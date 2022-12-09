@@ -11,12 +11,11 @@ const register = function (server, options) {
     options: {
       auth: {
         mode: 'try',
-        strategies: ['session']
+        strategies: ['session']        
         //scope: PermissionConfigTable.GET['/'] || DefaultScopes
-      }
+      }      
     },
-    handler: function (request, h) {
-
+    handler: function (request, h) {      
       let user = null;
       if (request.auth.isAuthenticated) {
         user = request.auth.credentials.user;

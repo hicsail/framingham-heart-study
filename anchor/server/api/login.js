@@ -20,7 +20,7 @@ const register = function (server, options) {
       auth: false,
       validate: {
         payload: {
-          username: Joi.string().lowercase().required(),
+          email: Joi.string().email().required(),
           password: Joi.string().required()
         }
       },
@@ -34,9 +34,9 @@ const register = function (server, options) {
         method: async function (request, h) {
 
           const ip = request.info.remoteAddress;
-          const username = request.payload.username;
+          const email = request.payload.email;
 
-          const detected = await AuthAttempt.abuseDetected(ip,username);
+          const detected = await AuthAttempt.abuseDetected(ip,email);
 
           if (detected) {
             throw Boom.badRequest('Maximum number of auth attempts reached.');
@@ -48,15 +48,15 @@ const register = function (server, options) {
         assign: 'user',
         method: async function (request, h) {
 
-          const username = request.payload.username;
+          const email = request.payload.email;
           const password = request.payload.password;
           const ip = request.info.remoteAddress;
-          const user = await User.findByCredentials(username, password);
+          const user = await User.findByCredentials(email, password);
           const userAgent = request.headers['user-agent'];
 
           if (!user) {
 
-            await AuthAttempt.create(ip, username, userAgent);
+            await AuthAttempt.create(ip, email, userAgent);
 
             throw Boom.badRequest('Credentials are invalid or account is inactive.');
           }
@@ -90,8 +90,7 @@ const register = function (server, options) {
       return ({
         user: {
           _id: request.pre.user._id,
-          name: request.pre.user.name,
-          username: request.pre.user.username,
+          name: request.pre.user.name,          
           email: request.pre.user.email,
           roles: request.pre.user.roles
         },

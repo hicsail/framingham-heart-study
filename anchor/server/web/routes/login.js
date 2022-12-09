@@ -14,7 +14,7 @@ const register  = function (server, options) {
       }
     },
     handler: function (request, h) {
-
+      console.log("here")
       if (request.auth.isAuthenticated) {
         /*if (request.query.returnUrl) {
           return h.redirect(request.query.returnUrl);

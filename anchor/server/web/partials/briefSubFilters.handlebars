@@ -1,0 +1,109 @@
+{{#if notDatatableView}}
+<div id="header" class="text-white bg-info">
+<div class="row pt-2 pb-2 pl-2">
+    <div class="col-md-2">                        
+        <h5>Submissions List</h5>        
+    </div>  
+    <div class="col-md-2">        
+        <div class="input-group">
+            <input id="search-input" type="text" class="form-control col" placeholder="Search Titles" onkeyup="searchBriefs()">
+            <div class="input-group-append">
+                <button class="btn btn-secondary" type="button" onclick="searchBriefs()">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </div>              
+    </div>    
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col">
+                <h5> 
+                    Showing 
+                    <select class="selectpicker" id="limit">
+                        <option value="All">All</option>            
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                    per page 
+                </h5>
+            </div>
+            <div class="col btn-group" role="group"> 
+                {{#if hasPrev}}       
+                    <button type="button" class="btn btn-info" onclick="goToPage('{{prev}}')">Previous</button>
+                {{/if}}
+                {{#if hasNext}}
+                    <button type="button" class="btn btn-info" onclick="goToPage('{{next}}')">Next</button>
+                {{/if}}             
+            </div>
+        </div>        
+    </div>       
+</div>
+</div>
+{{/if}}  
+<div id="filters">
+    <div class="row mt-4 ml-2 mr-2">
+        <div class="col">
+            <select class="selectpicker" id="sort" data-style="btn-white" data-size="5">
+                <option value="createdAt:-1">Sort By Newest</option>
+                <option value="createdAt:1">Sort By Oldest</option>
+                <option value="query.10:1">Sort By Title (A-Z)</option>
+                <option value="query.10:-1">Sort By Title (Z-A)</option>                                   
+            </select>
+        </div>
+        <div class="col">
+            <select class="selectpicker" id="userId" data-live-search="true" data-style="btn-white" data-size="10">
+                <option value="All">Filter By Name (All)</option>
+                <!--{{#each usersList as |user|}}
+                    <option value="{{user._id}}">{{user.name}}</option>
+                {{/each}}-->                            
+            </select>
+        </div>
+        <div class="col">
+            <select class="selectpicker" id="reviewerId" data-live-search="true" data-style="btn-white" data-size="5">
+                <option value="All">Filter By Reviewer Name (All)</option>
+                <!--{{#each reviewersList as |reviewer|}}
+                    <option value="{{reviewer._id}}">{{reviewer.name}}</option>
+                {{/each}}-->
+            </select>
+        </div>
+        <div class="col">
+            <select class="selectpicker" id="status" data-live-search="true" data-style="btn-white">
+                <option value="All">Filter By Status (All)</option>
+                <option value="pending">Pending</option>
+                <option value="rejected">Not Approved</option>
+                <option value="approved">Approved</option>
+            </select>
+        </div>        
+    </div>
+    <br>
+    <div class="row ml-2 mr-2">
+        <div class="col-md-2">
+            <select class="selectpicker" id="date" data-style="btn-white">        
+                <option value="range" role="button">Date Range</option>
+                <option value="exact">Exact Date</option>                      
+            </select>
+        </div>
+        <div class="col-md-10">
+            <div class="row"> 
+                <div class="col">                          
+                    <input class="form-control bg-white" type="date" id="startDate" onchange="pickDate()" display="none">
+                </div>
+                <div class="col">                          
+                    <input class="form-control bg-white" type="date" id="endDate" onchange="pickDate()" display="none">                
+                </div>
+            </div>
+        </div>   
+    </div>
+</div>
+{{#if notDatatableView}}
+<div class="bg-light text-dark pt-2 pb-1 pl-2 mt-2" id="footer">
+    <h6>Page {{currentPage}} of {{totalNumPages}} (showing {{submissions.length}} iterms of {{total}} items)</h6>
+</div>
+{{/if}}
+
+<!-- Add filter -->
+<link rel="stylesheet" href="/public/css/bootstrap-select.min.css"></link>
+<script type="text/javascript" src="/public/js/bootstrap-select.min.js"></script>
+
+<script type="text/javascript" src="/public/scripts/submissionsListFilters.js"></script>

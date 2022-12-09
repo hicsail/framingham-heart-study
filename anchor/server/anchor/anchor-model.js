@@ -525,8 +525,8 @@ class AnchorModel {
 
         lookup = Hoek.applyToDefaults(lookupDefaults,lookup);
         const foreignFilter = {};
-        foreignFilter[lookup.foreign] = {};
-        foreignFilter[lookup.foreign][lookup.operator] = doc[lookup.local];
+        foreignFilter[lookup.foreign] = {};        
+        foreignFilter[lookup.foreign][lookup.operator] = doc[lookup.local];        
         if (lookup.foreign === '_id') {
           if (Array.isArray(doc[lookup.local])) {
             foreignFilter[lookup.foreign][lookup.operator] = doc[lookup.local].map((v) => {
@@ -538,6 +538,17 @@ class AnchorModel {
             foreignFilter[lookup.foreign][lookup.operator] = this.ObjectId(doc[lookup.local]);
           }
         }
+        if (lookup.local === '_id') {
+          if (Array.isArray(doc[lookup.local])) {
+            foreignFilter[lookup.foreign][lookup.operator] = doc[lookup.local].map((v) => {
+
+              return v.toString();
+            });
+          }
+          else {
+            foreignFilter[lookup.foreign][lookup.operator] = doc[lookup.local].toString();
+          }
+        }        
         const results = await lookup.from.lookup(foreignFilter, lookup.options, lookup.lookups);
         doc[lookup.as] = lookup.one ? results[0] : results;
       }
@@ -939,7 +950,7 @@ AnchorModel.routes = {
     auth: true,
     disabled: false,
     payload: null,
-    scope: DefaultScopes,
+    scope: [],
     handler: async (request,h) => {
 
       const sortOrder = request.query['order[0][dir]'] === 'asc' ? '' : '-';
@@ -970,7 +981,7 @@ AnchorModel.routes = {
     auth: true,
     disabled: false,
     payload: null,
-    scope: DefaultScopes,
+    scope: [],
     handler: async (request,h) => {
 
       const model = request.pre.model;
@@ -979,7 +990,7 @@ AnchorModel.routes = {
       if (request.auth.isAuthenticated) {
 
         payload.userId = String(request.auth.credentials.user._id);
-      }
+      }      
       return await model.create(payload);
     },
     query: null
@@ -988,7 +999,7 @@ AnchorModel.routes = {
     auth: true,
     disabled: true,
     payload: null,
-    scope: DefaultScopes,
+    scope: [],
     handler: async (request,h) => {
 
       const model = request.pre.model;
@@ -1006,7 +1017,7 @@ AnchorModel.routes = {
       limit: Joi.number().default(20),
       page: Joi.number().default(1)
     },
-    scope: DefaultScopes,
+    scope: [],
     handler: async (request,h) => {
 
       const model = request.pre.model;
@@ -1023,7 +1034,7 @@ AnchorModel.routes = {
     auth:true,
     disabled: false,
     payload: {},
-    scope: DefaultScopes,
+    scope: [],
     handler: async (request,h) => {
 
       const model = request.pre.model;
@@ -1043,7 +1054,7 @@ AnchorModel.routes = {
     auth:true,
     disabled: false,
     payload: null,
-    scope: DefaultScopes,
+    scope: [],
     handler: async (request,h) => {
 
       const model = request.pre.model;
@@ -1059,7 +1070,7 @@ AnchorModel.routes = {
   getId: {
     auth:true,
     disabled: false,
-    scope: DefaultScopes,
+    scope: [],
     handler: async (request,h) => {
 
       const model = request.pre.model;
@@ -1073,7 +1084,6 @@ AnchorModel.routes = {
     },
     query: null
   },
-
   getMy: {
     auth:true,
     disabled: false,
@@ -1082,7 +1092,7 @@ AnchorModel.routes = {
       limit: Joi.number().default(20),
       page: Joi.number().default(1)
     },
-    scope: DefaultScopes,
+    scope: [],
     handler: async (request,h) => {
 
       const model = request.pre.model;
@@ -1101,25 +1111,29 @@ AnchorModel.routes = {
   tableView: {
     auth: true,
     disabled: false,
-    scope: DefaultScopes,
+    scope: [],
     apiDataSourcePath: '/api/table/{collectionName}',
+    partials: [],    
     outputDataFields: null,
     validationSchema: Joi.object({
       label: Joi.string().required(),
       from: Joi.string(),
+      property: Joi.string(),
       invisible: Joi.boolean().default(false),
+      function: Joi.any(),
+      arguments: Joi.array(),
       accessRoles: Joi.array()
     })
   },
   editView: {
     auth: true,
     disabled: false,
-    scope: DefaultScopes
+    scope: []
   },
   createView: {
     auth: true,
     disabled: false,
-    scope: DefaultScopes,
+    scope: [],
     createSchema: null
   }
 };

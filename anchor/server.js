@@ -26,11 +26,13 @@ const main = async function () {
 
   await server.start();
 
-  if (!Fs.existsSync('server/permission-config.json')){
+  /*if (!Fs.existsSync('server/permission-config.json')){
     InitPC(server);
-  }
+  }*/
 
   console.log(`Server started on port ${Manifest.get('/server/port')}`);
 };
 
+
 main();
+

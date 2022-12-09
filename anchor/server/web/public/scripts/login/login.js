@@ -1,6 +1,6 @@
 'use strict';
 const loginSchema = Joi.object({
-  username: Joi.string().lowercase().required(),
+  email: Joi.string().email().required(),
   password: Joi.string().required()
 });
 joiToForm('loginFormFields',loginSchema);
@@ -15,13 +15,14 @@ $('#login').click((event) => {
     type: 'POST',
     url: '/api/login',
     data: values,
-    success: function (result) {
-      console.log("is success")      
+    success: function (result) {           
       location.reload();
     },
-    error: function (result) {
-      console.log("hereeee")
+    error: function (result) {      
       errorAlert(result.responseJSON.message);
+      if (result.responseJSON.message === 'Credentials are invalid or account is inactive.') {
+        $("#forgot-password").css("display", "inline");  
+      }   
     }
   });
 });

@@ -19,7 +19,9 @@ $('#reset').click((event) => {
     url: '/api/login/reset',
     data: values,
     success: function (result) {
-      location.reload();
+      successAlert("Password successfully reset.")
+      window.location = '/login'; 
+      //location.reload();
     },
     error: function (result) {
       errorAlert(result.responseJSON.message);

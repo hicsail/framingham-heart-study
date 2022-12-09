@@ -5,7 +5,7 @@ Here are your login credentials:
 
 | Details   |              |
 | ---------:|:------------ |
-| Username: | {{username}} |
+| name:     | {{name}} |
 | Email:    | {{email}}    |
 
 Love,

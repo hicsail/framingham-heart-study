@@ -11,7 +11,25 @@ const register = function (server, options) {
 
   server.route({
     method: 'GET',
-    path: '/api/select2/users',
+    path: '/api/users/reviewersList',
+    options: {
+      auth: {
+        strategies: ['simple', 'session'],
+        scope: ['root', 'admin']
+      }      
+    },
+    handler: async function (request, h) {
+      
+      const usersList = await User.find({'roles': {}}, {'name':1, '_id':1});
+      const reviewersList = await User.find({'roles.reviewer': true}, {'name':1, '_id':1});
+
+      return ({usersList, reviewersList});
+    }
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/api/reviewersList/users',
     options: {
       auth: {
         strategies: ['simple', 'session']
@@ -62,22 +80,6 @@ const register = function (server, options) {
       },
       pre: [
         {
-          assign: 'usernameCheck',
-          method: async function (request, h) {
-
-            const conditions = {
-              username: request.payload.username
-            };
-
-            const user = await User.findOne(conditions);
-
-            if (user) {
-              throw Boom.conflict('Username already in use.');
-            }
-
-            return h.continue;
-          }
-        }, {
           assign: 'emailCheck',
           method: async function (request, h) {
 
@@ -111,13 +113,12 @@ const register = function (server, options) {
         }]
     },
     handler: async function (request, h) {
-
-      const username = request.payload.username;
+      
       const password = request.payload.password;
       const email = request.payload.email;
       const name = request.payload.name;
 
-      const user = await User.create(username, password, email, name);
+      const user = await User.create(password, email, name);
 
       return user;
     }
@@ -130,37 +131,19 @@ const register = function (server, options) {
     options: {
       auth: {
         strategies: ['simple', 'session'],
-        scope: PermissionConfigTable.PUT['/api/users/{id}'] || ['root']
+        scope: ['root', 'reviewer']
       },
       validate: {
         params: {
           id: Joi.string().invalid('000000000000000000000000')
         },
-        payload: {
-          username: Joi.string().token().lowercase().required(),
+        payload: {          
           email: Joi.string().email().lowercase().required(),
           name: Joi.string().required()
         }
       },
       pre: [
         {
-          assign: 'usernameCheck',
-          method: async function (request, h) {
-
-            const conditions = {
-              username: request.payload.username,
-              _id: { $ne: User._idClass(request.params.id) }
-            };
-
-            const user = await User.findOne(conditions);
-
-            if (user) {
-              throw Boom.conflict('Username already in use.');
-            }
-
-            return h.continue;
-          }
-        }, {
           assign: 'emailCheck',
           method: async function (request, h) {
 
@@ -185,8 +168,7 @@ const register = function (server, options) {
       const id = request.params.id.toString();
       const update = {
         $set: {
-          name: request.payload.name,
-          username: request.payload.username,
+          name: request.payload.name,          
           email: request.payload.email
         }
       };
@@ -248,37 +230,13 @@ const register = function (server, options) {
         strategies: ['simple', 'session']
       },
       validate: {
-        payload: {
-          username: Joi.string().token().lowercase().required(),
+        payload: {          
           email: Joi.string().email().lowercase().required(),
-          name: Joi.string().required(),
-          gender: Joi.string().allow('male', 'female'),
-          dob: Joi.date(),
-          address: Joi.string().allow('').optional(),
-          phone: Joi.string().allow('').optional(),
-          height: Joi.number().optional(),
-          weight: Joi.number().optional()
+          name: Joi.string().required()        
         }
       },
       pre: [
         {
-          assign: 'usernameCheck',
-          method: async function (request, h) {
-
-            const conditions = {
-              username: request.payload.username,
-              _id: { $ne: request.auth.credentials.user._id }
-            };
-
-            const user = await User.findOne(conditions);
-
-            if (user) {
-              throw Boom.conflict('Username already in use.');
-            }
-
-            return h.continue;
-          }
-        }, {
           assign: 'emailCheck',
           method: async function (request, h) {
 
@@ -302,24 +260,13 @@ const register = function (server, options) {
 
       const id = request.auth.credentials.user._id.toString();
       const update = {
-        $set: {
-          username: request.payload.username,
+        $set: {          
           email: request.payload.email,
-          name: request.payload.name,
-          gender: request.payload.gender,
-          dob: request.payload.dob,
-          address: request.payload.address,
-          phone: request.payload.phone,
-          height: request.payload.height,
-          weight: request.payload.weight
+          name: request.payload.name                   
         }
       };
-      const findOptions = {
-        fields: User.fieldsAdapter('username email roles gender dob address phone height weight')
-      };
 
-
-      const user = await User.findByIdAndUpdate(id, update, findOptions);
+      const user = await User.findByIdAndUpdate(id, update);
 
       return user;
     }
@@ -358,7 +305,8 @@ const register = function (server, options) {
             const complexityOptions = Config.get('/passwordComplexity');
 
             try {
-              await Joi.validate(request.payload.password, new PasswordComplexity(complexityOptions));
+              //await Joi.validate(request.payload.password, new PasswordComplexity(complexityOptions));
+              await Joi.validate(request.payload.password, Joi.string().required().min(6).regex(/^[a-zA-Z0-9]*$/, 'letters and/or numbers'));
             }
             catch (err) {
 
@@ -440,7 +388,8 @@ const register = function (server, options) {
           const complexityOptions = Config.get('/passwordComplexity');
 
           try {
-            await Joi.validate(request.payload.password, new PasswordComplexity(complexityOptions));
+            //await Joi.validate(request.payload.password, new PasswordComplexity(complexityOptions));
+            await Joi.validate(request.payload.password, Joi.string().required().min(6).regex(/^[a-zA-Z0-9]*$/, 'letters and/or numbers'));
           }
           catch (err) {
 

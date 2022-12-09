@@ -29,7 +29,7 @@ const register = function (server, serverOptions) {
         assign: 'enabled',
         method: function (request,h) {
 
-          const model = request.pre.model;
+          const model = request.pre.model;          
           if (model.routes.tableView.disabled) {
             throw Boom.forbidden('Route Disabled');
           }
@@ -40,6 +40,10 @@ const register = function (server, serverOptions) {
         method: function (request,h) {
 
           const model = request.pre.model;
+
+          if (model.routes.tableView.scope.length === 0) {
+            return h.continue;  
+          }
           if (model.routes.tableView.auth) {
             if (!request.auth.isAuthenticated) {
               throw Boom.unauthorized('Authentication Required');
@@ -72,10 +76,14 @@ const register = function (server, serverOptions) {
         assign: 'scopeCheck',
         method: function (request, h) {
 
-          const model = request.pre.model.routes.tableView.scope;
+          const scope = request.pre.model.routes.tableView.scope;
+
+          if (scope === 0) {
+            return h.continue;  
+          }
           const userRoles = request.auth.credentials.scope;
-          if (!IsAllowed(userRoles, model)){
-            throw Boom.unauthorized('Insufficient Scope');
+          if (!IsAllowed(userRoles, scope)){
+            throw Boom.unauthorized('Insufficient Scope salam');
           }
           return h.continue;
         }
@@ -89,15 +97,22 @@ const register = function (server, serverOptions) {
       if (apiDataSource === '/api/table/{collectionName}') {
         apiDataSource = '/api/table/' + request.params.collectionName;
       }
-
+      if (request.query) { //attaching query parameters to the api path 
+        apiDataSource += '?';
+        for (const key in request.query) {
+          apiDataSource += key + '=' + request.query[key] + '&';
+        }
+      }
+      apiDataSource = apiDataSource.substring(0, apiDataSource.length - 1); //removing the last '&' char
+      
       const req = {
         method: 'GET',
         url: apiDataSource,
-        credentials: request.auth.credentials
+        credentials: request.auth.credentials        
       };
 
       const res = await server.inject(req);
-
+      
       const outputCols = [];
       let outputData = res.result.data;
 
@@ -128,20 +143,67 @@ const register = function (server, serverOptions) {
             delete fields[key];
           }
         }
-
+        
         for (const rec of outputData){
           const doc = {};
           for (const key of Object.keys(fields)) {
-            if ('from' in fields[key]){
-              if (rec[fields[key].from][key]) {
-                doc[key] = rec[fields[key].from][key];
+            //case when output is a function of a some of the fields (like a link)
+            if ('function' in fields[key] && 'arguments' in fields[key]){
+              let args = [];
+              for (const arg of fields[key]['arguments']) {
+                if ('from' in arg) { 
+                  args.push(rec[arg['from']][arg['property']]);
+
+                }
+                else {
+                  args.push(rec[arg['property']]);
+                }
+              } 
+              if (args.includes(undefined)) {
+                doc[key] = 'N/A';                
+              }
+              else {
+                doc[key] = fields[key]['function'](...args);
+              }                         
+            }                      
+            else if ('from' in fields[key]){ 
+              let innerKey = key;              
+              if ('property' in fields[key]) {
+                innerKey = fields[key]['property'];// to handle multiple join on the same collection with same keys 
+              }
+              let val = rec[fields[key].from] ? rec[fields[key].from][innerKey] : 'N/A'; 
+              if (innerKey.includes('.')) { //case when there are nested keys for nestes objects 
+                let keys = innerKey.split('.');
+                val = rec[fields[key].from] ? rec[fields[key].from][keys[0]] : null;              
+                let sliced = keys.slice(1);
+                for (const item of sliced) {
+                  if (!val)  {
+                    break;
+                  }                
+                  val = val[item];
+                }                                
+              }                       
+              if (rec[fields[key].from] && val) {                
+                doc[key] = val;                              
               }
               else {
                 doc[key] = 'N/A';
               }
             }
             else {
-              if (rec[key] === null || typeof rec[key] === 'undefined'){
+              if (key.includes('.')) { //case when there are nested keys for nestes objects 
+                let keys = key.split('.');
+                let val = rec[keys[0]] ? rec[keys[0]]: null;              
+                let sliced = keys.slice(1);
+                for (const item of sliced) {
+                  if (!val) {
+                    break;
+                  }                  
+                  val = val[item];
+                }
+                doc[key] = val ? val : 'N/A';                
+              }
+              else if (rec[key] === null || typeof rec[key] === 'undefined' && !key.includes('.')){
                 doc[key] = 'N/A';
               }
               else {
@@ -151,6 +213,7 @@ const register = function (server, serverOptions) {
           }
           processedData.push(doc);
         }
+        
         outputData = processedData;
       }
       else {
@@ -212,6 +275,7 @@ const register = function (server, serverOptions) {
           }
         }
       }
+
       outputData.map((dataRow) => {//render function to change default string version of specified types.
 
         for (const key of Object.keys(dataRow)){
@@ -219,8 +283,8 @@ const register = function (server, serverOptions) {
             dataRow[key] = dataRow[key].toDateString() + ' ' + dataRow[key].toLocaleTimeString('en-us');//DOES NOT HAVE THE TIMEZONE...
           }
         }
-      });
-
+      });      
+      
       return h.view('anchor-default-templates/index', {
         user: request.auth.credentials.user,
         projectName: Config.get('/projectName'),
@@ -228,7 +292,8 @@ const register = function (server, serverOptions) {
         title:  capitalizeFirstLetter(request.params.collectionName),
         collectionName: request.params.collectionName,
         columns: outputCols,
-        data: outputData
+        data: outputData,
+        partials: model.routes.tableView.partials
       });
     }
   });
@@ -267,6 +332,10 @@ const register = function (server, serverOptions) {
         method: function (request,h) {
 
           const model = request.pre.model;
+
+          if (model.routes.editView.scope.length === 0) {
+            return h.continue;  
+          }
           if (model.routes.editView.auth) {
             if (!request.auth.isAuthenticated) {
               throw Boom.unauthorized('Authentication Required');
@@ -278,7 +347,10 @@ const register = function (server, serverOptions) {
         assign: 'scopeCheck',
         method: function (request, h) {
 
-          const model = request.pre.model.routes.editView.scope;
+          const model = request.pre.model;
+          if (model.routes.editView.scope.length === 0) {
+            return h.continue;  
+          }
           const userRoles = request.auth.credentials.scope;
           if (!IsAllowed(userRoles, model)){
             throw Boom.unauthorized('Insufficient Scope');
@@ -342,6 +414,10 @@ const register = function (server, serverOptions) {
         method: function (request,h) {
 
           const model = request.pre.model;
+
+          if (model.routes.createView.scope.length === 0) {
+            return h.continue;  
+          }
           if (model.routes.createView.auth) {
             if (!request.auth.isAuthenticated) {
               throw Boom.unauthorized('Authentication Required');
@@ -354,6 +430,10 @@ const register = function (server, serverOptions) {
         method: function (request, h) {
 
           const model = request.pre.model.routes.createView.scope;
+
+          if (model.routes.createView.scope.length === 0) {
+            return h.continue;  
+          }
           const userRoles = request.auth.credentials.scope;
           if (!IsAllowed(userRoles, model)){
             throw Boom.unauthorized('Insufficient Scope');

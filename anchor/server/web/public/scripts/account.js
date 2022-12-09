@@ -1,7 +1,6 @@
 const schema = Joi.object({
   name: Joi.string().required(),
-  email: Joi.string().email().lowercase().required(),
-  username: Joi.string().token().lowercase().required(),
+  email: Joi.string().email().lowercase().required()  
 });
 joiToForm('formFields',schema);
 $('#update').click((event) => {
@@ -22,3 +21,17 @@ $('#update').click((event) => {
     }
   });
 });
+
+function reset(email) {  
+  $.ajax({
+    type: 'POST',
+    url: '/api/login/forgot',
+    data: {'email': email},
+    success: function (result) {
+      window.location = '/reset'
+    },
+    error: function (result) {
+      errorAlert(result.responseJSON.message);
+    }
+  });
+}

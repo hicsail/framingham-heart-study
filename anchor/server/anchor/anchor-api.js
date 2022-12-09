@@ -31,9 +31,9 @@ const register = function (server,serverOptions) {
         method: function (request,h) {
 
           const model = request.pre.model;
-          if (model.routes.getAllTable.disabled) {
+          if (model.routes.getAllTable.disabled) {            
             throw Boom.forbidden('Route Disabled');
-          }
+          }          
           return h.continue;
         }
       },/*{
@@ -54,6 +54,10 @@ const register = function (server,serverOptions) {
 
           const model = request.pre.model;
 
+          if (model.routes.getAllTable.scope.length === 0) {
+            return h.continue;  
+          }
+
           if (model.routes.getAllTable.auth) {
 
             if (!request.auth.isAuthenticated) {
@@ -69,6 +73,10 @@ const register = function (server,serverOptions) {
         method: function (request, h) {
 
           const model = request.pre.model;
+
+          if (model.routes.getAllTable.scope.length === 0) {
+            return h.continue;  
+          }
           if (model.routes.getAllTable.auth) {
 
             const scopes = model.routes.getAllTable.scope;
@@ -82,7 +90,7 @@ const register = function (server,serverOptions) {
       }]
     },
     handler: async function (request, h) {
-
+      
       return await request.pre.model.routes.getAllTable.handler(request,h);
     }
   });
@@ -120,11 +128,12 @@ const register = function (server,serverOptions) {
       }, {
         assign: 'payload',
         method: function (request,h) {
-
+          
           const model = request.pre.model;
           const joiSchema = model.routes.create.payload;
           //console.log(JoiToJson(joiSchema));
           const obj = joiSchema.validate(request.payload);
+          
           if (obj.error) {
             throw Boom.badRequest('Incorrect Payload', obj.error);
           }
@@ -133,9 +142,14 @@ const register = function (server,serverOptions) {
         }
       }, {
         assign: 'auth',
-        method: function (request,h) {
+        method: function (request,h) {         
 
           const model = request.pre.model;
+
+          if (model.routes.create.scope.length === 0) {
+            return h.continue;  
+          }
+
           if (model.routes.create.auth) {
             if (!request.auth.isAuthenticated) {
               throw Boom.unauthorized('Authentication Required');
@@ -148,6 +162,10 @@ const register = function (server,serverOptions) {
         method: function (request, h) {
 
           const model = request.pre.model;
+          
+          if (model.routes.create.scope.length === 0) {
+            return h.continue;  
+          }
           if (model.routes.create.auth) {
 
             const scopes = model.routes.create.scope;
@@ -213,6 +231,10 @@ const register = function (server,serverOptions) {
         method: function (request,h) {
 
           const model = request.pre.model;
+
+          if (model.routes.insertMany.scope.length === 0) {
+            return h.continue;  
+          }
           if (model.routes.insertMany.auth) {
             if (!request.auth.isAuthenticated) {
               throw Boom.unauthorized('Authentication Required');
@@ -225,6 +247,10 @@ const register = function (server,serverOptions) {
         method: function (request, h) {
 
           const model = request.pre.model;
+
+          if (model.routes.insertMany.scope.length === 0) {
+            return h.continue;  
+          }
           if (model.routes.insertMany.auth) {
 
             const scopes = model.routes.insertMany.scope;
@@ -291,6 +317,10 @@ const register = function (server,serverOptions) {
         method: function (request, h) {
 
           const model = request.pre.model;
+          
+          if (model.routes.getId.scope.length === 0) {            
+            return h.continue;  
+          }
           if (model.routes.getId.auth) {
 
             const scopes = model.routes.getId.scope;
@@ -392,6 +422,10 @@ const register = function (server,serverOptions) {
         method: function (request,h) {
 
           const model = request.pre.model;
+
+          if (model.routes.delete.scope.length === 0) {            
+            return h.continue;  
+          }
           if (model.routes.delete.auth) {
             if (!request.auth.isAuthenticated) {
               throw Boom.unauthorized('Authentication Required');
@@ -405,6 +439,10 @@ const register = function (server,serverOptions) {
         method: function (request, h) {
 
           const model = request.pre.model;
+
+          if (model.routes.delete.scope.length === 0) {            
+            return h.continue;  
+          }
           if (model.routes.delete.auth) {
 
             const scopes = model.routes.delete.scope;
@@ -418,7 +456,7 @@ const register = function (server,serverOptions) {
       }]
     },
     handler: async function (request,h) {
-
+          
       return await request.pre.model.routes.delete.handler(request,h);
     }
   });
@@ -468,6 +506,10 @@ const register = function (server,serverOptions) {
         method: function (request, h) {
 
           const model = request.pre.model;
+
+          if (model.routes.getMy.scope.length === 0) {            
+            return h.continue;  
+          }
           if (model.routes.getMy.auth) {
             if (!request.auth.isAuthenticated) {
               throw Boom.unauthorized('Authentication Required');
@@ -481,6 +523,10 @@ const register = function (server,serverOptions) {
         method: function (request, h) {
 
           const model = request.pre.model;
+
+          if (model.routes.getMy.scope.length === 0) {            
+            return h.continue;  
+          }
           if (model.routes.getMy.auth) {
 
             const scopes = model.routes.getMy.scope;
@@ -512,7 +558,7 @@ const register = function (server,serverOptions) {
       pre: [{
         assign: 'model',
         method: function (request,h) {
-
+          
           const model = server.plugins['hapi-anchor-model'].models[request.params.collectionName];
           if (!model) {
             throw Boom.notFound('Model not found');
@@ -552,6 +598,11 @@ const register = function (server,serverOptions) {
         method: function (request,h) {
 
           const model = request.pre.model;
+
+          if (model.routes.update.scope.length === 0) {
+            return h.continue;  
+          }
+
           if (model.routes.update.auth) {
             if (!request.auth.isAuthenticated) {
               throw Boom.unauthorized('Authentication Required');
@@ -565,6 +616,10 @@ const register = function (server,serverOptions) {
         method: function (request, h) {
 
           const model = request.pre.model;
+
+          if (model.routes.update.scope.length === 0) {
+            return h.continue;  
+          }
           if (model.routes.update.auth) {
 
             const scopes = model.routes.update.scope;
@@ -630,6 +685,10 @@ const register = function (server,serverOptions) {
         method: function (request,h) {
 
           const model = request.pre.model;
+
+          if (model.routes.update.getAll.length === 0) {
+            return h.continue;  
+          }
           if (model.routes.getAll.auth) {
             if (!request.auth.isAuthenticated) {
 
@@ -644,6 +703,10 @@ const register = function (server,serverOptions) {
         method: function (request, h) {
 
           const model = request.pre.model;
+          
+          if (model.routes.getAll.scope.length === 0) {
+            return h.continue;  
+          }
           if (model.routes.getAll.auth) {
 
             const scopes = model.routes.getAll.scope;

@@ -15,9 +15,9 @@ const config = {
   projectName: {
     $filter: 'env',
     production: process.env.PROJECT_NAME,
-    test: 'FHS-Test',
+    test: 'Anchor-Test',
     local: process.env.PROJECT_NAME,
-    $default: 'FHS'
+    $default: 'FSH'
   },
   baseUrl: {
     $filter: 'env',
@@ -36,8 +36,8 @@ const config = {
     }
   },
   authAttempts: {
-    forIp: 50,
-    forIpAndUser: 7
+    forIp: 200,
+    forIpAndUser: 200
   },
   authSecret: {
     $filter: 'env',
@@ -50,7 +50,7 @@ const config = {
       uri: {
         $filter: 'env',
         production: process.env.MONGODB_URI,
-        test: 'mongodb://localhost:27017/fhs-test',
+        test: 'mongodb://localhost:27017/anchor-test',
         local: process.env.MONGODB_URI,
         $default: 'mongodb://localhost:27017/fhs'
       }
@@ -68,7 +68,7 @@ const config = {
         db: {
           $filter: 'env',
           production: process.env.MONGODB_DB_NAME,
-          test: 'fhs-test',
+          test: 'anchor-test',
           $default: 'fhs'
         }
       }
@@ -76,8 +76,9 @@ const config = {
     autoIndex: true
   },
   nodemailer: {
-    host: 'smtp.gmail.com',
-    port: 465,
+    host: 'smtp.office365.com',    
+    service: 'Outlook365',
+    port: 465, 
     secure: true,
     auth: {
       user: process.env.SMTP_USERNAME,
@@ -86,16 +87,23 @@ const config = {
   },
   system: {
     fromAddress: {
-      name: 'Anchor',
-      address: 'jedireza@gmail.com'
+      name: 'BWHS',
+      address: 'bwhsdata@bu.edu'//'bwhs2021@yahoo.com'
     },
     toAddress: {
-      name: 'Anchor',
-      address: 'jedireza@gmail.com'
+      name: 'BWHS',
+      address: 'jolij8147@gmail.com'
     }
   },
+  bccReviewrs: {
+    $filter: 'env',
+    production: process.env.BASE_URL,
+    test: [],
+    local: process.env.BASE_URL,
+    $default: []
+  },
   passwordComplexity: {
-    min: 8,
+    min: 6,
     max: 32,
     lowerCase: 1,
     upperCase: 1,
@@ -103,29 +111,19 @@ const config = {
     symbol: 1,
     requirementCount: 3
   },
-  roles:[
-    {
-      name: 'analyst',
-      accessLevel: '1',
-      type: 'groupAdmin'
-    },
-    {
-      name: 'clinician',
-      accessLevel: '2',
-      type: 'groupAdmin'
-    },
+  roles:[    
     {
       name: 'reviewer',
       accessLevel: '3'
     },
     {
-      name: 'committee member',
-      accessLevel: '4'
-    },
-    {
       name: 'root',
       accessLevel: '5'
-    }
+    },
+    {
+      name: 'committee_member',
+      accessLevel: '4'
+    },
   ]
 };
 

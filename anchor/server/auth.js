@@ -13,11 +13,7 @@ const register = function (server, options) {
 
       if (!user) {
         return { isValid: false };
-      }
-
-      if (!user.isActive) {
-        return { isValid: false };
-      }
+      }      
 
       const sessionId = request.state.AuthCookie._id.toString();
       const sessionKey = request.state.AuthCookie.key;
@@ -67,11 +63,7 @@ const register = function (server, options) {
 
       if (!user) {
         return { isValid: false };
-      }
-
-      if (!user.isActive) {
-        return { isValid: false };
-      }
+      }      
 
       const credentials = {
         token,
@@ -108,11 +100,7 @@ const register = function (server, options) {
 
       if (!user) {
         return { valid: false };
-      }
-
-      if (!user.isActive) {
-        return { valid: false };
-      }
+      }     
 
       const update = {
         $set: {

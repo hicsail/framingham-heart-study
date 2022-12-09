@@ -3,8 +3,7 @@
     {{>dashboardNav}}
     <div class="col-sm-9 col-md-10">
       <div style="padding: 30px">
-        <h3>Edit User</h3>
-        <hr>
+        <h3>Edit User</h3>        
         <div class="card">
           <div style="padding: 20px">
             <form id="form">
@@ -20,8 +19,7 @@
 <script type="text/javascript" src="/public/scripts/users/edit.js"></script>
 <script>
   joiFormValue('name', '{{editUser.name}}');
-  joiFormValue('email', '{{editUser.email}}');
-  joiFormValue('username', '{{editUser.username}}');
+  joiFormValue('email', '{{editUser.email}}');  
   $('#update').click((event) => {
     event.preventDefault();
     const values = {};

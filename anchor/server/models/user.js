@@ -33,9 +33,8 @@ class User extends AnchorModel {
     return { password, hash };
   }
 
-  static async create(username, password, email, name) {
-
-    Assert.ok(username, 'Missing username arugment.');
+  static async create(name, email, password) {
+    
     Assert.ok(password, 'Missing pasword arugment.');
     Assert.ok(email, 'Missing email arugment.');
     Assert.ok(name, 'Missing name arugment.');
@@ -43,15 +42,11 @@ class User extends AnchorModel {
     const self = this;
 
     const passwordHash = await this.generatePasswordHash(password);
-    const document =  new this({
-      isActive: true,
-      inStudy: true,
-      username: username.toLowerCase(),
+    const document =  new this({           
       password: passwordHash.hash,
       email: email.toLowerCase(),
       name,
-      roles: {},
-      studyID: null,
+      roles: {},      
       timeCreated: new Date()
     });
 
@@ -62,20 +57,17 @@ class User extends AnchorModel {
     return users[0];
   }
 
-  static async findByCredentials(username, password) {
+  static async findByCredentials(email, password) {
 
     const self = this;
 
-    Assert.ok(username,'Missing username argument.');
+    Assert.ok(email,'Missing email argument.');
     Assert.ok(password,'Missing password argument.');
 
-    const query = { isActive: true };
+    const query = {};
 
-    if (username.indexOf('@') > -1) {
-      query.email = username.toLowerCase();
-    }
-    else {
-      query.username = username.toLowerCase();
+    if (email.indexOf('@') > -1) {
+      query.email = email;
     }
 
     const user = await self.findOne(query);
@@ -89,16 +81,7 @@ class User extends AnchorModel {
     if (passwordMatch) {
       return user;
     }
-  }
-
-  static async findByUsername(username) {
-
-    Assert.ok(username, 'Misisng username argument.');
-
-    const query = { username: username.toLowerCase() };
-
-    return await this.findOne(query);
-  }
+  }  
 
   static async findByEmail(email) {
 
@@ -150,12 +133,9 @@ User.collectionName = 'users';
 
 
 User.schema = Joi.object({
-  _id: Joi.object(),
-  isActive: Joi.boolean().default(true),
-  username: Joi.string().token().lowercase().required(),
+  _id: Joi.object(),  
   password: Joi.string(),
-  name: Joi.string(),
-  inStudy: Joi.boolean().default(true),
+  name: Joi.string(),  
   email: Joi.string().email().lowercase().required(),
   roles: Joi.object(getRolesValidator()),
   resetPassword: Joi.object({
@@ -165,14 +145,13 @@ User.schema = Joi.object({
   timeCreated: Joi.date()
 });
 
-User.payload = Joi.object({
-  username: Joi.string().token().lowercase().invalid('root').required(),
+User.payload = Joi.object({  
   password: Joi.string().required(),
   email: Joi.string().email().lowercase().required(),
   name: Joi.string().required()
 });
 
-User.routes = Hoek.applyToDefaults(AnchorModel.routes, {
+User.routes = Hoek.applyToDefaults(AnchorModel.routes, {  
   create: {
     disabled: true
   },
@@ -199,8 +178,7 @@ User.routes = Hoek.applyToDefaults(AnchorModel.routes, {
   }
 });
 
-User.indexes = [
-  { key: { username: 1, unique: 1 } },
+User.indexes = [  
   { key: { email: 1, unique: 1 } }
 ];
 

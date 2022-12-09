@@ -6,6 +6,6 @@ need this key to do it.
 __Key:__  
 {{key}}
 
-Love,
+Thanks,
 
-The Plot Device
+BWHS team

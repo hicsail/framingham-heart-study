@@ -47,7 +47,7 @@ const register = function (server, options) {
       }]
     },
     handler: async function (request, h) {
-
+      
       const users = await User.find({});
 
       if (!users) {
@@ -60,7 +60,7 @@ const register = function (server, options) {
         projectName: Config.get('/projectName'),
         title: 'Users',
         baseUrl: Config.get('/baseUrl'),
-        role: Config.get('/roles')
+        roles: [{name: 'reviewer'}, {name: 'committee_member'}]
       });
     }
   });
@@ -188,7 +188,7 @@ const register = function (server, options) {
     options: {
       auth: {
         strategies: ['session'],
-        scope: PermissionConfigTable.GET['/change-password/{id}'] || ['root']
+        scope: ['root', 'reviewer']
       },
       validate: {
         params: {

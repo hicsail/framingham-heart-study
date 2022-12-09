@@ -8,10 +8,10 @@ const Hoek = require('hoek');
 
 class AuthAttempt extends AnchorModel {
 
-  static async create(ip, username, userAgent) {
+  static async create(ip, email, userAgent) {
 
     Assert.ok(ip, 'Missing ip argument.');
-    Assert.ok(username, 'Missing username argument.');
+    Assert.ok(email, 'Missing email argument.');
     Assert.ok(userAgent, 'Missing userAgent argument.');
 
     const agentInfo = UserAgent.lookup(userAgent);
@@ -21,7 +21,7 @@ class AuthAttempt extends AnchorModel {
       browser,
       ip,
       os: agentInfo.os.toString(),
-      username
+      email
     });
 
     const authAttempts = await this.insertOne(document);
@@ -29,14 +29,14 @@ class AuthAttempt extends AnchorModel {
     return authAttempts[0];
   }
 
-  static async abuseDetected(ip, username) {
+  static async abuseDetected(ip, email) {
 
     Assert.ok(ip, 'Missing ip argument.');
-    Assert.ok(username, 'Missing username argument.');
+    Assert.ok(email, 'Missing email argument.');
 
     const [countByIp, countByIpAndUser] = await Promise.all([
       this.count({ ip }),
-      this.count({ ip, username })
+      this.count({ ip, email })
     ]);
 
     const config = Config.get('/authAttempts');
@@ -55,7 +55,7 @@ AuthAttempt.schema = Joi.object({
   browser: Joi.string(),
   ip: Joi.string().required(),
   os: Joi.string().required(),
-  username: Joi.string().lowercase().required(),
+  email: Joi.string().email().required(),
   createdAt: Joi.date().default(new Date(), 'time of creation')
 });
 
@@ -68,7 +68,7 @@ AuthAttempt.routes = Hoek.applyToDefaults(AnchorModel.routes, {
   }),
   tableView: {
     outputDataFields: {
-      username: { label: 'Username' },
+      email: { label: 'Email' },
       ip: { label: 'IP' },
       createdAt: { label: 'Time' },
       _id: { label: 'ID', accessRoles: ['admin', 'researcher','root'], invisible: true },
@@ -90,8 +90,8 @@ AuthAttempt.routes = Hoek.applyToDefaults(AnchorModel.routes, {
 AuthAttempt.lookups = [];
 
 AuthAttempt.indexes = [
-  { key: { ip: 1, username: 1 } },
-  { key: { username: 1 } }
+  { key: { ip: 1, email: 1 } },
+  { key: { email: 1 } }
 ];
 
 module.exports = AuthAttempt;

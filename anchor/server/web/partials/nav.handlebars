@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark static-top">
+<nav class="navbar navbar-expand-md navbar-dark bg-danger static-top text-light">
   <a class="navbar-brand" href="../">{{projectName}}</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
           aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
@@ -6,30 +6,27 @@
   </button>
 
   <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav mr-auto">      
       <li class="nav-item">
-        <a class="nav-link" href="../">Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="../dashboard">Dashboard</a>
+        <a class="nav-link" href="../../dashboard">Dashboard</a>
       </li>
     </ul>
     {{#if user}}
       <ul class="navbar-nav my-2 my-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="../account">My Account</a>
+          <a class="nav-link" href="../../account">My Account</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="../logout">Logout</a>
+          <a class="nav-link" href="../../logout">Logout</a>
         </li>
       </ul>
     {{else}}
       <ul class="navbar-nav my-2 my-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="../login">Login</a>
+          <a class="nav-link" href="../../login">Login</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="../signup">Sign Up</a>
+          <a class="nav-link" href="../../signup">Sign Up</a>
         </li>
       </ul>
     {{/if}}
