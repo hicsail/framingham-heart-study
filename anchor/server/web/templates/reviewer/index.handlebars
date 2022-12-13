@@ -1,0 +1,18 @@
+<div class="container-fluid h-100">
+  <div class="row h-100">
+    {{>dashboardNav}}
+    <div class="col-sm-9 col-md-10">
+      <div style="padding: 30px">
+        <h3 class="font-weight-bold" style="font-size:1.8em;">Hello, {{user.name}}!</h3>        
+        <br>        
+        {{#if user.roles.committee_member}}
+           <h2>Is a committee member </h2>
+           {{> reviewerUploadForm}}
+            
+        {{else}} 
+           <h4>Not a committee member</h4>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

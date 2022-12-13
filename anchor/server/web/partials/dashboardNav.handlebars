@@ -37,6 +37,13 @@
       <li class="nav-item">        
         <a class="nav-link text-light" href="../../../roles">Roles</a>             
       </li>
+
+       {{!-- <li class="nav-item">        
+        <a class="nav-link text-light" href="../../../proposal/index">
+          Document upload         
+        </a>   
+
+      </li>       --}}
     </ul>
     <ul class="nav nav-pills flex-column mt-4">
       <h6 class="text-white font-weight-bold">
@@ -65,9 +72,9 @@
       <div class="sticky-header2 col-sm-3 col-md-2" style="padding-top: 20px;">       
         <ul class="nav nav-pills flex-column" style="padding-top: 20px;">
           <h6 class="text-white font-weight-bold">
-            Brief Query Submissions <span class="ml-2"><a href="../../../brief"><i class="fa fa-plus"></i></a></span>
+            Reviewer Upload <span class="ml-2"><a href="../../../reviewerUpload"><i class="fa fa-plus"></i></a></span>
           </h6>
-          {{#if submissions}}
+          {{!-- {{#if submissions}}
             <li class="nav-item">
               {{#each submissions as |sub|}}
                 <a class="nav-link text-light" href="../../../brief/{{sub.id}}">
@@ -75,7 +82,7 @@
                 </a>
               {{/each}}      
             </li>
-          {{/if}}
+          {{/if}} --}}
         </ul>
         {{#if approvedSubs}}
           <ul class="nav nav-pills flex-column" style="padding-top: 20px;">
