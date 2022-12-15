@@ -1,6 +1,5 @@
 FROM ubuntu:16.04
-FROM mongo:3.4.5
-FROM node:8
+FROM node:14
 
 WORKDIR /usr/src/anchor
 COPY . /usr/src/anchor/
