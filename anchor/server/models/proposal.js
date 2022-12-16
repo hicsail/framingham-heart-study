@@ -13,8 +13,8 @@ class Proposal extends AnchorModel {
       "/Users/wenhwang/hicsail/framingham-heart-study/anchor/proposals";
 
     const documents = [];
-    for (const idx = 0; idx < 15; idx++) {
-      const status = null;
+    for (let idx = 0; idx < 15; idx++) {
+      let status = null;
       if (idx % 3 === 0) status = PENDING;
       else if (idx % 3 === 1) status = APPROVED;
       else status = REJECTED;
@@ -26,9 +26,9 @@ class Proposal extends AnchorModel {
         url: path + `prop_${idx}`,
         timeUploaded: new Date(2020, 5, 0 + 2 * idx),
       });
-
-      return this.insertMany(documents);
     }
+
+    return this.insertMany(documents);
   }
 
   static async create(name, url) {
