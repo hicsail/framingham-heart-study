@@ -34,12 +34,25 @@
                                 <div class="col-md-10">
                                     <h5 class="font-weight-bold">
                                         <a href="../../feasibilityCheck/{{proposal.id}}" name="projectTitle">{{proposal.name}}</a>
-                                        <span class="badge badge-pill {{statusBadgeClass proposal.status 'badge'}}">{{status proposal.status}}</span>
+                                        {{#if proposal.feasibilityPending}}
+                                        <span class="badge badge-secondary">Pending</span>
+                                        {{/if}}
+                                        {{#if proposal.feasibilityApproved}}
+                                        <span class="badge badge-success">Approved</span>
+                                        {{/if}}
+                                        {{#if proposal.feasibilityRejected}}
+                                        <span class="badge badge-danger">Rejected</span>
+                                        {{/if}}
                                     </h5>
                                     <h6>Submitted on {{proposal.uploadedAtString}}</h6>
                                 </div>
                                 <div class="col-md-2">
-                                    ##Something
+                                    <div class="btn-group float-right" role="group">
+                                        {{#if proposal.feasibilityPending}}
+                                        <button type="button" class="btn btn-success btn-sm">Approve</button>
+                                        <button type="button" class="btn btn-danger btn-sm">Reject</button>
+                                        {{/if}}
+                                    </div>
                                 </div>
                             </div>
                         </div>
