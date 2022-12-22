@@ -19,8 +19,6 @@ const register = function (server, options) {
       let page = 1;
       const pages = [];
 
-      console.log(request.query);
-
       // if there is a date filter
       if ("uploadedAt" in request.query) {
         let start;
@@ -99,18 +97,6 @@ const register = function (server, options) {
       for (let idx = 1; idx <= mostRecentProposals.pages.total; idx++) {
         pages.push;
       }
-
-      console.log("####################");
-      console.log(proposals);
-      console.log("####################");
-
-      // TODO: Add handler body here
-      /**
-       * dashboardNav:
-       *    - user
-       *    - submissions
-       *    - approvedSubs
-       */
 
       return h.view("feasibilityCheck/index", {
         user,
