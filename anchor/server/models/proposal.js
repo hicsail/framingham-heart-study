@@ -55,24 +55,24 @@ class Proposal extends AnchorModel {
     return this.find({ reviewStatus });
   }
 
-  static async updateFeasibilityStatus(feasibilityStatus) {
+  static async updateFeasibilityStatus(_id, feasibilityStatus) {
     const update = {
       $set: {
         feasibilityStatus,
       },
     };
 
-    return this.findByIdAndUpdate(this._id, update);
+    return this.findByIdAndUpdate(_id, update);
   }
 
-  static async updateReviewStatus(reviewStatus) {
+  static async updateReviewStatus(_id, reviewStatus) {
     const update = {
       $set: {
         reviewStatus,
       },
     };
 
-    return this.findByIdAndUpdate(this._id, update);
+    return this.findByIdAndUpdate(_id, update);
   }
 
   static async delete(_id) {
