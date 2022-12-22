@@ -1,6 +1,9 @@
 "user strict";
 const Proposal = require("../models/proposal");
 
+const APPROVED = "Approved";
+const REJECTED = "Rejected";
+
 const register = function (server, options) {
   server.route({
     method: "POST",
@@ -12,6 +15,20 @@ const register = function (server, options) {
       const proposals = await Proposal.populate();
 
       return proposals;
+    },
+  });
+
+  server.route({
+    method: "PUT",
+    path: "/api/feasibility-check/status",
+    options: {
+      auth: {
+        strategies: ["simple", "session"],
+        scope: ["reviewer", "root"],
+      },
+    },
+    handler: async function (request, h) {
+      // TODO: add handler body
     },
   });
 };
