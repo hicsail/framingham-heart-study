@@ -5,24 +5,6 @@
       <div style="padding: 30px">  
         <div calass="row">            
             <div class="col-md-12">
-                <div class="row">
-                    <div class="col pl-4 pr-4">
-                        <div class="card pt-4 pb-4">
-                            <h3 class="font-weight-bold text-info text-center">#numReviewed Reviewed by you</h3>
-                        </div>
-                    </div>
-                    <div class="col pl-4 pr-4">
-                        <div class="card pt-4 pb-4">
-                            <h3 class="font-weight-bold text-danger text-center">#numRejected Not approved by you</h3>
-                        </div>
-                    </div>
-                    <div class="col pl-4 pr-4">
-                        <div class="card pt-4 pb-4">
-                            <h3 class="font-weight-bold text-success text-center">#numApproved Approved by you</h3>
-                        </div>
-                    </div>                
-                </div>
-                <br><br>
                 <div class="card">
                     <div>
                         {{> proposalFilters}}
@@ -33,7 +15,7 @@
                             <div class="row">
                                 <div class="col-md-10">
                                     <h5 class="font-weight-bold">
-                                        <a href="../../feasibilityCheck/{{proposal.id}}" name="projectTitle">{{proposal.name}}</a>
+                                        <a href="{{proposal.url}}" name="projectTitle">{{proposal.name}}</a>
                                         {{#if proposal.feasibilityPending}}
                                         <span class="badge badge-secondary">Pending</span>
                                         {{/if}}
@@ -55,6 +37,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <hr />
                         </div>
                         {{/each}}
                     </div>
