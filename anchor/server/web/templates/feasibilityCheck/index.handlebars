@@ -31,8 +31,8 @@
                                 <div class="col-md-2">
                                     <div class="btn-group float-right" role="group">
                                         {{#if proposal.feasibilityPending}}
-                                        <button type="button" class="btn btn-success btn-sm">Approve</button>
-                                        <button type="button" class="btn btn-danger btn-sm">Reject</button>
+                                        <button type="button" class="btn btn-success btn-sm" onclick="updateFeasibilityStatus('{{proposal.id}}', true)">Approve</button>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="updateFeasibilityStatus('{{proposal.id}}', false)">Reject</button>
                                         {{/if}}
                                     </div>
                                 </div>
@@ -48,3 +48,4 @@
 </div>
 </div>
 </div>
+<script type="text/javascript" src="/public/scripts/feasibilityCheck/index.js"></script>

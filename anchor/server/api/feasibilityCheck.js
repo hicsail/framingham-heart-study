@@ -1,4 +1,5 @@
 "user strict";
+const Joi = require("joi");
 const Proposal = require("../models/proposal");
 
 const APPROVED = "Approved";
@@ -26,9 +27,20 @@ const register = function (server, options) {
         strategies: ["simple", "session"],
         scope: ["reviewer", "root"],
       },
+      validate: {
+        payload: {
+          id: Joi.string().required(),
+          feasibilityStatus: Joi.string().required(),
+        },
+      },
     },
     handler: async function (request, h) {
-      // TODO: add handler body
+      const id = request.payload.id;
+      const status = request.payload.feasibilityStatus;
+
+      const proposal = await Proposal.updateFeasibilityStatus(id, status);
+
+      return { message: "Success", submission: proposal };
     },
   });
 };
