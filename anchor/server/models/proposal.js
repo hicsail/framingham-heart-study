@@ -11,6 +11,23 @@ class Proposal extends AnchorModel {
   static async populate() {
     const path =
       "/Users/wenhwang/hicsail/framingham-heart-study/anchor/proposals";
+    const nameList = [
+      "Katie Carney",
+      "Derrick Higgins",
+      "Brandon Paul",
+      "Florence Johnson",
+      "Cheryl Ware",
+      "Dena Hobbs",
+      "Noel Curry",
+      "Lyle Shaw",
+      "Suzanne Shepard",
+      "Sally Graham",
+      "Karin Jordan",
+      "Jesse Rose",
+      "Robbie Delgado",
+      "Claudia Collier",
+      "Chester Welch",
+    ];
 
     const documents = [];
     for (let idx = 0; idx < 15; idx++) {
@@ -21,6 +38,7 @@ class Proposal extends AnchorModel {
 
       documents.push({
         name: `Proposal No.${idx}`,
+        submitter: nameList[idx],
         feasibilityStatus: status,
         reviewStatus: PENDING,
         url: path + `prop_${idx}`,
@@ -31,9 +49,10 @@ class Proposal extends AnchorModel {
     return this.insertMany(documents);
   }
 
-  static async create(name, url) {
+  static async create(name, submitter, url) {
     const document = new this({
       name,
+      submitter,
       feasibilitiesStatus: PENDING,
       reviewStatus: PENDING,
       url,
@@ -45,6 +64,10 @@ class Proposal extends AnchorModel {
 
   static async findByName(name) {
     return this.findOne({ name });
+  }
+
+  static async findBySubmitter(submitter) {
+    return this.findOne({ submitter });
   }
 
   static async findManyByFeasibilityStatus(feasibilityStatus) {
@@ -85,6 +108,7 @@ Proposal.collectionName = "proposals";
 Proposal.schema = Joi.object({
   _id: Joi.object(),
   name: Joi.string().required(),
+  submitter: Joi.string().required(),
   feasibilityStatus: Joi.string(),
   reviewStatus: Joi.string(),
   url: Joi.string().required(),
