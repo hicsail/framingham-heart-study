@@ -6,50 +6,39 @@ const Mongodb = require('mongodb');
 const Promptly = require('promptly');
 const User = require('./server/models/user');
 const PasswordComplexity = require('joi-password-complexity');
+ 
 
 
 const main = async function () {
 
+  const hapiAnchorModel = Config.get('/hapiAnchorModel');
+  const defualtMongoURI = hapiAnchorModel.mongodb.connection.uri + hapiAnchorModel.mongodb.connection.db;
   const options = {
-    default: 'mongodb://localhost:27017/anchor'
-  };
-  const mongodbUri = await Promptly.prompt(`MongoDB URI: (${options.default})`, options);
-
-
-  const testMongo = await Mongodb.MongoClient.connect(mongodbUri, {});
+    default: defualtMongoURI
+  };  
+  
+  const mongodbUri = await Promptly.prompt(`MongoDB URI: (${defualtMongoURI})`, options);
+  const testMongo = await Mongodb.MongoClient.connect(mongodbUri, {}); 
 
   if (!testMongo) {
     console.error('Failed to connect to Mongodb.');
   }
 
   const rootEmail = await Promptly.prompt('Root user email:');
-
   const rootPassword = await Promptly.password('Root user password:');
   const complexityOptions = Config.get('/passwordComplexity');
   Joi.validate(rootPassword, new PasswordComplexity(complexityOptions));
-
-
-  console.log(mongodbUri);
-  const connection = { 'uri': mongodbUri, 'db': 'anchor' };
+  
+  const connection = { 'uri': mongodbUri ,'db': `${hapiAnchorModel.mongodb.connection.db}`};
   await AnchorModels.connect(connection, {});
-
-  const rootUser = await User.findOne({ username: 'root' });
-
-  if (rootUser) {
-    console.error(Error('Root User already exists'));
-    return process.exit(1);
-  }
-
-  const userEmail = await User.findOne({ email: rootEmail });
-  // replaces emailCheck
+  
+  const userEmail = await User.findOne({ email: rootEmail });  
   if (userEmail) {
     console.err(Error('Email is in use'));
   }
   const passwordHash = await User.generatePasswordHash(rootPassword);
   const document = {
-    _id: User.ObjectId('000000000000000000000000'),
-    isActive: true,
-    username: 'root',
+    _id: User.ObjectId('000000000000000000000000'),     
     name: 'Root',
     password: passwordHash.hash,
     email: rootEmail.toLowerCase(),
@@ -60,17 +49,6 @@ const main = async function () {
   };
   await User.insertOne(document);
   console.log('Setup complete.');
-  process.exit(0);
-
-  /*
-   *  if (err) {
-   *    console.error('Setup failed.');
-   *    console.error(err);
-   *    return process.exit(1);
-   *  }
-   *
-   *  console.log('Setup complete.');
-   *  process.exit(0);
-   */
+  process.exit(0);  
 };
 main();
