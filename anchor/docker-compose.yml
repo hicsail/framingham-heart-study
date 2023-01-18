@@ -3,7 +3,7 @@ services:
   mongo:
     image: mongo:3.6
     ports:
-      - "9001:27017"
+      - "27017:27017"
     volumes:
       - ./db:/data/db
   anchor:

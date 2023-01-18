@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 FROM node:14
 
 WORKDIR /usr/src/anchor
