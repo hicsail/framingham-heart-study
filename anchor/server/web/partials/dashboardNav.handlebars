@@ -1,174 +1,109 @@
-<nav class="col-sm-3 col-md-2 d-none d-sm-block bg-dark sidebar" style="padding-top: 40px;">
+<nav
+  class="col-sm-3 col-md-2 d-none d-sm-block bg-dark sidebar"
+  style="padding-top: 40px;"
+>
   <ul class="nav nav-pills flex-column sticky-header1 col-sm-3 col-md-2">
     <h6 class="text-light">Your Role
-      {{#if user.roles.reviewer}}      
+      {{#if user.roles.reviewer}}
         <span class="badge badge-warning">Reviewer</span>
       {{else}}
-        {{#if user.roles.root}}      
+        {{#if user.roles.root}}
           <span class="badge badge-warning">Root</span>
         {{else}}
           {{#if user.roles.committee_member}}
-            <span class="badge badge-warning">Committee Member</span> 
+            <span class="badge badge-warning">Committee Member</span>
           {{else}}
-            <span class="badge badge-warning">External Investigator</span> 
+            <span class="badge badge-warning">External Investigator</span>
           {{/if}}
-               
-        {{/if}}        
-      {{/if}}      
-    </h6>    
+        {{/if}}
+      {{/if}}
+    </h6>
   </ul>
 
   {{#if user.roles.reviewer}}
     <div class="sticky-header2 col-sm-3 col-md-2" style="padding-top: 20px;">
-    <ul class="nav nav-pills flex-column" >
-      <h6 class="text-white font-weight-bold">
-      Your links
-      </h6>      
-      <li class="nav-item">        
-        <a class="nav-link text-light" href="brief/review">
-          Review Brief Query Submissions          
-        </a>           
-      </li>
-      <li class="nav-item">        
-        <a class="nav-link text-light" href="proposal/review">
-          Review Concept Proposal Submissions          
-        </a>           
-      </li>        
-      <li>
-        <a class="nav-link text-light" href="feasibility-check">
-          Review Feasibility
-        </a>
-      </li>
-      <li class="nav-item">        
-        <a class="nav-link text-light" href="../../../roles">Roles</a>             
-      </li>
-    </ul>
-    <ul class="nav nav-pills flex-column mt-4">
-      <h6 class="text-white font-weight-bold">
-      Database collections
-      </h6>      
-      <li class="nav-item">        
-        <a class="nav-link text-light" href="../../../users">
-          Users          
-        </a>           
-      </li>
-      <li class="nav-item">        
-        <a class="nav-link text-light" href="../../../briefSubmission">
-          Brief Submissions           
-        </a>           
-      </li> 
-      <li class="nav-item">        
-        <a class="nav-link text-light" href="../../../conceptProposal">
-          Concept Proposals           
-        </a>           
-      </li>       
-    </ul>
+      <ul class="nav nav-pills flex-column">
+        <h6 class="text-white font-weight-bold">
+          Your links
+        </h6>
+        <li>
+          <a class="nav-link text-light" href="feasibility-check">
+            Review Feasibility
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="../../../roles">Roles</a>
+        </li>
+      </ul>
+      <ul class="nav nav-pills flex-column mt-4">
+        <h6 class="text-white font-weight-bold">
+          Database collections
+        </h6>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="../../../users">
+            Users
+          </a>
+        </li>
+      </ul>
     </div>
   {{else}}
-    {{#if user.roles.root}}
-    {{else}}    
-      <div class="sticky-header2 col-sm-3 col-md-2" style="padding-top: 20px;">       
-        <ul class="nav nav-pills flex-column" style="padding-top: 20px;">
-          <h6 class="text-white font-weight-bold">
-            Brief Query Submissions <span class="ml-2"><a href="../../../brief"><i class="fa fa-plus"></i></a></span>
-          </h6>
-          {{#if submissions}}
-            <li class="nav-item">
-              {{#each submissions as |sub|}}
-                <a class="nav-link text-light" href="../../../brief/{{sub.id}}">
-                  {{sub.title}} <span class="badge badge-pill ml-2 {{statusBadgeClass sub.status 'badge'}} float-right">{{status sub.status}}</span>
-                </a>
-              {{/each}}      
-            </li>
-          {{/if}}
-        </ul>
-        {{#if approvedSubs}}
-          <ul class="nav nav-pills flex-column" style="padding-top: 20px;">
-            <h6 class="text-white font-weight-bold">
-              Concept Proposals 
-            </h6>          
-            <li class="nav-item">
-              {{#each approvedSubs as |sub|}}
-                <a class="nav-link text-light" {{#if sub.proposalSubmissionId}} href="../../proposal/{{sub.briefSubmissionId}}/{{sub.proposalSubmissionId}}" {{else}} href="../../proposal/{{sub.briefSubmissionId}}" {{/if}}>
-                  {{sub.title}} <span class="badge badge-pill ml-2 {{statusBadgeClass sub.status 'badge'}} float-right">{{status sub.status}}</span>
-                </a>
-              {{/each}}      
-            </li>          
-          </ul>
-        {{/if}}   
-      </div>          
+    {{#if user.roles.root}}{{else}}
+      <div class="sticky-header2 col-sm-3 col-md-2" style="padding-top: 20px;">
+        <ul class="nav nav-pills flex-column" style="padding-top: 20px;"></ul>
+      </div>
     {{/if}}
   {{/if}}
 
-  {{#role user 'root'}}  
-  <div class="sticky-header2 col-sm-3 col-md-2" style="padding-top: 20px;">
-    <ul class="nav nav-pills flex-column" >
-      <h6 class="text-white font-weight-bold">
-      Reviewer's links
-      </h6>      
-      <li class="nav-item">        
-        <a class="nav-link text-light" href="../../../brief/review">
-          Brief Query Submissions          
-        </a>           
-      </li> 
-      <li class="nav-item">        
-        <a class="nav-link text-light" href="../../../proposal/review">
-          Concept Proposal Submissions          
-        </a>           
-      </li>      
-      <li>
-        <a class="nav-link text-light" href="feasibility-check">
-          Feasibility Check
-        </a>
-      </li>
-    </ul>
+  {{#role user "root"}}
+    <div class="sticky-header2 col-sm-3 col-md-2" style="padding-top: 20px;">
+      <ul class="nav nav-pills flex-column">
+        <h6 class="text-white font-weight-bold">
+          Reviewer's links
+        </h6>
+        <li>
+          <a class="nav-link text-light" href="feasibility-check">
+            Feasibility Check
+          </a>
+        </li>
+      </ul>
 
-    <ul class="nav nav-pills flex-column" style="padding-top: 20px">
-      <h6 class="text-white">Collections</h6>
-      <li class="nav-item">
-        <a class="nav-link text-light" href="../../../authAttempts">Auth Attempts</a>      
-        <a class="nav-link text-light" href="../../../sessions">Sessions</a>
-        <a class="nav-link text-light" href="../../../users">Users</a>
-        <a class="nav-link text-light" href="../../../briefSubmission">Brief Submissions</a>
-        <a class="nav-link text-light" href="../../../conceptProposal">Concept Proposals</a>
-        <a class="nav-link text-light" href="../../../briefComments">Brief Comments</a>
-        <a class="nav-link text-light" href="../../../proposalComments">Proposal Comments</a>     
-      </li>
-    </ul>
-  
-    <ul class="nav nav-pills flex-column" style="padding-top: 20px">
-      <h6 class="text-light">Population Settings</h6>
-      <li class="nav-item">
-        <a class="nav-link text-light" href="../../../roles">Roles</a>        
-      </li>
-    </ul>  
-  
-    <ul class="nav nav-pills flex-column" style="padding-top: 20px">
-      <h6 class="text-light">API Access</h6>
-      <li class="nav-item">
-        <a class="nav-link text-light" href="../../../tokens">Tokens</a>
-      </li>
-    </ul>  
-  
-    <ul class="nav nav-pills flex-column" style="padding-top: 20px">
-      <h6 class="text-light">Application Settings</h6>
-      <li class="nav-item">
-        <a class="nav-link text-light" href="../../../backups">Backups</a>
-        <a class="nav-link text-light" href="../../../env">Env</a>
-        <a class="nav-link text-light" href="../../../scopes">Routing & Scopes</a>
-      </li>
-    </ul>
-  </div> 
+      <ul class="nav nav-pills flex-column" style="padding-top: 20px">
+        <h6 class="text-white">Collections</h6>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="../../../authAttempts">Auth
+            Attempts</a>
+          <a class="nav-link text-light" href="../../../sessions">Sessions</a>
+          <a class="nav-link text-light" href="../../../users">Users</a>
+        </li>
+      </ul>
+
+      <ul class="nav nav-pills flex-column" style="padding-top: 20px">
+        <h6 class="text-light">Population Settings</h6>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="../../../roles">Roles</a>
+        </li>
+      </ul>
+
+      <ul class="nav nav-pills flex-column" style="padding-top: 20px">
+        <h6 class="text-light">API Access</h6>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="../../../tokens">Tokens</a>
+        </li>
+      </ul>
+
+      <ul class="nav nav-pills flex-column" style="padding-top: 20px">
+        <h6 class="text-light">Application Settings</h6>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="../../../backups">Backups</a>
+          <a class="nav-link text-light" href="../../../env">Env</a>
+          <a class="nav-link text-light" href="../../../scopes">Routing & Scopes</a>
+        </li>
+      </ul>
+    </div>
   {{/role}}
 </nav>
 
 <style>
-  .sticky-header1 {
-    position:fixed; 
-    top:10%;
-  }
-  .sticky-header2 {
-    position:fixed; 
-    top:12%;
-  }
+  .sticky-header1 { position:fixed; top:10%; } .sticky-header2 { position:fixed;
+  top:12%; }
 </style>

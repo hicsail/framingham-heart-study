@@ -4,59 +4,8 @@
     <div class="col-sm-9 col-md-10">
       <div style="padding: 30px">
         <h3 class="font-weight-bold" style="font-size:1.8em;">Hello, {{user.name}}!</h3>        
-        <br>        
-        {{#if user.roles.reviewer}}
-            <!--<div class="row">
-                <div class="col pl-4 pr-4">
-                    <div class="card pt-4 pb-4">
-                        <h3 class="font-weight-bold text-info text-center">{{numReviewed}} Reviewed by you</h3>
-                    </div>
-                </div>
-                <div class="col pl-4 pr-4">
-                    <div class="card pt-4 pb-4">
-                        <h3 class="font-weight-bold text-danger text-center">{{numRejected}} Rejected by you</h3>
-                    </div>
-                </div>
-                <div class="col pl-4 pr-4">
-                    <div class="card pt-4 pb-4">
-                        <h3 class="font-weight-bold text-success text-center">{{numApproved}} Approved by you</h3>
-                    </div>
-                </div>                
-            </div>-->
-            <!--{{#each resubmittedBriefs as |sub|}}
-                <div class="row">
-                    <div class="col card">
-                        <div class="card-body">
-                            <h5 class="font-weight-bold">
-                                {{sub.userName}} resubmitted query for project<span class="badge badge-light font-weight-bold">{{sub.shortTitle}}</span> which was rejected by you. To review the submission, click <a href="../brief/{{sub._id}}">here</a>.
-                            </h5>
-                            <p>{{formatDate sub.updatedAt}}</p>
-                        </div>
-                    </div>
-                </div>
-                <br>
-            {{/each}}
-            <br><br>-->
-            <h4>
-                You can view full brief query submission list <a href="../brief/review">here</a>.
-            </h4>
-        {{else}} 
-            <h4>
-                Click on the “+” sign to submit a new brief query.
-            </h4>
-            <h4>
-                To check the status of your submissions, click on the name of the submission on the left side menu.
-            </h4><br>            
-            <h4>
-                For the submissions which have not been approved, the reviewer might have left a feedback for you on the submission to help you with your future submissions. 
-            </h4><br>
-            <h4>
-                If your submission is approved, you can download the conpect proposal and email the completed form to <strong>bwhs@bu.edu</strong>. 
-            </h4><br>
-            <h4>
-                Please contact <strong>bwhs@bu.edu</strong> for further inquiries/assistance.
-            </h4>    
-        {{/if}}
+        <br>
+        <h4>#Dashboard index content</h4>
       </div>
     </div>
   </div>
