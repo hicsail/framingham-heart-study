@@ -6,182 +6,48 @@
                 <div class="row">
                     <div class="col">
                         <label>Reviewer Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="Enter name" value="{{user.name}}" disabled>                        
+                        <input type="text" class="form-control" id="reviewerName" placeholder="Enter name" value="{{user.name}}" disabled>                        
                     </div>
                     <div class="col">
                         <label>Reviewer's Email address</label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter email address" value={{user.email}} disabled>
+                        <input type="email" class="form-control" id="reviewerEmail" placeholder="Enter email address" value={{user.email}} disabled>
                     </div>
-                    
                 </div>
-                <br>
-                <div class="row">                            
-                    <div class="col">
-                        <label>Review Date</label>
-                        <input type="date" class="form-control" id="date" placeholder="Enter today\'s date"  >
-                    </div>
-                </div>              
-                <br>
-                
-                <br><br>
-                <div class="form-group" style="display:none;" id="traineeTypeOtherSection">
-                    <h8 class="font-weight-bold">
-                        Please provide a short explanation              
-                    </h8>                                       
-                    <input type="text" class="form-control" id="traineeTypeOther" placeholder="Enter other trainee type">
-                <div class="form-group">
             </div>
         </div>
     </div>                 
 </div>
-<div class="row">
-    <div class="col">
-        <div class="card">
-            <h5 class="card-header bg-light text-dark">Project Information</h5>
-            <div class="card-body">
-                <div class="form-group">
-                    <label>Project Title (255 character max)</label>
-                    <input type="text" class="form-control" id="projectTitle" placeholder="Enter title">
-                </div>
-                <br>
-                <div class="form-group">
-                    <label>Applicant's Name</label>
-                    <input type="text" class="form-control" id="applicant-name" placeholder="Enter applicant's name">
-                </div>
-                <br>
-                <h8 class="font-weight-bold">
-                    Is the project funded?
-                </h8>                
-                <select class="form-select btn" style="margin-left:5px;" id="requireQData">
-                    <option value="yes">Yes</option>                            
-                    <option value="no">No</option>                            
-                </select>
-                <br><br><br>
-                <h8 class="font-weight-bold">
-                    Will your project require use of germline genetic data?
-                </h8>
-                <select class="form-select btn" style="margin-left:5px;" id="requireGenData">
-                    <option value="yes">Yes</option>                            
-                    <option value="no">No</option>                            
-                </select>                        
-                <br><br><br>
-                <h8 class="font-weight-bold">
-                    Will your project require use of biospecimens?
-                </h8>                
-                <select class="form-select btn" style="margin-left:5px;" id="requireBiospecimens" onchange="requireBiospecimenOnChange()">                                              
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>                             
-                </select>                
-                <div class="form-group mt-4" id="BiospecimensType" style="display:none;">                        
-                    <div class="form-check form-check-inline ml-4">
-                        <input class="form-check-input ml-0" type="checkbox" id="plasma" onchange="validateBiospecimensTypeCheckBoxes()">
-                        <label class="form-check-label">Plasma</label>
-                    </div>
-                    <div class="form-check form-check-inline ml-4">
-                        <input class="form-check-input ml-0" type="checkbox" id="serum" onchange="validateBiospecimensTypeCheckBoxes()">
-                        <label class="form-check-label">Serum</label>
-                    </div>
-                    <div class="form-check form-check-inline ml-4">
-                        <input class="form-check-input ml-0" type="checkbox" id="RBC" onchange="validateBiospecimensTypeCheckBoxes()">
-                        <label class="form-check-label">RBC</label>
-                    </div>
-                    <div class="form-check form-check-inline ml-4">
-                        <input class="form-check-input ml-0" type="checkbox" id="germlineDNA" onchange="validateBiospecimensTypeCheckBoxes()">
-                        <label class="form-check-label">DNA</label>
-                    </div>
-                    <div class="form-check form-check-inline ml-4">
-                        <input class="form-check-input ml-0" type="checkbox" id="tumorTissue" onchange="validateBiospecimensTypeCheckBoxes()">
-                        <label class="form-check-label">Tumor tissue</label>
-                    </div>
-                </div>                
-                <div class="form-group mt-4" style="display:none;" id="analyteInterestSection">
-                    <h8 class="font-weight-bold">Please describe the analyte or biomarker of interest </h8>
-                    <input type="text" class="form-control" id="analyteInterest" placeholder="Enter analyte or biomarker of interest">
-                </div>                             
-            </div>
-        </div>
-    </div>
+<br>
+<div>
+    <h4>Files to upload: </h4>
+    <h5 id="fileName">No file chosen</h5>
+    <form>
+        <input type="file" id="proposal-file" name="proposalFile" accept="application/pdf" onchange="updateLabel()" hidden>
+        <label for="proposal-file">Upload File</label>
+        <input type="submit" id="proposal-submit" onclick="uploadFile(document.getElementById('proposal-file').files, document.getElementById('reviewerName').value, document.getElementById('reviewerEmail').value)" hidden>
+        <label for="proposal-submit">Submit</label>
+  </form>          
 </div>
-<div class="row">
-    <div class="col">
-        <div class="card">
-            <h5 class="card-header bg-light text-dark">Project Description</h5>
-            <div class="card-body">
-                <h8 class="font-weight-bold">Which study design will your analysis use? (Select only one option)</h8>
-                <select class="form-select btn" style="margin-left:5px;" id="studyDesignType">
-                    <option value="Cross-sectional">Cross-sectional</option>          
-                    <option value="Cohort">Cohort</option>
-                    <option value="Case-control">Case-control</option>
-                </select>
-                <br><br>
-                <h8 class="font-weight-bold">What is the primary outcome type in this analysis? (Select only one option)</h8>
-                <select class="form-select btn" style="margin-left:5px;" id="outcomeType">
-                    <option value="Cancer">Cancer</option>                           
-                    <option value="Other chronic disease">Other chronic disease</option>
-                    <option value="Mortality">Mortality</option>
-                </select>
-                <br><br>
-                <div class="form-group">
-                    <h8 class="font-weight-bold">Specify the outcome(s) of interest:</h8>
-                    <input type="text" class="form-control" id="outcomeInterest" placeholder="Enter here">
-                </div>
-                <br>
-                <div class="form-group">
-                    <h8 class="font-weight-bold">What is the primary exposure of interest?</h8>
-                    <input type="text" class="form-control" id="primaryExposure" placeholder="Enter here">
-                </div>
-                <br>
-                <div class="form-group">
-                    <h8 class="font-weight-bold">What is your hypothesis?</h8>
-                    <input type="text" class="form-control" id="hypothesis" placeholder="Enter here">
-                </div>
-                <br>
-                <div class="form-group">
-                    <h8 class="font-weight-bold">What is the minimum number of cases needed for your outcome of interest? (optional)</h8>
-                    <input type="text" class="form-control" id="minSampleSize" placeholder="Enter here">
-                </div>
-                <h8 class="font-weight-bold">Will this project combine BWHS data with data from other studies?</h8>
-                <select class="form-select btn" style="margin-left:5px;" id="willCombineData">
-                    <option value="yes">Yes</option>                           
-                    <option value="no">No</option>                            
-                </select>
-                <br><br>
-                <div class="form-group">
-                    <h8 class="font-weight-bold">Name of institution where analysis will take place:</h8>
-                    <input type="text" class="form-control" id="analysisInstitution" placeholder="Enter here">
-                </div>
-                <br>                
-                <h8 class="font-weight-bold">
-                    Do you have or do you plan to obtain funding to support this project?
-                </h8>
-                <select class="form-select btn" style="margin-left:5px;" id="requireFunding" onchange="requireFundingOnChange()">                                               
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>                             
-                </select>
-                <br><br>
-                <div class="form-group" id="deadlineSection" style="display:none;">
-                    <h8 class="font-weight-bold">What is your grant deadline?</h8>                        
-                    <input type="text" class="form-control" id="deadline" placeholder="Enter date and/or short explanation">
-                </div>
-                <br>
-                <h8 class="font-weight-bold">
-                    Please be aware that there are significant costs to preparing a data file (<a href="../../">see here</a>). How do you plan to cover the fees associated with this data request?
-                </h8>                
-                <select class="form-select btn" style="margin-left:5px;" id="coverFeePlan">
-                    <option value="Grant">Grant</option>          
-                    <option value="Institutional funds">Institutional funds</option>
-                    <option value="Discretionary account">Discretionary account</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-        </div>
-    </div>
-</div>
+<h3>Files Uploaded By You</h3>
+<br>
+{{#each filesFromDb as |file|}}
+    <h4><a href="https://github.com/hicsail/VA-Journeys/blob/deploy/src/Login/LoginPage.js">{{file.projectTitle}}</a></h4>
+    <h6>Submitted on: {{file.createdAt}} </h6>
+    <hr>
+{{/each}}
+
+<script type="text/javascript" src="/public/scripts/reviewer/index.js" ></script>
 <script>
-    
+    function updateLabel() {
+        var input = document.getElementById("proposal-file");
+        var label = document.getElementById("fileName");
+        label.innerHTML = input.files[0].name;
+        console.log(input.files[0].name);
+    }
 </script>
 <style>
  label {
     font-weight: bold;
+    padding: 10px;
  }
 </style>
