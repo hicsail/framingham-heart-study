@@ -83,6 +83,7 @@ const register = function (server, options) {
           id: doc._id,
           name: doc.name,
           userId: doc.userId,
+          feasibilityReviewerId: doc.feasibilityReviewerId,
           feasibilityStatus: doc.feasibilityStatus,
           feasibilityApproved:
             doc.feasibilityStatus === Proposal.status.APPROVED,
@@ -92,6 +93,9 @@ const register = function (server, options) {
           url: doc.url,
           uploadedAt: doc.uploadDate.toJSON(),
           uploadedAtString: doc.uploadDate.toDateString(),
+          feasibilityReviewDate: doc.feasibilityReviewDate?.toJSON(),
+          feasibilityReviewDateString:
+            doc.feasibilityReviewDate?.toDateString(),
         };
       });
 

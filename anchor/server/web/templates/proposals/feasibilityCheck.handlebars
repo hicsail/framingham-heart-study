@@ -27,6 +27,10 @@
                                         {{/if}}
                                     </h5>
                                     <h6>Uploaded on {{proposal.uploadedAtString}} by {{proposal.userId}}</h6>
+                                    {{#unless proposal.feasibilityPending}}
+                                    <h6>Feasibility reviewed on {{proposal.feasibilityReviewDateString}} by {{proposal.feasibilityReviewerId}}</h6>
+                                    {{/unless}}
+                                    <h6></h6>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="btn-group float-right" role="group">

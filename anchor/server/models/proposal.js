@@ -74,20 +74,24 @@ class Proposal extends AnchorModel {
     return this.find({ reviewStatus });
   }
 
-  static async updateFeasibilityStatus(_id, feasibilityStatus) {
+  static async updateFeasibilityStatus(_id, userId, feasibilityStatus) {
     const update = {
       $set: {
+        feasibilityReviewerId: userId,
         feasibilityStatus,
+        feasibilityReviewDate: new Date(),
       },
     };
 
     return this.findByIdAndUpdate(_id, update);
   }
 
-  static async updateReviewStatus(_id, reviewStatus) {
+  static async updateReviewStatus(_id, userId, reviewStatus) {
     const update = {
       $set: {
+        reviewerId: userId,
         reviewStatus,
+        reviewDate: new Date(),
       },
     };
 
@@ -111,10 +115,14 @@ Proposal.schema = Joi.object({
   _id: Joi.object(),
   name: Joi.string().required(),
   userId: Joi.object(),
+  feasibilityReviewerId: Joi.object(),
+  reviewerId: Joi.object(),
   feasibilityStatus: Joi.string(),
   reviewStatus: Joi.string(),
   url: Joi.string().required(),
   uploadDate: Joi.date(),
+  feasibilityReviewDate: Joi.date(),
+  reviewDate: Joi.date(),
 });
 
 Proposal.routeMap = Hoek.applyToDefaults(AnchorModel.routes, {

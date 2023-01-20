@@ -30,9 +30,14 @@ const register = function (server, options) {
     },
     handler: async function (request, h) {
       const id = request.payload.id;
+      const userId = request.auth.credentials.user._id;
       const status = request.payload.feasibilityStatus;
 
-      const proposal = await Proposal.updateFeasibilityStatus(id, status);
+      const proposal = await Proposal.updateFeasibilityStatus(
+        id,
+        userId,
+        status
+      );
 
       return { message: "Success", submission: proposal };
     },
