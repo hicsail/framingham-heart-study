@@ -92,8 +92,6 @@ const register = function (server, options) {
           url: doc.url,
           uploadedAt: doc.uploadDate.toJSON(),
           uploadedAtString: doc.uploadDate.toDateString(),
-          createdAt: doc.createdAt.toJSON(),
-          createdAtString: doc.createdAt.toDateString(),
         };
       });
 
