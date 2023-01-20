@@ -82,7 +82,7 @@ const register = function (server, options) {
         return {
           id: doc._id,
           name: doc.name,
-          submitter: doc.submitter,
+          userId: doc.userId,
           feasibilityStatus: doc.feasibilityStatus,
           feasibilityApproved:
             doc.feasibilityStatus === Proposal.status.APPROVED,

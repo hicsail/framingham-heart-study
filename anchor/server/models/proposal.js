@@ -34,7 +34,7 @@ class Proposal extends AnchorModel {
 
       documents.push({
         name: `Proposal No.${idx}`,
-        submitter: nameList[idx],
+        userId: nameList[idx],
         feasibilityStatus: status,
         reviewStatus: this.status.PENDING,
         url: path + `prop_${idx}`,
@@ -110,7 +110,7 @@ Proposal.status = {
 Proposal.schema = Joi.object({
   _id: Joi.object(),
   name: Joi.string().required(),
-  submitter: Joi.string().required(),
+  userId: Joi.object(),
   feasibilityStatus: Joi.string(),
   reviewStatus: Joi.string(),
   url: Joi.string().required(),
