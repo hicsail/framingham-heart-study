@@ -6,7 +6,7 @@ const Proposal = require("../../models/proposal");
 const register = function (server, options) {
   server.route({
     method: "GET",
-    path: "/feasibility-check/{submissionId?}",
+    path: "/proposals/feasibility-check/{submissionId?}",
     options: {
       auth: {
         strategies: ["session"],
@@ -99,7 +99,7 @@ const register = function (server, options) {
         pages.push;
       }
 
-      return h.view("feasibilityCheck/index", {
+      return h.view("proposals/feasibilityCheck", {
         user,
         projectName: Config.get("/projectName"),
         title: "Feasibility Check",
@@ -119,7 +119,7 @@ const register = function (server, options) {
 };
 
 module.exports = {
-  name: "feasibilityCheckList",
+  name: "proposalsList",
   dependencies: ["hapi-anchor-model", "auth"],
   register,
 };

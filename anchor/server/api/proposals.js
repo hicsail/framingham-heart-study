@@ -8,7 +8,7 @@ const REJECTED = "Rejected";
 const register = function (server, options) {
   server.route({
     method: "POST",
-    path: "/api/feasibility-check/populate",
+    path: "/api/proposals/feasibility-check/populate",
     options: {
       auth: false,
     },
@@ -21,7 +21,7 @@ const register = function (server, options) {
 
   server.route({
     method: "PUT",
-    path: "/api/feasibility-check/status",
+    path: "/api/proposals/feasibility-check/status",
     options: {
       auth: {
         strategies: ["simple", "session"],
@@ -46,7 +46,7 @@ const register = function (server, options) {
 };
 
 module.exports = {
-  name: "feasibilityCheck",
+  name: "proposals",
   dependencies: ["hapi-anchor-model", "auth"],
   register,
 };

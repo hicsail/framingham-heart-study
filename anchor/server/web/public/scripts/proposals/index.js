@@ -9,7 +9,7 @@ function updateFeasibilityStatus(proposalId, approved) {
   const status = approved ? APPROVED : REJECTED;
   $.ajax({
     type: "PUT",
-    url: "/api/feasibility-check/status",
+    url: "/api/proposals/feasibility-check/status",
     contentType: "application/json",
     data: JSON.stringify({ id: proposalId, feasibilityStatus: status }),
     success: function (result) {
