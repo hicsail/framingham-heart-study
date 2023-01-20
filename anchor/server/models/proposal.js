@@ -129,4 +129,9 @@ Proposal.routeMap = Hoek.applyToDefaults(AnchorModel.routes, {
   },
 });
 
+Proposal.payload = Joi.object({
+  id: Joi.string().required(),
+  feasibilityStatus: Joi.string().valid("Approved", "Rejected").required(),
+});
+
 module.exports = Proposal;

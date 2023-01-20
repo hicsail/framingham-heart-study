@@ -28,10 +28,7 @@ const register = function (server, options) {
         scope: ["reviewer", "root"],
       },
       validate: {
-        payload: {
-          id: Joi.string().required(),
-          feasibilityStatus: Joi.string().required(),
-        },
+        payload: Proposal.payload,
       },
     },
     handler: async function (request, h) {
