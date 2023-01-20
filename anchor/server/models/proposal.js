@@ -45,10 +45,10 @@ class Proposal extends AnchorModel {
     return this.insertMany(documents);
   }
 
-  static async create(name, submitter, url) {
+  static async create(name, userId, url) {
     const document = new this({
       name,
-      submitter,
+      userId,
       feasibilitiesStatus: this.status.PENDING,
       reviewStatus: this.status.PENDING,
       url,
