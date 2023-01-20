@@ -43,7 +43,7 @@ const register = function (server, options) {
 };
 
 module.exports = {
-  name: "proposals",
+  name: "proposalsAPI",
   dependencies: ["hapi-anchor-model", "auth"],
   register,
 };
