@@ -49,7 +49,7 @@ class Proposal extends AnchorModel {
     const document = new this({
       name,
       userId,
-      feasibilitiesStatus: this.status.PENDING,
+      feasibilityStatus: this.status.PENDING,
       reviewStatus: this.status.PENDING,
       url,
       uploadedAt: new Date(),
