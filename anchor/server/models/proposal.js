@@ -38,7 +38,7 @@ class Proposal extends AnchorModel {
         feasibilityStatus: status,
         reviewStatus: this.status.PENDING,
         url: path + `prop_${idx}`,
-        uploadedAt: new Date(2020, 5, 0 + 2 * idx),
+        uploadDate: new Date(2020, 5, 0 + 2 * idx),
       });
     }
 
@@ -52,7 +52,7 @@ class Proposal extends AnchorModel {
       feasibilityStatus: this.status.PENDING,
       reviewStatus: this.status.PENDING,
       url,
-      uploadedAt: new Date(),
+      uploadDate: new Date(),
     });
 
     return this.insertOne(document);
@@ -114,7 +114,7 @@ Proposal.schema = Joi.object({
   feasibilityStatus: Joi.string(),
   reviewStatus: Joi.string(),
   url: Joi.string().required(),
-  uploadedAt: Joi.date(),
+  uploadDate: Joi.date(),
 });
 
 Proposal.routeMap = Hoek.applyToDefaults(AnchorModel.routes, {

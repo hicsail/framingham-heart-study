@@ -90,8 +90,8 @@ const register = function (server, options) {
           feasibilityRejected:
             doc.feasibilityStatus === Proposal.status.REJECTED,
           url: doc.url,
-          uploadedAt: doc.uploadedAt.toJSON(),
-          uploadedAtString: doc.uploadedAt.toDateString(),
+          uploadedAt: doc.uploadDate.toJSON(),
+          uploadedAtString: doc.uploadDate.toDateString(),
           createdAt: doc.createdAt.toJSON(),
           createdAtString: doc.createdAt.toDateString(),
         };
