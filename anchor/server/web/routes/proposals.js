@@ -84,9 +84,11 @@ const register = function (server, options) {
           name: doc.name,
           submitter: doc.submitter,
           feasibilityStatus: doc.feasibilityStatus,
-          feasibilityApproved: doc.feasibilityStatus === "Approved",
-          feasibilityPending: doc.feasibilityStatus === "Pending",
-          feasibilityRejected: doc.feasibilityStatus === "Rejected",
+          feasibilityApproved:
+            doc.feasibilityStatus === Proposal.status.APPROVED,
+          feasibilityPending: doc.feasibilityStatus === Proposal.status.PENDING,
+          feasibilityRejected:
+            doc.feasibilityStatus === Proposal.status.REJECTED,
           url: doc.url,
           uploadedAt: doc.uploadedAt.toJSON(),
           uploadedAtString: doc.uploadedAt.toDateString(),

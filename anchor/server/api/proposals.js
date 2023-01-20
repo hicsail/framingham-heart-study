@@ -2,9 +2,6 @@
 const Joi = require("joi");
 const Proposal = require("../models/proposal");
 
-const APPROVED = "Approved";
-const REJECTED = "Rejected";
-
 const register = function (server, options) {
   server.route({
     method: "POST",

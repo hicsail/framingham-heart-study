@@ -3,10 +3,6 @@ const Joi = require("joi");
 const AnchorModel = require("../anchor/anchor-model");
 const Hoek = require("hoek");
 
-const PENDING = "Pending";
-const APPROVED = "Approved";
-const REJECTED = "Rejected";
-
 class Proposal extends AnchorModel {
   static async populate() {
     const path =
@@ -32,15 +28,15 @@ class Proposal extends AnchorModel {
     const documents = [];
     for (let idx = 0; idx < 15; idx++) {
       let status = null;
-      if (idx % 3 === 0) status = PENDING;
-      else if (idx % 3 === 1) status = APPROVED;
-      else status = REJECTED;
+      if (idx % 3 === 0) status = this.status.PENDING;
+      else if (idx % 3 === 1) status = this.status.APPROVED;
+      else status = this.status.REJECTED;
 
       documents.push({
         name: `Proposal No.${idx}`,
         submitter: nameList[idx],
         feasibilityStatus: status,
-        reviewStatus: PENDING,
+        reviewStatus: this.status.PENDING,
         url: path + `prop_${idx}`,
         uploadedAt: new Date(2020, 5, 0 + 2 * idx),
       });
@@ -53,8 +49,8 @@ class Proposal extends AnchorModel {
     const document = new this({
       name,
       submitter,
-      feasibilitiesStatus: PENDING,
-      reviewStatus: PENDING,
+      feasibilitiesStatus: this.status.PENDING,
+      reviewStatus: this.status.PENDING,
       url,
       uploadedAt: new Date(),
     });
@@ -105,6 +101,12 @@ class Proposal extends AnchorModel {
 
 Proposal.collectionName = "proposals";
 
+Proposal.status = {
+  PENDING: "Pending",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+};
+
 Proposal.schema = Joi.object({
   _id: Joi.object(),
   name: Joi.string().required(),
@@ -131,7 +133,9 @@ Proposal.routeMap = Hoek.applyToDefaults(AnchorModel.routes, {
 
 Proposal.payload = Joi.object({
   id: Joi.string().required(),
-  feasibilityStatus: Joi.string().valid("Approved", "Rejected").required(),
+  feasibilityStatus: Joi.string()
+    .valid(Proposal.status.APPROVED, Proposal.status.REJECTED)
+    .required(),
 });
 
 module.exports = Proposal;
