@@ -6,10 +6,11 @@ const Proposal = require("../../models/proposal");
 const register = function (server, options) {
   server.route({
     method: "GET",
-    path: "/proposals/feasibility-check/{submissionId?}",
+    path: "/proposals/feasibility-check",
     options: {
       auth: {
         strategies: ["session"],
+        scope: ["committee_member", "root"],
       },
     },
     handler: async function (request, h) {
