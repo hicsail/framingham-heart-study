@@ -99,16 +99,11 @@ const register = function (server, options) {
         };
       });
 
-      for (let idx = 1; idx <= mostRecentProposals.pages.total; idx++) {
-        pages.push;
-      }
-
       return h.view("proposals/feasibilityCheck", {
         user,
         projectName: Config.get("/projectName"),
         title: "Feasibility Check",
         proposals, // submissions
-        pages,
         hasNext: mostRecentProposals.pages.hasNext,
         hasPrev: mostRecentProposals.pages.hasPrev,
         next: mostRecentProposals.pages.next,
