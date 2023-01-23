@@ -18,7 +18,7 @@ const register = function (server, options) {
 
   server.route({
     method: "PUT",
-    path: "/api/proposals/feasibility-check/status",
+    path: "/api/proposals/feasibility-check/status/{proposalId}",
     options: {
       auth: {
         strategies: ["simple", "session"],
@@ -29,12 +29,12 @@ const register = function (server, options) {
       },
     },
     handler: async function (request, h) {
-      const id = request.payload.id;
+      const proposalId = request.params.proposalId;
       const userId = request.auth.credentials.user._id;
       const status = request.payload.feasibilityStatus;
 
       const proposal = await Proposal.updateFeasibilityStatus(
-        id,
+        proposalId,
         userId,
         status
       );
