@@ -4,8 +4,6 @@ const APPROVED = "Approved";
 const REJECTED = "Rejected";
 
 function updateFeasibilityStatus(proposalId, approved) {
-  console.log("Click event triggered");
-  console.log(`Id: ${proposalId}, Status: ${approved}`);
   const status = approved ? APPROVED : REJECTED;
   $.ajax({
     type: "PUT",
