@@ -62,8 +62,8 @@ class Proposal extends AnchorModel {
     return this.findOne({ name });
   }
 
-  static async findBySubmitter(submitter) {
-    return this.findOne({ submitter });
+  static async findByUploaderId(userId) {
+    return this.findOne({ userId });
   }
 
   static async findManyByFeasibilityStatus(feasibilityStatus) {
