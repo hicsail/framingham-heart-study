@@ -15,7 +15,6 @@ function updateFeasibilityStatus(proposalId, approved) {
       console.log(result);
     },
     error: function (result) {
-      console.log("ERROR TRIGGERED");
       errorAlert(result.responseJSON.message);
     },
   });
