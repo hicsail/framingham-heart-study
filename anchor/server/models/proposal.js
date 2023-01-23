@@ -97,10 +97,6 @@ class Proposal extends AnchorModel {
 
     return this.findByIdAndUpdate(_id, update);
   }
-
-  static async delete(_id) {
-    await this.deleteOne({ _id });
-  }
 }
 
 Proposal.collectionName = "proposals";
