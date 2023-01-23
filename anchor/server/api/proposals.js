@@ -4,19 +4,6 @@ const Proposal = require("../models/proposal");
 
 const register = function (server, options) {
   server.route({
-    method: "POST",
-    path: "/api/proposals/feasibility-check/populate",
-    options: {
-      auth: false,
-    },
-    handler: async function (request, h) {
-      const proposals = await Proposal.populate();
-
-      return proposals;
-    },
-  });
-
-  server.route({
     method: "PUT",
     path: "/api/proposals/feasibility-check/status/{proposalId}",
     options: {
