@@ -114,7 +114,7 @@ const config = {
   roles:[    
     {
       name: 'reviewer',
-      accessLevel: '3'
+      accessLevel: '4'
     },
     {
       name: 'root',
@@ -124,7 +124,27 @@ const config = {
       name: 'committee_member',
       accessLevel: '4'
     },
-  ]
+  ],
+  S3: {
+    bucketName: {
+      $filter: 'env',
+      production: process.env.BUCKET_NAME, 
+      local: process.env.BUCKET_NAME,     
+      $default: 'fhs-broc'
+    },
+    accessKeyId: {
+      $filter: 'env',
+      production: process.env.S3_ACCESS_KEY, 
+      local: process.env.S3_ACCESS_KEY,     
+      $default: ''
+    },
+    secretAccessKey: {
+      $filter: 'env',
+      production: process.env.S3_SECRET_ACCESS_KEY, 
+      local: process.env.S3_SECRET_ACCESS_KEY,     
+      $default: ''
+    }    
+  }
 };
 
 

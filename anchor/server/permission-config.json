@@ -405,6 +405,60 @@
       "researcher",
       "admin",
       "root"
+    ],
+    "/reviewerUpload": [
+      "reviewer"
+    ],
+    "/brief/review": [
+      "reviewer",
+      "root"
+    ],
+    "/brief/{submissionId?}": [
+      "reviewer",
+      "root",
+      "committee_member"
+    ],
+    "/proposal/review": [
+      "reviewer",
+      "root"
+    ],
+    "/api/briefComments/{submissionId}": [
+      "reviewer",
+      "root"
+    ],
+    "/api/briefSubmission/table": [
+      "reviewer",
+      "root"
+    ],
+    "/api/conceptProposal/table": [
+      "reviewer",
+      "root"
+    ],
+    "/api/reviewersList/users": [
+      "reviewer",
+      "root",
+      "committee_member"
+    ],
+    "/api/users/reviewersList": [
+      "root",
+      "admin"
+    ],
+    "/edit/briefSubmission/{submissionId}": [
+      "root"
+    ],
+    "/proposal/{briefSubmissionId}/{submissionId?}": [
+      "reviewer",
+      "root",
+      "committee_member"
+    ],
+    "/api/S3/getObject/{fileName}": [
+      "reviewer",
+      "root",
+      "committee_member"
+    ],
+    "/api/conceptProposal/history/{briefSubmissionId}/{submissionId}": [
+      "reviewer",
+      "root"
     ]
   },
   "POST": {
@@ -496,7 +550,25 @@
       "clinician",
       "researcher",
       "admin",
+      "root",
+      "reviewer"
+    ],
+    "/api/proposalUpload": [
+      "reviewer",
       "root"
+    ],
+    "/api/S3/saveFilesToBucket": [
+      "reviewer",
+      "root",
+      "committee_member"
+    ],
+    "/api/briefSubmission/sendEmailsToReviewers/{briefSubId}/{proposalSubId?}": [
+      "reviewer",
+      "root",
+      "committee_member"
+    ],
+    "/api/comments/sendEmailsToReviewers/{userId}/{briefSubId}/{proposalSubId?}": [
+      "reviewer"
     ]
   },
   "DELETE": {
@@ -648,6 +720,22 @@
       "root",
       "admin",
       "researcher"
+    ],
+    "/api/briefSubmission/submitReview/{id}": [
+      "reviewer",
+      "root"
+    ],
+    "/api/conceptProposal/editPostApproval/{id}": [
+      "reviewer",
+      "root"
+    ],
+    "/api/conceptProposal/submitReview/{id}": [
+      "reviewer",
+      "root"
+    ],
+    "/api/conceptProposal/uploadFile/{id}": [
+      "reviewer",
+      "root"
     ]
   }
 }

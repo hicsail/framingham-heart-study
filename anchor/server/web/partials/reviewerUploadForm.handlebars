@@ -1,50 +1,25 @@
-<div class="row">
-    <div class="col">
-        <div class="card">
-            <h5 class="card-header bg-light text-dark">Reviewer Information</h5>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <label>Reviewer Name</label>
-                        <input type="text" class="form-control" id="reviewerName" placeholder="Enter name" value="{{user.name}}" disabled>                        
-                    </div>
-                    <div class="col">
-                        <label>Reviewer's Email address</label>
-                        <input type="email" class="form-control" id="reviewerEmail" placeholder="Enter email address" value={{user.email}} disabled>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>                 
+
+<div class="col">
+    <input type="text" class="form-control" id="reviewerName" placeholder="Enter name" value="{{user.name}}" disabled hidden>                        
 </div>
-<br>
+<div class="col">
+    <input type="email" class="form-control" id="reviewerEmail" placeholder="Enter email address" value={{user.email}} disabled hidden>
+</div>
 <div>
     <h4>Files to upload: </h4>
     <h5 id="fileName">No file chosen</h5>
-    <form>
-        <input type="file" id="proposal-file" name="proposalFile" accept="application/pdf" onchange="updateLabel()" hidden>
-        <label for="proposal-file">Upload File</label>
-        <input type="submit" id="proposal-submit" onclick="uploadFile(document.getElementById('proposal-file').files, document.getElementById('reviewerName').value, document.getElementById('reviewerEmail').value)" hidden>
-        <label for="proposal-submit">Submit</label>
-  </form>          
+    <input class='btn btn-sm btn-light d-none' title='' type="file" id="proposal-file" name="proposalFile" accept="application/pdf" onchange="uploadFile(this, document.getElementById('reviewerName').value, document.getElementById('reviewerEmail').value)" multiple/>
+    <label for="proposal-file">Upload File</label>
 </div>
 <h3>Files Uploaded By You</h3>
 <br>
 {{#each filesFromDb as |file|}}
-    <h4><a href="https://github.com/hicsail/VA-Journeys/blob/deploy/src/Login/LoginPage.js">{{file.projectTitle}}</a></h4>
+    <h4><a href="/api/S3/getObject/{{file.projectTitle}}">{{file.projectTitle}}</a></h4>
     <h6>Submitted on: {{file.createdAt}} </h6>
     <hr>
 {{/each}}
 
 <script type="text/javascript" src="/public/scripts/reviewer/index.js" ></script>
-<script>
-    function updateLabel() {
-        var input = document.getElementById("proposal-file");
-        var label = document.getElementById("fileName");
-        label.innerHTML = input.files[0].name;
-        console.log(input.files[0].name);
-    }
-</script>
 <style>
  label {
     font-weight: bold;

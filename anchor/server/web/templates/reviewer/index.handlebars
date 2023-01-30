@@ -5,12 +5,9 @@
       <div style="padding: 30px">
         <h3 class="font-weight-bold" style="font-size:1.8em;">Hello, {{user.name}}!</h3>        
         <br>        
-        {{#if user.roles.committee_member}}
+        {{#if user.roles.reviewer}}
            <h2>Is a committee member </h2>
            {{> reviewerUploadForm}}
-            
-        {{else}} 
-           <h4>Not a committee member</h4>
         {{/if}}
       </div>
     </div>

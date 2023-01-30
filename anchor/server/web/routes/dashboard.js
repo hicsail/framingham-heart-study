@@ -4,6 +4,7 @@ const PermissionConfigTable = require('../../permission-config.json');
 const DefaultScopes = require('../../helper/getRoleNames');
 const Submission = require('../../models/brief-submission');
 const ConceptProposal = require('../../models/concept-proposal');
+const ReviewerUpload = require('../../models/reviewer-upload');
 
 const register = function (server, options) {
 
@@ -28,21 +29,19 @@ const register = function (server, options) {
       let hasApprovedSubmission = false;  
 
       if (user.roles.reviewer) {
-          numReviewed = await Submission.count({reviewerId: user._id});          
-          numRejected = await Submission.count({reviewerId: user._id, status: 'rejected'});
-          numApproved = await Submission.count({reviewerId: user._id, status: 'approved'});
-
-          const distinctDates = await Submission.distinct('createdAt', {reviewerId: user._id, status:'rejected'});
-          const options = {
-            sort: Submission.sortAdapter('-updatedAt')
-          };
-          const query = {
-            status: 'pending', 
-            createdAt: { $in: distinctDates }
-          };
-          feed['resubmittedBriefs'] = await Submission.lookup(query, options, Submission.lookups); 
-          feed['resubmittedBriefs'] = feed['resubmittedBriefs'].map(doc => {
-          return {'_id': doc._id, 'updatedAt': doc.updatedAt, 'shortTitle': doc.query['10'], 'userName': doc.user.name};
+          
+        const user = request.auth.credentials.user;
+        console.log('user name: ', user.name);
+        const query = {
+            reviewerName: user.name
+        }
+        const files = await ReviewerUpload.find(query);
+        return h.view('dashboard/index',{
+            user: request.auth.credentials.user,
+            filesFromDb: files,
+            projectName: 'BROC-FHS',
+            title: 'Reviewer Upload',
+            baseUrl: Config.get('/baseUrl')
         });                           
       }
       else if (!user.roles.reviewer) {

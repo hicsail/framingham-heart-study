@@ -264,7 +264,7 @@ const register = function (server,serverOptions) {
       }]
     },
     handler: async function (request,h) {
-
+      console.log('Handler here');
       return await request.pre.model.routes.insertMany.handler(request,h);
     }
 

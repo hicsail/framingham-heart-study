@@ -1,9 +1,7 @@
 'use strict';
 const Boom = require('boom');
 const Config = require('../../../config');
-const Submission = require('../../models/brief-submission');
-const ConceptProposal = require('../../models/concept-proposal');
-const Comment = require('../../models/brief-comment');
+const ReviewerUpload = require('../../models/reviewer-upload')
 const User = require('../../models/user');
 const ObjectId = require('mongodb').ObjectID;
 
@@ -15,15 +13,19 @@ const register = function (server, options){
         options: {
             auth: {
                 strategies: ['session'],
-                scope: ['committee_member']
+                scope: ['reviewer']
             }
         },
         handler: async function (request, h) {
             const user = request.auth.credentials.user;
-
-            return h.view('reviewer/index',{
+            const query = {
+                reviewerName: user.name
+            }
+            const files = await ReviewerUpload.find(query);
+            return h.view('dashboard/index',{
                 user: request.auth.credentials.user,
-                projectName: 'Change later lmao',
+                filesFromDb: files,
+                projectName: 'BROC-FHS',
                 title: 'Reviewer Upload',
                 baseUrl: Config.get('/baseUrl')
             })
