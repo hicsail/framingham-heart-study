@@ -17,7 +17,7 @@ const register = function (server, options) {
     },
     handler: async function (request, h) {
       const proposalId = request.params.proposalId;
-      const userId = request.auth.credentials.user._id;
+      const userId = request.auth.credentials.user._id.toString();
       const status = request.payload.feasibilityStatus;
 
       const proposal = await Proposal.updateFeasibilityStatus(
