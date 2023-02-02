@@ -35,10 +35,16 @@ class Proposal extends AnchorModel {
       documents.push({
         name: `Proposal No.${idx}`,
         userId: nameList[idx],
+        feasibilityReviewerId:
+          status === this.status.PENDING ? null : "000000000000000000000000",
+        reviewerId: null,
         feasibilityStatus: status,
         reviewStatus: this.status.PENDING,
         url: path + `prop_${idx}`,
         uploadDate: new Date(2020, 5, 0 + 2 * idx),
+        feasibilityReviewDate:
+          status === this.status.PENDING ? null : new Date(),
+        reviewDate: null,
       });
     }
 
@@ -49,10 +55,14 @@ class Proposal extends AnchorModel {
     const document = new this({
       name,
       userId,
+      feasibilityReviewerId: null,
+      reviewerId: null,
       feasibilityStatus: this.status.PENDING,
       reviewStatus: this.status.PENDING,
       url,
       uploadDate: new Date(),
+      feasibilityReviewDate: null,
+      reviewDate: null,
     });
 
     return this.insertOne(document);
