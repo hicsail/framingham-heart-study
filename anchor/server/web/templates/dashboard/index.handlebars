@@ -5,9 +5,6 @@
       <div style="padding: 30px">
         <h3 class="font-weight-bold" style="font-size:1.8em;">Hello, {{user.name}}!</h3>        
         <br>        
-        {{#if user.roles.reviewer}}
-            {{>reviewerUploadForm}}
-        {{else}} 
             <h4>
                 Click on the “+” sign to submit a new brief query.
             </h4>
@@ -23,7 +20,6 @@
             <h4>
                 Please contact <strong>bwhs@bu.edu</strong> for further inquiries/assistance.
             </h4>    
-        {{/if}}
       </div>
     </div>
   </div>
