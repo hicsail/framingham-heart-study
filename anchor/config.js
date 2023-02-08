@@ -134,8 +134,8 @@ const config = {
     },
     accessKeyId: {
       $filter: 'env',
-      production: process.env.S3_ACCESS_KEY, 
-      local: process.env.S3_ACCESS_KEY,     
+      production: process.env.S3_ACCESS_KEY_ID, 
+      local: process.env.S3_ACCESS_KEY_ID,     
       $default: ''
     },
     secretAccessKey: {
