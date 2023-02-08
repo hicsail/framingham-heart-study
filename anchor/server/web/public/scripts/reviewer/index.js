@@ -78,3 +78,7 @@ async function uploadFile(elem,name,email,userId) {
         }
     });    
 }
+
+function uploadFiles(elem) {  
+    $(elem).siblings("input").click();
+  }

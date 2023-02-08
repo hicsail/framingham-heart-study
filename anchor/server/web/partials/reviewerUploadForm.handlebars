@@ -1,28 +1,28 @@
-
-<div class="col">
-    <input type="text" class="form-control" id="reviewerName" placeholder="Enter name" value="{{user.name}}" disabled hidden>                        
-</div>
-<div class="col">
-    <input type="email" class="form-control" id="reviewerEmail" placeholder="Enter email address" value={{user.email}} disabled hidden>
-</div>
 <div>
     <h4>Files to upload: </h4>
-    <h5 id="fileName">No file chosen</h5>
-    <input class='btn btn-sm btn-light d-none' title='' type="file" id="proposal-file" name="proposalFile" accept="application/pdf" onchange="uploadFile(this, document.getElementById('reviewerName').value, document.getElementById('reviewerEmail').value)" multiple/>
-    <label for="proposal-file">Upload File</label>
-</div>
-<h3>Files Uploaded By You</h3>
-<br>
-{{#each filesFromDb as |file|}}
-    <h4><a href="/api/S3/getObject/{{file.projectTitle}}">{{file.projectTitle}}</a></h4>
-    <h6>Submitted on: {{file.createdAt}} </h6>
-    <hr>
-{{/each}}
 
+    <h5 id="fileName"></h5>
+    <input class='btn btn-sm btn-light d-none' title='' type="file" id="proposal-file" name="proposalFile" accept="application/pdf" onchange="uploadFile(this, '{{user.name}}','{{user.email}}', '{{user._id}}')" multiple/>
+     <button class='btn btn-info btn-lg' onclick='uploadFiles(this)'>Upload Files</button>               
+</div>
+{{#if filesFromDb}}
+    <h3>Files Uploaded</h3>
+    <br>
+    <br>
+    {{#each filesFromDb as |file|}}
+        <h4><a href="/api/S3/getObject/{{file.name}}">{{file.name}}</a></h4>
+        <h6>Submitted on: {{file.createdAt}} </h6>
+        <hr>
+    {{/each}}
+{{/if}}
 <script type="text/javascript" src="/public/scripts/reviewer/index.js" ></script>
 <style>
  label {
     font-weight: bold;
     padding: 10px;
+ }
+ 
+ label:hover {
+    color:blue
  }
 </style>
