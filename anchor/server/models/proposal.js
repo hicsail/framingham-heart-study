@@ -146,7 +146,7 @@ Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
   insertMany: {
     disabled: false,
     payload: Joi.object({
-        reviewerId: Joi.object(),
+        reviewerId: Joi.string(),
         name: Joi.string(),
         reviewerName: Joi.string(),
         reviewerEmail: Joi.string(),
