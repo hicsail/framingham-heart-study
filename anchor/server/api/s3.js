@@ -1,6 +1,6 @@
 'use strict';
 const Boom = require('boom');
-const ReviewerUpload = require('../models/reviewer-upload')
+const Proposal = require('../models/proposal')
 const AWS = require('aws-sdk');
 const Config = require('../../config');
 
@@ -15,6 +15,7 @@ const register = function (server, options) {
             payload: {
                 output: 'stream',
                 parse: true,
+                maxBytes: 1000000*1024*1024
             },
             pre: [
               {
@@ -22,7 +23,7 @@ const register = function (server, options) {
                 method: async function (request, h) {
       
                   const fileName = request.payload.file.hapi.filename;
-                  const files = await ReviewerUpload.find({projectTitle: fileName});
+                  const files = await Proposal.find({name: fileName});
                   console.log('name of file is: ', fileName);
                   if (files.length > 0) {  
                     return false; //since this api is supposed to be followed by another ajax api call, we return any way
