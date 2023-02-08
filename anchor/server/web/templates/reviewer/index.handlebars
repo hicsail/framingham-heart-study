@@ -6,8 +6,7 @@
         <h3 class="font-weight-bold" style="font-size:1.8em;">Hello, {{user.name}}!</h3>        
         <br>        
         {{#if user.roles.reviewer}}
-           <h2>Is a committee member </h2>
-           {{> reviewerUploadForm}}
+           {{>reviewerUploadForm}}
         {{/if}}
       </div>
     </div>
