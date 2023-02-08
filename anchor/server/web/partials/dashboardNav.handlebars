@@ -18,18 +18,21 @@
     </h6>    
   </ul>
 
-  {{#if user.roles.reviewer}}
     <div class="sticky-header2 col-sm-3 col-md-2" style="padding-top: 20px;">
-    <ul class="nav nav-pills flex-column" >
-      <h6 class="text-white font-weight-bold">
-      Your links
-      </h6>      
-      <h6 class="text-white font-weight-bold">
-            Reviewer Upload <span class="ml-2"><a href="../../../reviewerUpload"></a></span>
-          </h6>
-    </ul>
+      <ul class="nav nav-pills flex-column" >
+        <h6 class="text-white font-weight-bold">
+        Your links
+        </h6>
+        {{#if user.roles.reviewer}} 
+          <li class="nav-item">        
+            <a class="nav-link text-light" href="../../../reviewer">
+              Proposal Upload         
+            </a>           
+          </li> 
+      
+        {{else}}
+      </ul>
     </div>
-  {{else}}
     {{#if user.roles.root}}
     {{else}}    
       <div class="sticky-header2 col-sm-3 col-md-2" style="padding-top: 20px;">       
@@ -37,15 +40,6 @@
           <h6 class="text-white font-weight-bold">
             Reviewer Upload <span class="ml-2"><a href="../../../reviewerUpload"><i class="fa fa-plus"></i></a></span>
           </h6>
-          {{!-- {{#if submissions}}
-            <li class="nav-item">
-              {{#each submissions as |sub|}}
-                <a class="nav-link text-light" href="../../../brief/{{sub.id}}">
-                  {{sub.title}} <span class="badge badge-pill ml-2 {{statusBadgeClass sub.status 'badge'}} float-right">{{status sub.status}}</span>
-                </a>
-              {{/each}}      
-            </li>
-          {{/if}} --}}
         </ul>
         {{#if approvedSubs}}
           <ul class="nav nav-pills flex-column" style="padding-top: 20px;">
