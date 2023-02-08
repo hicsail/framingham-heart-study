@@ -4,7 +4,6 @@ const PermissionConfigTable = require('../../permission-config.json');
 const DefaultScopes = require('../../helper/getRoleNames');
 const Submission = require('../../models/brief-submission');
 const ConceptProposal = require('../../models/concept-proposal');
-const ReviewerUpload = require('../../models/reviewer-upload');
 
 const register = function (server, options) {
 
@@ -30,19 +29,6 @@ const register = function (server, options) {
 
       if (user.roles.reviewer) {
           
-        const user = request.auth.credentials.user;
-        console.log('user name: ', user.name);
-        const query = {
-            reviewerName: user.name
-        }
-        const files = await ReviewerUpload.find(query);
-        return h.view('dashboard/index',{
-            user: request.auth.credentials.user,
-            filesFromDb: files,
-            projectName: 'BROC-FHS',
-            title: 'Reviewer Upload',
-            baseUrl: Config.get('/baseUrl')
-        });                           
       }
       else if (!user.roles.reviewer) {
 
