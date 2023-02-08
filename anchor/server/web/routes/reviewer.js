@@ -1,7 +1,7 @@
 'use strict';
 const Boom = require('boom');
 const Config = require('../../../config');
-const ReviewerUpload = require('../../models/reviewer-upload')
+const Proposal = require('../../models/proposal')
 const User = require('../../models/user');
 const ObjectId = require('mongodb').ObjectID;
 
@@ -9,7 +9,7 @@ const register = function (server, options){
 
     server.route({
         method: 'GET',
-        path: '/reviewerUpload',
+        path: '/reviewer',
         options: {
             auth: {
                 strategies: ['session'],
@@ -18,14 +18,11 @@ const register = function (server, options){
         },
         handler: async function (request, h) {
             const user = request.auth.credentials.user;
-            const query = {
-                reviewerName: user.name
-            }
-            const files = await ReviewerUpload.find(query);
-            return h.view('dashboard/index',{
+            const files = await Proposal.find();
+            return h.view('reviewer/index',{
                 user: request.auth.credentials.user,
                 filesFromDb: files,
-                projectName: 'BROC-FHS',
+                projectName: Config.get('/projectName'),
                 title: 'Reviewer Upload',
                 baseUrl: Config.get('/baseUrl')
             })
@@ -35,7 +32,7 @@ const register = function (server, options){
 
 
 module.exports = {
-    name: 'reviewer-upload',
+    name: 'proposal',
     dependencies: [
         'auth',
         'hapi-anchor-model'
