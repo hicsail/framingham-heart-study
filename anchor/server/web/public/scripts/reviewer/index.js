@@ -10,16 +10,14 @@ function updateLabel() {
     }
     
     label.innerHTML = fileTitles;
-    console.log(fileTitles);
     
 }
 
-async function uploadFile(elem,name,email) {
+async function uploadFile(elem,name,email,userId) {
     updateLabel();
     const files = $(elem).prop("files");
     let filesPayload = [];
     const ajaxCalls = [];
-    
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         let formData = new FormData();
@@ -27,9 +25,10 @@ async function uploadFile(elem,name,email) {
         
         //creating the payloads to update the DB collection with files that were uploaded to S3
         let payload = {
+            reviewerId: userId,
             reviewerName: name,
             reviewerEmail: email,
-            projectTitle: file.name,
+            name: file.name,
         }
         filesPayload.push(payload);
        
@@ -54,8 +53,8 @@ async function uploadFile(elem,name,email) {
 
     Promise.all(ajaxCalls).then(ajaxCallsResults => {
         const uploadedFiles = ajaxCallsResults.map(res => res.fileName);
-        const failedUploads = filesPayload.filter(file => !uploadedFiles.includes(file.projectTitle)).map(file => file.projectTitle);
-        filesPayload = filesPayload.filter(file => uploadedFiles.includes(file.projectTitle));
+        const failedUploads = filesPayload.filter(file => !uploadedFiles.includes(file.name)).map(file => file.name);
+        filesPayload = filesPayload.filter(file => uploadedFiles.includes(file.name));
 
         if(failedUploads.length > 0){
             errorAlert('Unable to upload files: ' + failedUploads.join(', ') + '.');
@@ -64,7 +63,7 @@ async function uploadFile(elem,name,email) {
         if(filesPayload.length > 0){
             $.ajax({
                 type:'POST',
-                url: '/api/proposal/insertMany',
+                url: '/api/proposals/insertMany',
                 contentType: 'application/json',
                 data: JSON.stringify(filesPayload),
                 success: function (result) {
