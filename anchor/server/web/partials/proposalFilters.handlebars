@@ -1,0 +1,128 @@
+{{#if notDatatableView}}
+  <div id="header" class="text-white bg-info">
+    <div class="row pt-2 pb-2 pl-2">
+      <div class="col-md-2">
+        <h5>Proposals List</h5>
+      </div>
+      <div class="col-md-2">
+        <div class="input-group">
+          <input
+            id="search-input"
+            type="text"
+            class="form-control col"
+            placeholder="Search Titles"
+            onkeyup="searchProposals()"
+          />
+          <div class="input-group-append">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              onclick="searchProposals()"
+            >
+              <i class="fa fa-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="row">
+          <div class="col">
+            <h5>
+              Showing
+              <select class="selectpicker" id="limit">
+                <option value="All">All</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+              per page
+            </h5>
+          </div>
+          <div class="col btn-group" role="group">
+            {{#if hasPrev}}
+              <button
+                type="button"
+                class="btn btn-info"
+                onclick="goToPage('{{prev}}')"
+              >Previous</button>
+            {{/if}}
+            {{#if hasNext}}
+              <button
+                type="button"
+                class="btn btn-info"
+                onclick="goToPage('{{next}}')"
+              >Next</button>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{{/if}}
+<div id="filters">
+  <div class="row mt-4 ml-2 mr-2">
+    <div class="col">
+      <select
+        class="selectpicker"
+        id="sort"
+        data-style="btn-white"
+        data-size="5"
+      >
+        <option value="uploadedAt:-1">Sort By Newest</option>
+        <option value="uploadedAt:1">Sort By Oldest</option>
+        <option value="query.10:1">Sort By Title (A-Z)</option>
+        <option value="query.10:-1">Sort By Title (Z-A)</option>
+      </select>
+    </div>
+    <div class="col">
+      <select
+        class="selectpicker"
+        id="feasibilityStatus"
+        data-live-search="true"
+        data-style="btn-white"
+      >
+        <option value="All">Filter By Status (All)</option>
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+    </div>
+  </div>
+      <br>
+    <div class="row ml-2 mr-2">
+        <div class="col-md-2">
+            <select class="selectpicker" id="date" data-style="btn-white">        
+                <option value="range" role="button">Date Range</option>
+                <option value="exact">Exact Date</option>                      
+            </select>
+        </div>
+        <div class="col-md-10">
+            <div class="row"> 
+                <div class="col">                          
+                    <input class="form-control bg-white" type="date" id="startDate" onchange="pickDate()" display="none">
+                </div>
+                <div class="col">                          
+                    <input class="form-control bg-white" type="date" id="endDate" onchange="pickDate()" display="none">                
+                </div>
+            </div>
+        </div>   
+    </div>
+</div>
+{{#if notDatatableView}}
+  <div class="bg-light text-dark pt-2 pb-1 pl-2 mt-2" id="footer">
+    <h6>Page
+      {{currentPage}}
+      of
+      {{totalNumPages}}
+      (showing
+      {{proposals.length}}
+      items of
+      {{total}}
+      items)</h6>
+  </div>
+{{/if}}
+
+<link rel="stylesheet" href="/public/css/bootstrap-select.min.css"></link>
+<script type="text/javascript" src="/public/js/bootstrap-select.min.js"></script>
+
+<script type="text/javascript" src="/public/scripts/proposals/proposalsListFilters.js"></script>

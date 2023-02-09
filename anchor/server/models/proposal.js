@@ -180,7 +180,21 @@ Proposal.lookups = [
     foreign: '_id',
     as: 'user',
     one: true
-  }  
+  },
+  {
+    from: require('./user'),
+    local: 'reviewerId',
+    foreign: '_id',
+    as: 'reviewer',
+    one: true
+  },
+  {
+    from: require('./user'),
+    local: 'feasibilityReviewerId',
+    foreign: '_id',
+    as: 'feasibilityReviewer',
+    one: true
+  }      
 ];
 
 module.exports = Proposal;

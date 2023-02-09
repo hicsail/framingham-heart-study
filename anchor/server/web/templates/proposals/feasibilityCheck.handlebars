@@ -1,0 +1,55 @@
+<div class="container-fluid h-100">
+  <div class="row h-100">
+    {{>dashboardNav}}
+    <div class="col-sm-9 col-md-10">
+      <div style="padding: 30px">  
+        <div calass="row">            
+            <div class="col-md-12">
+                <div class="card">
+                    <div>
+                        {{> proposalFilters}}
+                    </div>                                     
+                    <div class="card-body">
+                        {{#each proposals as |proposal|}}
+                        <div class="proposal" id={{proposal.id}}>
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <h5 class="font-weight-bold">
+                                        <a href="{{proposal.url}}" name="projectTitle">{{proposal.name}}</a>
+                                        {{#if proposal.feasibilityPending}}
+                                        <span class="badge badge-secondary">Pending</span>
+                                        {{/if}}
+                                        {{#if proposal.feasibilityApproved}}
+                                        <span class="badge badge-success">Approved</span>
+                                        {{/if}}
+                                        {{#if proposal.feasibilityRejected}}
+                                        <span class="badge badge-danger">Rejected</span>
+                                        {{/if}}
+                                    </h5>
+                                    <h6>Uploaded on {{proposal.uploadedAtString}} by {{proposal.userId}}</h6>
+                                    {{#unless proposal.feasibilityPending}}
+                                    <h6>Feasibility reviewed on {{proposal.feasibilityReviewDateString}} by {{proposal.feasibilityReviewerId}}</h6>
+                                    {{/unless}}
+                                    <h6></h6>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="btn-group float-right" role="group">
+                                        {{#if proposal.feasibilityPending}}
+                                        <button type="button" class="btn btn-success btn-sm" onclick="updateFeasibilityStatus('{{proposal.id}}', true)">Approve</button>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="updateFeasibilityStatus('{{proposal.id}}', false)">Reject</button>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>               
+            </div>            
+        </div>               
+    </div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="/public/scripts/proposals/index.js"></script>

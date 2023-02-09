@@ -44,19 +44,7 @@ const config = {
     production: process.env.AUTH_SECRET,
     local: process.env.AUTH_SECRET,
     $default: '!k3yb04rdK4tz~4qu4~k3yb04rdd0gz!'
-  },
-  hapiMongoModels: {
-    mongodb: {
-      uri: {
-        $filter: 'env',
-        production: process.env.MONGODB_URI,
-        test: 'mongodb://localhost:27017/anchor-test',
-        local: process.env.MONGODB_URI,
-        $default: 'mongodb://localhost:27017/fhs'
-      }
-    },
-    autoIndex: true
-  },
+  },  
   hapiAnchorModel: {
     mongodb: {
       connection: {
