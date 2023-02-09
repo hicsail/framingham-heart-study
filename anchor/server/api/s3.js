@@ -5,6 +5,7 @@ const AWS = require('aws-sdk');
 const Config = require('../../config');
 
 const register = function (server, options) {
+
     server.route({
         method: 'POST',
         path: '/api/S3/saveFilesToBucket',
@@ -79,7 +80,31 @@ const register = function (server, options) {
           .header('Content-Disposition', 'attachment;');   
       }
     }); 
-}
+
+    server.route({
+    method: 'DELETE',
+    path: '/api/S3/deleteFile/{fileName}',
+    options: {
+      auth: {
+        strategies: ['simple', 'session']        
+      }           
+    },      
+    handler: async function (request, h) {
+      
+      const fileName = request.params.fileName;
+      const bucketName = Config.get('/S3/bucketName'); 
+      
+      try {
+        await deleteFromS3(bucketName, fileName);        
+      } 
+      catch (err) {        
+        throw Boom.badRequest('Unable to delete file because ' + err.message);
+      }
+
+      return "success";
+    }
+  });   
+};
 
 async function getObjectFromS3(fileName, bucketName) {
 
@@ -130,6 +155,31 @@ async function uploadToS3(fileStream, fileName, bucketName) {
       });  
     });  
   }
+
+  async function deleteFromS3(bucketName, fileName) {
+
+  const s3 = new AWS.S3({
+    accessKeyId: Config.get('/S3/accessKeyId'),
+    secretAccessKey: Config.get('/S3/secretAccessKey')
+  });
+
+  const params = {
+    Bucket: bucketName,
+    Key: fileName    
+  };
+
+  return new Promise((resolve, reject) => {    
+    s3.deleteObject(params, (s3Err, data) => {      
+      if (s3Err) {        
+        reject(s3Err);      
+      }
+      else {         
+        console.log(data)
+        resolve(`${data}`);  
+      }   
+    });  
+  }); 
+}
 
   module.exports = {
     name: 'proposalFileUpload',

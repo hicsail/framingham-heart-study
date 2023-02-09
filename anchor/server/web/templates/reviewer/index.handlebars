@@ -7,8 +7,73 @@
         <br>        
         {{#if user.roles.reviewer}}
            {{>reviewerUploadForm}}
+           <br>
         {{/if}}
+        <!-- File Delete modal -->
+        <div class="modal" id="delete-file-modal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title font-weight-bold" id="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <input type="hidden" id="file-name">
+                <input type="hidden" id="file-object-id">
+                <p>Are you sure you want to permanently delete this file?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onClick="deleteFile()">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>   
+        <div class="card mt-2">
+          <div style="padding: 20px;">
+            <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th class="hidden">ID</th>
+                  <th>Proposal Name</th>
+                  <th>Uploaded By</th>
+                  <th>Upload Date</th>            
+                  <th>Feasibility Status</th>
+                  <th>Review Status</th>                
+                  <th>Delete</th>                                            
+                </tr>
+              </thead>
+              {{#each proposals as |proposal|}}
+                <tr>
+                  <td>{{_id}}</td> 
+                  <td>
+                    <h4><a href="/api/S3/getObject/{{fileName}}">{{fileName}}</a></h4>
+                  </td>
+                  <td>{{user.name}}</td>
+                  <td>{{formatDate createdAt}}</td>                            
+                  <td><span class="badge badge-info">{{feasibilityStatus}}</span></td>
+                  <td><span class="badge badge-info">{{reviewStatus}}</span></td>
+                  <td><button class="btn btn-danger" onClick="onClickDeleteFile('{{fileName}}', '{{_id}}')" data-toggle="modal" data-target="#delete-file-modal" {{#ifNotEquals userId ../user._id}}disabled{{/ifNotEquals}}>Delete</button></td>                         
+                </tr>
+              {{/each}}
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<script type="text/javascript" src="/public/scripts/reviewer/index.js" ></script>
+<style>
+ label {
+    font-weight: bold;
+    padding: 10px;
+ }
+ 
+ label:hover {
+    color:blue
+ }
+</style>

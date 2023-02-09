@@ -19,8 +19,8 @@ const register = function (server, options){
         handler: async function (request, h) {
 
             const user = request.auth.credentials.user;
-            const proposals = await Proposal.find();
-            console.log(proposals)
+            const proposals = await Proposal.lookup({}, Proposal.lookups);
+            
             return h.view('reviewer/index',{
                 user: request.auth.credentials.user,                
                 projectName: Config.get('/projectName'),

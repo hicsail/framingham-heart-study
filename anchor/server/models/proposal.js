@@ -173,4 +173,14 @@ Proposal.payload = Joi.object({
     .required(),
 });
 
+Proposal.lookups = [
+  {
+    from: require('./user'),
+    local: 'userId',
+    foreign: '_id',
+    as: 'user',
+    one: true
+  }  
+];
+
 module.exports = Proposal;
