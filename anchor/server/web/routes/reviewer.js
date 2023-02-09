@@ -17,14 +17,16 @@ const register = function (server, options){
             }
         },
         handler: async function (request, h) {
+
             const user = request.auth.credentials.user;
-            const files = await Proposal.find();
+            const proposals = await Proposal.find();
+            console.log(proposals)
             return h.view('reviewer/index',{
-                user: request.auth.credentials.user,
-                filesFromDb: files,
+                user: request.auth.credentials.user,                
                 projectName: Config.get('/projectName'),
                 title: 'Reviewer Upload',
-                baseUrl: Config.get('/baseUrl')
+                baseUrl: Config.get('/baseUrl'),
+                proposals
             })
         }
     })

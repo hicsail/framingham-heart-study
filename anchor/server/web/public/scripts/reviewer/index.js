@@ -1,35 +1,20 @@
 'use strict'
 
-function updateLabel() {
-    var input = document.getElementById("proposal-file");
-    var label = document.getElementById("fileName");
-   
-    var fileTitles = ''
-    for(let i = 0; i < input.files.length; i++){
-        fileTitles = fileTitles + input.files[i].name + '<br> <hr>';
-    }
+async function uploadFile(elem, userId) {
     
-    label.innerHTML = fileTitles;
-    
-}
-
-async function uploadFile(elem,name,email,userId) {
-    updateLabel();
     const files = $(elem).prop("files");
     let filesPayload = [];
     const ajaxCalls = [];
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+
+    for (const file of files) {        
         let formData = new FormData();
         formData.append('file', file);
         
         //creating the payloads to update the DB collection with files that were uploaded to S3
         let payload = {
-            reviewerId: userId,
-            reviewerName: name,
-            reviewerEmail: email,
-            name: file.name,
-        }
+            userId, //userId of the person who uploads the doc 
+            fileName: file['name']                    
+        };
         filesPayload.push(payload);
        
         //sends file with content to server so we can upload it to S3
@@ -44,8 +29,7 @@ async function uploadFile(elem,name,email,userId) {
             console.log('save file to bucket');
           },
           error: function (result) {
-            errorAlert(result.responseJSON.message);
-            console.log('save file to bucket error');
+            errorAlert(result.responseJSON.message);            
           }
         });
         ajaxCalls.push(call);
@@ -53,8 +37,8 @@ async function uploadFile(elem,name,email,userId) {
 
     Promise.all(ajaxCalls).then(ajaxCallsResults => {
         const uploadedFiles = ajaxCallsResults.map(res => res.fileName);
-        const failedUploads = filesPayload.filter(file => !uploadedFiles.includes(file.name)).map(file => file.name);
-        filesPayload = filesPayload.filter(file => uploadedFiles.includes(file.name));
+        const failedUploads = filesPayload.filter(payload => !uploadedFiles.includes(payload.fileName)).map(payload => payload.fileName);
+        filesPayload = filesPayload.filter(payload => uploadedFiles.includes(payload.fileName));
 
         if(failedUploads.length > 0){
             errorAlert('Unable to upload files: ' + failedUploads.join(', ') + '.');
@@ -66,8 +50,8 @@ async function uploadFile(elem,name,email,userId) {
                 url: '/api/proposals/insertMany',
                 contentType: 'application/json',
                 data: JSON.stringify(filesPayload),
-                success: function (result) {
-                    console.log('upload success');
+                success: function (result) { 
+                    console.log(result)                   
                     successAlert('Files uploaded');
                     location.reload();
                 },
@@ -79,6 +63,7 @@ async function uploadFile(elem,name,email,userId) {
     });    
 }
 
-function uploadFiles(elem) {  
-    $(elem).siblings("input").click();
+function onClickUploadFile() { 
+
+    $("#proposal-file-input").click();
   }

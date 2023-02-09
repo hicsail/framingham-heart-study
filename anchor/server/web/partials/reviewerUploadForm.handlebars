@@ -1,17 +1,15 @@
 <div>
     <h4>Files to upload: </h4>
-
     <h5 id="fileName"></h5>
-    <input class='btn btn-sm btn-light d-none' title='' type="file" id="proposal-file" name="proposalFile" accept="application/pdf" onchange="uploadFile(this, '{{user.name}}','{{user.email}}', '{{user._id}}')" multiple/>
-     <button class='btn btn-info btn-lg' onclick='uploadFiles(this)'>Upload Files</button>               
+    <input class='btn btn-sm btn-light d-none' type="file" id="proposal-file-input" name="proposalFile" accept="application/pdf" onchange="uploadFile(this,'{{user._id}}')" multiple/>
+     <button class='btn btn-info btn-lg' onclick='onClickUploadFile()'>Upload Files</button>               
 </div>
-{{#if filesFromDb}}
+{{#if proposals}}
     <h3>Files Uploaded</h3>
-    <br>
-    <br>
-    {{#each filesFromDb as |file|}}
-        <h4><a href="/api/S3/getObject/{{file.name}}">{{file.name}}</a></h4>
-        <h6>Submitted on: {{file.createdAt}} </h6>
+    <br><br>
+    {{#each proposals as |proposal|}}
+        <h4><a href="/api/S3/getObject/{{fileName}}">{{fileName}}</a></h4>
+        <h6>Submitted on: {{createdAt}} </h6>
         <hr>
     {{/each}}
 {{/if}}
