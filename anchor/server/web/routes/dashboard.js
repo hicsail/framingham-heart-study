@@ -28,22 +28,7 @@ const register = function (server, options) {
       let hasApprovedSubmission = false;  
 
       if (user.roles.reviewer) {
-          numReviewed = await Submission.count({reviewerId: user._id});          
-          numRejected = await Submission.count({reviewerId: user._id, status: 'rejected'});
-          numApproved = await Submission.count({reviewerId: user._id, status: 'approved'});
-
-          const distinctDates = await Submission.distinct('createdAt', {reviewerId: user._id, status:'rejected'});
-          const options = {
-            sort: Submission.sortAdapter('-updatedAt')
-          };
-          const query = {
-            status: 'pending', 
-            createdAt: { $in: distinctDates }
-          };
-          feed['resubmittedBriefs'] = await Submission.lookup(query, options, Submission.lookups); 
-          feed['resubmittedBriefs'] = feed['resubmittedBriefs'].map(doc => {
-          return {'_id': doc._id, 'updatedAt': doc.updatedAt, 'shortTitle': doc.query['10'], 'userName': doc.user.name};
-        });                           
+          
       }
       else if (!user.roles.reviewer) {
 
