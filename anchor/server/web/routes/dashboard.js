@@ -14,8 +14,9 @@ const register = function (server, options) {
       },
     },
     handler: async function (request, h) {
+    
       const user = request.auth.credentials.user;
-
+      
       return h.view("dashboard/index", {
         user,
         projectName: Config.get("/projectName"),

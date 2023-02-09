@@ -1004,8 +1004,14 @@ AnchorModel.routes = {
 
       const model = request.pre.model;
       const payload = request.payload;
+            
+      if (request.auth.isAuthenticated) {
 
-      return await model.insertMany(payload);
+        for (const doc of payload) {
+         doc.userId = String(request.auth.credentials.user._id); 
+        }       
+      } 
+      return await model.createMany(payload);
     },
     query: null
   },

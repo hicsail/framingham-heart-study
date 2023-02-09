@@ -2,9 +2,12 @@
 const Joi = require("joi");
 const AnchorModel = require("../anchor/anchor-model");
 const Hoek = require("hoek");
+const Assert = require('assert');
 
 class Proposal extends AnchorModel {
+
   static async populate() {
+
     const path =
       "/Users/wenhwang/hicsail/framingham-heart-study/anchor/proposals";
     const nameList = [
@@ -51,40 +54,57 @@ class Proposal extends AnchorModel {
     return this.insertMany(documents);
   }
 
-  static async create(name, userId, url) {
-    const document = new this({
-      name,
-      userId,
+  static async create(userId, fileName) {
+
+    const document = new this({  
+      fileName,    
+      userId, //userId of the person who uploads the doc
       feasibilityReviewerId: null,
       reviewerId: null,
       feasibilityStatus: this.status.PENDING,
-      reviewStatus: this.status.PENDING,
-      url,
-      uploadDate: new Date(),
+      reviewStatus: this.status.PENDING,      
       feasibilityReviewDate: null,
       reviewDate: null,
     });
-
     return this.insertOne(document);
   }
 
-  static async findByName(name) {
-    return this.findOne({ name });
+  static async createMany(docs) { 
+
+    for (const doc of docs)  {
+      Assert.ok(doc.userId, 'Missing userId argument.');
+      Assert.ok(doc.fileName, 'Missing file name argument.');
+
+      doc.reviewerId = null;
+      doc.feasibilityReviewerId = null;
+      doc.reviewStatus = this.status.PENDING;
+      doc.feasibilityStatus = this.status.PENDING;
+      doc.reviewDate = null;
+      doc.feasibilityReviewDate = null;     
+    }
+
+    const files = await this.insertMany(docs);
+    return files;
   }
 
   static async findByUploaderId(userId) {
+
     return this.findOne({ userId });
   }
 
+
   static async findManyByFeasibilityStatus(feasibilityStatus) {
+
     return this.find({ feasibilityStatus });
   }
 
   static async findManyByReviewStatus(reviewStatus) {
+
     return this.find({ reviewStatus });
   }
 
-  static async updateFeasibilityStatus(_id, userId, feasibilityStatus) {
+  static async updateFeasibilityStatus(docId, userId, feasibilityStatus) {
+
     const update = {
       $set: {
         feasibilityReviewerId: userId,
@@ -93,10 +113,11 @@ class Proposal extends AnchorModel {
       },
     };
 
-    return this.findByIdAndUpdate(_id, update);
+    return this.findByIdAndUpdate(docId, update);
   }
 
-  static async updateReviewStatus(_id, userId, reviewStatus) {
+  static async updateReviewStatus(docId, userId, reviewStatus) {
+
     const update = {
       $set: {
         reviewerId: userId,
@@ -105,7 +126,7 @@ class Proposal extends AnchorModel {
       },
     };
 
-    return this.findByIdAndUpdate(_id, update);
+    return this.findByIdAndUpdate(docId, update);
   }
 }
 
@@ -118,30 +139,31 @@ Proposal.status = {
 };
 
 Proposal.schema = Joi.object({
-  _id: Joi.object(),
-  name: Joi.string().required(),
-  userId: Joi.object(),
-  feasibilityReviewerId: Joi.object(),
-  reviewerId: Joi.object(),
-  feasibilityStatus: Joi.string(),
-  reviewStatus: Joi.string(),
-  url: Joi.string().required(),
-  uploadDate: Joi.date(),
-  feasibilityReviewDate: Joi.date(),
-  reviewDate: Joi.date(),
+  _id: Joi.object().required(), 
+  fileName: Joi.string().required(), 
+  userId: Joi.object().required(),
+  feasibilityReviewerId: Joi.object().required(),
+  reviewerId: Joi.object().required(),
+  feasibilityStatus: Joi.string().required(),
+  reviewStatus: Joi.string().required(),  
+  createdAt: Joi.date().required(),
+  feasibilityReviewDate: Joi.date().required(),
+  reviewDate: Joi.date().required(),
 });
 
-Proposal.routeMap = Hoek.applyToDefaults(AnchorModel.routes, {
+Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
   create: {
     payload: Joi.object({
-      name: Joi.string().required(),
-      url: Joi.string().required(),
+      userId: Joi.string().required(),
+      fileName: Joi.string().required()      
     }),
-  },
-  update: {
+  },  
+  insertMany: {
+    disabled: false,
     payload: Joi.object({
-      name: Joi.string().required(),
-    }),
+      userId: Joi.string().required(),
+      fileName: Joi.string().required()           
+    })
   },
 });
 
@@ -150,5 +172,29 @@ Proposal.payload = Joi.object({
     .valid(Proposal.status.APPROVED, Proposal.status.REJECTED)
     .required(),
 });
+
+Proposal.lookups = [
+  {
+    from: require('./user'),
+    local: 'userId',
+    foreign: '_id',
+    as: 'user',
+    one: true
+  },
+  {
+    from: require('./user'),
+    local: 'reviewerId',
+    foreign: '_id',
+    as: 'reviewer',
+    one: true
+  },
+  {
+    from: require('./user'),
+    local: 'feasibilityReviewerId',
+    foreign: '_id',
+    as: 'feasibilityReviewer',
+    one: true
+  }      
+];
 
 module.exports = Proposal;
