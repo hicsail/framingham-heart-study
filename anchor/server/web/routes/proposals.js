@@ -1,9 +1,36 @@
-"use strict";
+'use strict';
+const Boom = require('boom');
+const Config = require('../../../config');
+const Proposal = require('../../models/proposal')
+const User = require('../../models/user');
+const ObjectId = require('mongodb').ObjectID;
 
-const Config = require("../../../config");
-const Proposal = require("../../models/proposal");
+const register = function (server, options){
 
-const register = function (server, options) {
+  server.route({
+    method: 'GET',
+    path: '/proposals/reviewer/upload',
+    options: {
+      auth: {
+        strategies: ['session'],
+        scope: ['reviewer', 'root']
+      }
+    },
+    handler: async function (request, h) {
+
+      const user = request.auth.credentials.user;
+      const proposals = await Proposal.lookup({}, Proposal.lookups);
+            
+      return h.view('proposals/reviewer-upload',{
+        user: request.auth.credentials.user,                
+        projectName: Config.get('/projectName'),
+        title: 'Reviewer Upload',
+        baseUrl: Config.get('/baseUrl'),
+        proposals
+      })
+    }
+  });
+
   server.route({
     method: "GET",
     path: "/proposals/feasibility-check",
@@ -15,7 +42,7 @@ const register = function (server, options) {
     },
     handler: async function (request, h) {
       const user = request.auth.credentials.user;
-      let sort = { uploadedAt: -1 };
+      let sort = { createdAt: -1 };
       let limit = null;
       let page = 1;
       const pages = [];
@@ -38,8 +65,8 @@ const register = function (server, options) {
         }
 
         request.query["$and"] = [
-          { uploadedAt: { $gte: new Date(start) } },
-          { uploadedAt: { $lt: new Date(end) } },
+          { createdAt: { $gte: new Date(start) } },
+          { createdAt: { $lt: new Date(end) } },
         ];
         delete request.query.uploadedAt;
       }
@@ -72,54 +99,38 @@ const register = function (server, options) {
         sort,
       };
 
-      const mostRecentProposals = await Proposal.pagedLookup(
+      const proposals = await Proposal.pagedLookup(
         request.query,
         page,
         limit,
         options,
-        []
+        Proposal.lookups
       );
-      const proposals = mostRecentProposals.data.map((doc) => {
-        return {
-          id: doc._id,
-          name: doc.name,
-          userId: doc.userId,
-          feasibilityReviewerId: doc.feasibilityReviewerId,
-          feasibilityStatus: doc.feasibilityStatus,
-          feasibilityApproved:
-            doc.feasibilityStatus === Proposal.status.APPROVED,
-          feasibilityPending: doc.feasibilityStatus === Proposal.status.PENDING,
-          feasibilityRejected:
-            doc.feasibilityStatus === Proposal.status.REJECTED,
-          url: doc.url,
-          uploadedAt: doc.uploadDate.toJSON(),
-          uploadedAtString: doc.uploadDate.toDateString(),
-          feasibilityReviewDate: doc.feasibilityReviewDate?.toJSON(),
-          feasibilityReviewDateString:
-            doc.feasibilityReviewDate?.toDateString(),
-        };
-      });
 
       return h.view("proposals/feasibilityCheck", {
         user,
         projectName: Config.get("/projectName"),
         title: "Feasibility Check",
-        proposals, // submissions
-        hasNext: mostRecentProposals.pages.hasNext,
-        hasPrev: mostRecentProposals.pages.hasPrev,
-        next: mostRecentProposals.pages.next,
-        prev: mostRecentProposals.pages.prev,
-        currentPage: mostRecentProposals.pages.current,
-        totalNumPages: mostRecentProposals.pages.total,
-        total: mostRecentProposals.items.total,
+        proposals: proposals.data, // submissions
+        hasNext: proposals.pages.hasNext,
+        hasPrev: proposals.pages.hasPrev,
+        next: proposals.pages.next,
+        prev: proposals.pages.prev,
+        currentPage: proposals.pages.current,
+        totalNumPages: proposals.pages.total,
+        total: proposals.items.total,
         notDatatableView: true,
       });
     },
   });
-};
+}
+
 
 module.exports = {
-  name: "proposalsList",
-  dependencies: ["hapi-anchor-model", "auth"],
-  register,
-};
+    name: 'proposal',
+    dependencies: [
+        'auth',
+        'hapi-anchor-model'
+    ],
+    register
+}

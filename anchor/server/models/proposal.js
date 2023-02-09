@@ -4,55 +4,7 @@ const AnchorModel = require("../anchor/anchor-model");
 const Hoek = require("hoek");
 const Assert = require('assert');
 
-class Proposal extends AnchorModel {
-
-  static async populate() {
-
-    const path =
-      "/Users/wenhwang/hicsail/framingham-heart-study/anchor/proposals";
-    const nameList = [
-      "Katie Carney",
-      "Derrick Higgins",
-      "Brandon Paul",
-      "Florence Johnson",
-      "Cheryl Ware",
-      "Dena Hobbs",
-      "Noel Curry",
-      "Lyle Shaw",
-      "Suzanne Shepard",
-      "Sally Graham",
-      "Karin Jordan",
-      "Jesse Rose",
-      "Robbie Delgado",
-      "Claudia Collier",
-      "Chester Welch",
-    ];
-
-    const documents = [];
-    for (let idx = 0; idx < 15; idx++) {
-      let status = null;
-      if (idx % 3 === 0) status = this.status.PENDING;
-      else if (idx % 3 === 1) status = this.status.APPROVED;
-      else status = this.status.REJECTED;
-
-      documents.push({
-        name: `Proposal No.${idx}`,
-        userId: nameList[idx],
-        feasibilityReviewerId:
-          status === this.status.PENDING ? null : "000000000000000000000000",
-        reviewerId: null,
-        feasibilityStatus: status,
-        reviewStatus: this.status.PENDING,
-        url: path + `prop_${idx}`,
-        uploadDate: new Date(2020, 5, 0 + 2 * idx),
-        feasibilityReviewDate:
-          status === this.status.PENDING ? null : new Date(),
-        reviewDate: null,
-      });
-    }
-
-    return this.insertMany(documents);
-  }
+class Proposal extends AnchorModel { 
 
   static async create(userId, fileName) {
 

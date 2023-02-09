@@ -2,6 +2,7 @@
 
 //Update filters selected option on UI using query params in the URL
 function UpdateFiltersOnUI(url) {
+
   if (url.includes("?")) {
     let queries = url.split("?")[1].split("&");
     for (let query of queries) {
@@ -32,9 +33,10 @@ function UpdateFiltersOnUI(url) {
 }
 
 function searchProposals() {
+
   const searchInput = $("#search-input").val();
   $(".proposal").each(function (i, obj) {
-    const proposalTitle = $(this).find('a[name="projectTitle"]').first().html();
+    const proposalTitle = $(this).find('a[name="fileName"]').first().html();
     let display = obj.style.display;
     if (
       searchInput &&
@@ -50,6 +52,7 @@ function searchProposals() {
 }
 
 function attachKeyValuesToURL(key, value, url) {
+
   const filterProperties = {};
   if (url.includes("?")) {
     // case when there are already some active filters
@@ -80,6 +83,7 @@ function attachKeyValuesToURL(key, value, url) {
 
 // once filters have been created, make each filter interdependent
 function linkFilters() {
+
   $(".selectpicker").each(function () {
     if ($(this).attr("id") !== "date") {
       $(this).on("change", function () {
@@ -93,11 +97,13 @@ function linkFilters() {
 }
 
 function goToPage(pageNo) {
+
   let url = window.location.href;
   window.location = attachKeyValuesToURL("page", pageNo, url);
 }
 
 $("#date").on("change", function () {
+
   const value = $(this).find("option:selected").attr("value");
   const url = window.location.href;
   if (value === "exact") {
@@ -124,6 +130,7 @@ $("#date").on("change", function () {
 });
 
 function pickDate() {
+
   const filterType = $("#date").val();
   const startDate = $("#startDate").val();
   const endDate = $("#endDate").val();
@@ -147,6 +154,7 @@ function pickDate() {
 }
 
 $(document).ready(function () {
+
   linkFilters();
   UpdateFiltersOnUI(window.location.href);
 });
