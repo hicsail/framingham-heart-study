@@ -2,10 +2,10 @@
 
 module.exports = (status, prefix) => {
 
-  	if (status === 'rejected'){
+  	if (status === 'Rejected'){
   		return prefix + '-danger';
   	}
-  	else if (status === 'approved') {
+  	else if (status === 'Approved') {
   		return prefix + '-success';
   	}
   	return prefix + '-info';
