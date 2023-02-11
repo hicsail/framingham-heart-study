@@ -9,7 +9,7 @@ const register = function (server, options){
 
   server.route({
     method: 'GET',
-    path: '/proposals/reviewer/upload',
+    path: '/proposals/upload',
     options: {
       auth: {
         strategies: ['session'],

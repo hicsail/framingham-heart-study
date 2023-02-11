@@ -1,4 +1,4 @@
-<nav class="col-sm-3 col-md-2 d-none d-sm-block bg-dark sidebar" style="padding-top: 40px;">
+<nav class="col-sm-3 col-md-2 d-none d-sm-block bg-dark sidebar" style="padding-top: 20px;">
   <ul class="nav nav-pills flex-column sticky-header1 col-sm-3 col-md-2">
     <h6 class="text-light">Your Role
       {{#if user.roles.reviewer}}      
@@ -12,19 +12,32 @@
           {{/if}}           
         {{/if}}        
       {{/if}}      
-    </h6>    
+    </h6>
+    <br><hr>    
   </ul>
-
+  
   <div class="sticky-header2 col-sm-3 col-md-2" style="padding-top: 20px;">
     <ul class="nav nav-pills flex-column" >
       <h6 class="text-white font-weight-bold">
         Your links
       </h6>
+      {{#if user.roles.root}} 
+        <li class="nav-item">        
+          <a class="nav-link text-light" href="../../../proposals/upload">
+            Proposal Upload         
+          </a>
+          <a  class="nav-link text-light" href="../../../proposals/feasibility-check">
+            Review Feasibility
+          </a>            
+        </li>           
+      {{/if}}
       {{#if user.roles.reviewer}} 
         <li class="nav-item">        
-          <a class="nav-link text-light" href="../../../proposals/reviewer/upload">
-            Proposal Upload         
-          </a>           
+          <a class="nav-link text-light" href="../../../proposals/upload">
+            Upload Proposals        
+          </a>
+          <a class="nav-link text-light" href="../../../users">Users</a>
+          <a class="nav-link text-light" href="../../../roles">Roles</a>           
         </li>     
       {{/if}}
       {{#if user.roles.committee_member}} 
@@ -36,12 +49,12 @@
       {{/if}}
     </ul>
   </div>
-
+  <br><br><br>
   {{#role user 'root'}}  
-  <div class="sticky-header2 col-sm-3 col-md-2" style="padding-top: 20px;"> 
+  <div class="sticky-header3 col-sm-3 col-md-2" style="padding-top: 120px;"> 
 
     <ul class="nav nav-pills flex-column" style="padding-top: 20px">
-      <h6 class="text-white">Collections</h6>
+      <h6 class="text-white font-weight-bold">Collections</h6>
       <li class="nav-item">
         <a class="nav-link text-light" href="../../../authAttempts">Auth Attempts</a>       
         <a class="nav-link text-light" href="../../../users">Users</a>        
@@ -49,14 +62,14 @@
     </ul>
   
     <ul class="nav nav-pills flex-column" style="padding-top: 20px">
-      <h6 class="text-light">Population Settings</h6>
+      <h6 class="text-light font-weight-bold">Population Settings</h6>
       <li class="nav-item">
         <a class="nav-link text-light" href="../../../roles">Roles</a>        
       </li>
     </ul>   
   
     <ul class="nav nav-pills flex-column" style="padding-top: 20px">
-      <h6 class="text-light">Application Settings</h6>
+      <h6 class="text-light font-weight-bold">Application Settings</h6>
       <li class="nav-item">
         <a class="nav-link text-light" href="../../../backups">Backups</a>
         <a class="nav-link text-light" href="../../../env">Env</a>
@@ -75,5 +88,9 @@
   .sticky-header2 {
     position:fixed; 
     top:12%;
+  }
+  .sticky-header3 {
+    position:fixed; 
+    top:15%;
   }
 </style>
