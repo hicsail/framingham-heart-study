@@ -55,8 +55,6 @@ const main = async function () {
   };
   await User.insertOne(document);
 
-  await Proposal.populate();
-
   console.log("Setup complete.");
   process.exit(0);
 };
