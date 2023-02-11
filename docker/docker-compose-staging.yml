@@ -1,0 +1,19 @@
+version: '3'
+services:
+  fhs-mongo:
+    image: mongo:3.4
+    ports:
+      - 27022:27017
+    volumes:
+      - fhs-staging:/data/db
+  fhs:
+    image: hicsail/fhs:unstable
+    restart: always
+    depends_on:
+      - fhs-mongo
+    ports:
+      - 9002:9000
+    env_file:
+      - ../stack.env
+volumes:
+  fhs-staging: ~

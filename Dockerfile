@@ -1,6 +1,6 @@
 FROM node:8
 
-WORKDIR /usr/src/anchor
+WORKDIR /usr/src/fhs
 COPY . .
 
 RUN npm ci
