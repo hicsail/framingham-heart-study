@@ -12,7 +12,7 @@ services:
     depends_on:
       - fhs-mongo
     ports:
-      - 9002:9000
+      - 5000:5000
     env_file:
       - ../stack.env
 volumes:
