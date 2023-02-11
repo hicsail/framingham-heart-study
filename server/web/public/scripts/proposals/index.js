@@ -4,6 +4,7 @@ const APPROVED = "Approved";
 const REJECTED = "Rejected";
 
 function updateFeasibilityStatus(proposalId, approved) {
+  
   const status = approved ? APPROVED : REJECTED;
   $.ajax({
     type: "PUT",
@@ -11,8 +12,7 @@ function updateFeasibilityStatus(proposalId, approved) {
     contentType: "application/json",
     data: JSON.stringify({ feasibilityStatus: status }),
     success: function (result) {
-      location.reload();
-      console.log(result);
+      location.reload();      
     },
     error: function (result) {
       errorAlert(result.responseJSON.message);
