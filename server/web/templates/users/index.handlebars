@@ -66,8 +66,10 @@
               roles += 'reviewer';              
             if (row.roles.root)
               roles += ' root'
-            else if (roles === "")
-              roles += ' external investigator'  
+            if (row.roles.coordinator)
+              roles += ' coordinator'
+            if (row.roles.chair)
+              roles += ' chair'            
             return "<span class='badge badge-info'>" + roles + "</span>";  
           }
         },         
