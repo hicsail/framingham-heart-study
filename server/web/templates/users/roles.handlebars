@@ -11,23 +11,23 @@
                 <tr>                  
                   <th>Name</th>
                   <th>Email</th>
-                  <th>Reviewer</th>
-                  <th>Committee Member</th>
+                  {{#each roles}}
+                    <th>{{this.name}}</th>
+                  {{/each}}
                 </tr>
               </thead>
               <tbody>
                 {{#each usersList as |userRow|}}
                   <tr>                    
                     <td>{{userRow.name}}</td>
-                    <td>{{userRow.email}}</td>
-                                  
+                    <td>{{userRow.email}}</td>                    
+
                     {{#each ../roles as |role|}}
                         <td>
                           <label>
                             <input class="roleCheck" id="{{role.name}}" type="checkbox" onchange="onCheckboxClicked(this, {{json userRow._id}})" {{#disableCB ../../user userRow role}}disabled{{/disableCB}} {{#userHasRole userRow name}}checked{{/userHasRole}}>
                           </label>
                         </td>
-                        
                     {{/each}}
                   </tr>
                 {{/each}}

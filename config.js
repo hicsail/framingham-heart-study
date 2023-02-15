@@ -101,7 +101,7 @@ const config = {
   },
   roles:[    
     {
-      name: 'reviewer',
+      name: 'coordinator',
       accessLevel: '4'
     },
     {
@@ -109,7 +109,7 @@ const config = {
       accessLevel: '5'
     },
     {
-      name: 'committee_member',
+      name: 'reviewer',
       accessLevel: '4'
     },
   ],

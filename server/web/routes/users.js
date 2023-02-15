@@ -60,7 +60,7 @@ const register = function (server, options) {
         projectName: Config.get('/projectName'),
         title: 'Users',
         baseUrl: Config.get('/baseUrl'),
-        roles: [{name: 'reviewer'}, {name: 'committee_member'}]
+        roles: Config.get('/roles')
       });
     }
   });
