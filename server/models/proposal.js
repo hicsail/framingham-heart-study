@@ -93,7 +93,7 @@ Proposal.status = {
 
 Proposal.schema = Joi.object({
   _id: Joi.object().required(), 
-  groupId: Joi.object().required(),
+  groupId: Joi.string().required(),
   fileName: Joi.string().required(), 
   userId: Joi.object().required(),
   feasibilityReviewerId: Joi.object().required(),
