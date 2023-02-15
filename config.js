@@ -102,15 +102,19 @@ const config = {
   roles:[    
     {
       name: 'coordinator',
-      accessLevel: '4'
+      accessLevel: '2'
     },
     {
       name: 'root',
-      accessLevel: '5'
+      accessLevel: '4'
     },
     {
       name: 'reviewer',
-      accessLevel: '4'
+      accessLevel: '1'
+    },
+    {
+      name: 'chair',
+      accessLevel: '3'
     },
   ],
   S3: {

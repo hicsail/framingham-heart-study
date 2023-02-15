@@ -8,7 +8,11 @@
           <span class="badge badge-warning">Root</span>
         {{else}}
           {{#if user.roles.coordinator}}
-            <span class="badge badge-warning">Coordinator</span> 
+            <span class="badge badge-warning">Coordinator</span>
+            {{else}} 
+              {{#if user.roles.chair}}
+                <span class="badge badge-warning">Chair</span>
+              {{/if}}
           {{/if}}           
         {{/if}}        
       {{/if}}      
