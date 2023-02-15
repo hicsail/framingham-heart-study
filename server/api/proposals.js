@@ -9,7 +9,7 @@ const register = function (server, options) {
     options: {
       auth: {
         strategies: ["simple", "session"],
-        scope: ["committee_member", "root"],
+        scope: ["coordinator", "root"],
       },
       validate: {
         payload: Proposal.payload,

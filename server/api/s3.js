@@ -11,7 +11,8 @@ const register = function (server, options) {
         path: '/api/S3/saveFilesToBucket',
         options: {
             auth: {
-                strategies: ['simple', 'session']        
+                strategies: ['simple', 'session'],
+                scope: ['coordinator', 'root']        
             },
             payload: {
                 output: 'stream',
@@ -59,7 +60,8 @@ const register = function (server, options) {
       path: '/api/S3/getObject/{fileName}',
       options: {
         auth: {
-          strategies: ['simple', 'session']        
+          strategies: ['simple', 'session'],
+          scope: ['coordinator', 'root', 'reviewer']        
         }             
       },      
       handler: async function (request, h) {      
@@ -86,7 +88,8 @@ const register = function (server, options) {
     path: '/api/S3/deleteFile/{fileName}',
     options: {
       auth: {
-        strategies: ['simple', 'session']        
+        strategies: ['simple', 'session'],
+        scope: ['coordinator', 'root']        
       }           
     },      
     handler: async function (request, h) {

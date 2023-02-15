@@ -7,8 +7,8 @@
         {{#if user.roles.root}}      
           <span class="badge badge-warning">Root</span>
         {{else}}
-          {{#if user.roles.committee_member}}
-            <span class="badge badge-warning">Committee Member</span> 
+          {{#if user.roles.coordinator}}
+            <span class="badge badge-warning">Coordinator</span> 
           {{/if}}           
         {{/if}}        
       {{/if}}      
@@ -26,25 +26,28 @@
           <a class="nav-link text-light" href="../../../proposals/upload">
             Proposal Upload         
           </a>
-          <a  class="nav-link text-light" href="../../../proposals/feasibility-check">
+          <a  class="nav-link text-light" href="../../../proposals/submissions">
             Review Feasibility
           </a>            
         </li>           
       {{/if}}
       {{#if user.roles.reviewer}} 
         <li class="nav-item">        
-          <a class="nav-link text-light" href="../../../proposals/upload">
-            Upload Proposals        
-          </a>
-          <a class="nav-link text-light" href="../../../users">Users</a>
-          <a class="nav-link text-light" href="../../../roles">Roles</a>           
+          <a  class="nav-link text-light" href="../../../proposals/submissions">
+            Review Proposals
+          </a>           
         </li>     
       {{/if}}
       {{#if user.roles.committee_member}} 
-        <li class="nav-item">        
-          <a  class="nav-link text-light" href="../../../proposals/feasibility-check">
+        <li class="nav-item">
+          <a class="nav-link text-light" href="../../../proposals/upload">
+            Upload Proposals        
+          </a>                   
+          <a  class="nav-link text-light" href="../../../proposals/submissions">
             Review Proposals Feasibility
-          </a>          
+          </a>
+          <a class="nav-link text-light" href="../../../users">Users</a>
+          <a class="nav-link text-light" href="../../../roles">Roles</a>          
         </li>     
       {{/if}}
     </ul>

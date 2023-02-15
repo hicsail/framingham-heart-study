@@ -13,7 +13,7 @@ const register = function (server, options){
     options: {
       auth: {
         strategies: ['session'],
-        scope: ['reviewer', 'root']
+        scope: ['coordinator', 'root']
       }
     },
     handler: async function (request, h) {
@@ -33,11 +33,11 @@ const register = function (server, options){
 
   server.route({
     method: "GET",
-    path: "/proposals/feasibility-check",
+    path: "/proposals/submissions",
     options: {
       auth: {
         strategies: ["session"],
-        scope: ["committee_member", "root"],
+        scope: ["coordinator", "root"],
       },
     },
     handler: async function (request, h) {
@@ -45,7 +45,7 @@ const register = function (server, options){
       let sort = { createdAt: -1 };
       let limit = null;
       let page = 1;
-      const pages = [];
+      const pages = [];      
 
       // if there is a date filter
       if ("uploadedAt" in request.query) {
@@ -99,6 +99,11 @@ const register = function (server, options){
         sort,
       };
 
+      
+      if (user.roles.reviewer) { //get proposals that are assigned to the reviwer        
+        request.query.reviewerIds = user._id.toString(); 
+      }
+
       const proposals = await Proposal.pagedLookup(
         request.query,
         page,
@@ -107,7 +112,7 @@ const register = function (server, options){
         Proposal.lookups
       );
 
-      return h.view("proposals/feasibilityCheck", {
+      return h.view("proposals/submissions-list", {
         user,
         projectName: Config.get("/projectName"),
         title: "Feasibility Check",
