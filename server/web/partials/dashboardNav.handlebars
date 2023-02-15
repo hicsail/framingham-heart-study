@@ -35,6 +35,13 @@
           </a>            
         </li>           
       {{/if}}
+      {{#if user.roles.chair}} 
+        <li class="nav-item">        
+          <a class="nav-link text-light" href="../../../proposals/submissions">
+            Review Proposals         
+          </a>                     
+        </li>           
+      {{/if}}
       {{#if user.roles.reviewer}} 
         <li class="nav-item">        
           <a  class="nav-link text-light" href="../../../proposals/submissions">

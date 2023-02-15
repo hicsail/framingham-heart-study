@@ -13,7 +13,7 @@ const register = function (server, options){
     options: {
       auth: {
         strategies: ['session'],
-        scope: ['reviewer', 'root']
+        scope: ['reviewer', 'root', 'chair']
       }
     },
     handler: async function (request, h) {
@@ -62,7 +62,7 @@ const register = function (server, options){
     options: {
       auth: {
         strategies: ["session"],
-        scope: ["coordinator", "root", "reviewer"],
+        scope: ["coordinator", "root", "reviewer", "chair"],
       },
     },
     handler: async function (request, h) {
@@ -127,6 +127,10 @@ const register = function (server, options){
       
       if (user.roles.reviewer) { //get proposals that are assigned to the reviwer        
         request.query.reviewerIds = user._id.toString(); 
+      }
+
+      if (user.roles.chair) { //get proposals with feasibility status of approved when user is chair        
+        request.query.feasibilityStatus = 'Approved'; 
       }
 
       const proposals = await Proposal.pagedLookup(
