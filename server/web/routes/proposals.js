@@ -9,6 +9,31 @@ const register = function (server, options){
 
   server.route({
     method: 'GET',
+    path: '/proposals/review/{proposalId}',
+    options: {
+      auth: {
+        strategies: ['session'],
+        scope: ['reviewer', 'root']
+      }
+    },
+    handler: async function (request, h) {
+
+      const user = request.auth.credentials.user;
+      const proposalId = request.params.proposalId;
+      const proposal = await Proposal.lookupById(proposalId, Proposal.lookups);
+            
+      return h.view('proposals/review',{
+        user: request.auth.credentials.user,                
+        projectName: Config.get('/projectName'),
+        title: 'Reviewer Upload',
+        baseUrl: Config.get('/baseUrl'),
+        proposal
+      })
+    }
+  });
+
+  server.route({
+    method: 'GET',
     path: '/proposals/upload',
     options: {
       auth: {
@@ -111,7 +136,7 @@ const register = function (server, options){
         options,
         Proposal.lookups
       );
-      
+
       return h.view("proposals/submissions-list", {
         user,
         projectName: Config.get("/projectName"),
