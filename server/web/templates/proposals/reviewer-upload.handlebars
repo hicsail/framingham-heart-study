@@ -5,7 +5,7 @@
       <div style="padding: 30px">
         <h3 class="font-weight-bold" style="font-size:1.8em;">Hello, {{user.name}}!</h3>        
         <br>        
-        {{#if user.roles.reviewer}}
+        {{#if user.roles.coordinator}}
            {{>reviewerUploadForm}}
            <br>
         {{/if}}

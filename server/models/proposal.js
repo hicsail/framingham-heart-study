@@ -6,17 +6,19 @@ const Assert = require('assert');
 
 class Proposal extends AnchorModel { 
 
-  static async create(userId, fileName) {
+  static async create(doc) {
+
+    Assert.ok(doc.userId, 'Missing userId argument.');
+    Assert.ok(doc.fileName, 'Missing file name argument.');
 
     const document = new this({  
-      fileName,    
-      userId, //userId of the person who uploads the doc
-      feasibilityReviewerId: null,
-      reviewerId: null,
-      feasibilityStatus: this.status.PENDING,
-      reviewStatus: this.status.PENDING,      
+      fileName: doc.fileName,    
+      userId: doc.userId, //userId of the person who uploads the doc
+      groupId: doc.groupId ? doc.groupId : null, // we link proposals (revised ones) using groupId      
+      reviewerIds: [], // list of assigned reviwers 
+      feasibilityStatus: this.status.PENDING,           
       feasibilityReviewDate: null,
-      reviewDate: null,
+      feasibilityReviewerId: null      
     });
     return this.insertOne(document);
   }
@@ -27,12 +29,11 @@ class Proposal extends AnchorModel {
       Assert.ok(doc.userId, 'Missing userId argument.');
       Assert.ok(doc.fileName, 'Missing file name argument.');
 
-      doc.reviewerId = null;
-      doc.feasibilityReviewerId = null;
-      doc.reviewStatus = this.status.PENDING;
-      doc.feasibilityStatus = this.status.PENDING;
-      doc.reviewDate = null;
-      doc.feasibilityReviewDate = null;     
+      doc.reviewerIds = [];
+      doc.feasibilityStatus = this.status.PENDING; 
+      doc.feasibilityReviewerId = null;           
+      doc.feasibilityReviewDate = null;
+      doc.groupId = doc.groupId ? doc.groupId : null;     
     }
 
     const files = await this.insertMany(docs);
@@ -92,15 +93,14 @@ Proposal.status = {
 
 Proposal.schema = Joi.object({
   _id: Joi.object().required(), 
+  groupId: Joi.object().required(),
   fileName: Joi.string().required(), 
   userId: Joi.object().required(),
   feasibilityReviewerId: Joi.object().required(),
-  reviewerId: Joi.object().required(),
-  feasibilityStatus: Joi.string().required(),
-  reviewStatus: Joi.string().required(),  
+  reviewerIds: Joi.array().required(),
+  feasibilityStatus: Joi.string().required(),   
   createdAt: Joi.date().required(),
-  feasibilityReviewDate: Joi.date().required(),
-  reviewDate: Joi.date().required(),
+  feasibilityReviewDate: Joi.date().required()  
 });
 
 Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
@@ -132,14 +132,7 @@ Proposal.lookups = [
     foreign: '_id',
     as: 'user',
     one: true
-  },
-  {
-    from: require('./user'),
-    local: 'reviewerId',
-    foreign: '_id',
-    as: 'reviewer',
-    one: true
-  },
+  },  
   {
     from: require('./user'),
     local: 'feasibilityReviewerId',

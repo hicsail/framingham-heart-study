@@ -37,7 +37,7 @@ const register = function (server, options){
     options: {
       auth: {
         strategies: ["session"],
-        scope: ["coordinator", "root"],
+        scope: ["coordinator", "root", "reviewer"],
       },
     },
     handler: async function (request, h) {
@@ -111,7 +111,7 @@ const register = function (server, options){
         options,
         Proposal.lookups
       );
-
+      
       return h.view("proposals/submissions-list", {
         user,
         projectName: Config.get("/projectName"),
