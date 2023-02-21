@@ -4,7 +4,83 @@
     <div class="col-sm-9 col-md-10">
       <div style="padding: 30px">        
         <br>
-        <h4>Implement review template</h4>
+        <h3>Framingham Heart Study Brain Tissue Request Review</h3>
+        <hr>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">#Project Title</h4>
+                <h5 class="card-subtitle mb-2 text-muted">#Applicant Name</h5><hr>
+
+                <div class="card-text">
+                  <h6><u>Funding, if any</u></h6>
+                  <textarea class="form-control" rows="1" id="feedback-funding"></textarea>
+                </div><br>
+                
+                <div class="card-text">
+                  <h6><u>Conflict of Interest</u></h6>
+                  <span>Does the PI or any of the Co-Investigators of the larger research team have a potential Financial Conflict of Interest? If yes, please briefly describe the conflict below, including the investigators and research team members involved.</span>
+                  <textarea class="form-control" rows="5" id="feedback-conflict"></textarea>
+                </div><br>
+                
+                <div class="card-text">
+                  <h6><u>Research Proposal Details</u></h6>
+                  <span>
+                    <ul>
+                      <li>Background & Rationale</li>
+                      <li>Specific Aims</li>
+                      <li>Methods</li>
+                      <li>Data Requested</li>
+                    </ul>
+                  </span>
+                  <textarea class="form-control" rows="5" id="feedback-details"></textarea>
+                </div><hr>
+                
+                <div>
+                  <span class="card-text">Summarize what strengths and weaknesses from the three factors that most informed your decision and include any concerns.</span>
+                </div><br>
+
+                <div>
+                    <h6>1. Context/background of proposed investigation (Significance):</h6>
+                    <textarea class="form-control" rows="5" id="feedback-significance"></textarea>
+                </div><br>
+
+                <div>
+                    <h6>2. Novel vs. confirmatory nature of proposed investigation (Innovation):</h6>
+                    <textarea class="form-control" rows="5" id="feadback-innovation"></textarea>
+                </div><br>
+
+                <div>
+                  <h6>3. Feasibility of proposed study (Approach):</h6>
+                  <textarea class="form-control" rows="5" id="feedback-approach"></textarea>
+                </div><hr>
+
+                <div>
+                  <h5>Decision</h5>
+                  <div class="row">
+                    <div class="col">
+                      <textarea class="form-control" rows="5" id="feedback-approach" placeholder="Comments"></textarea>
+                    </div>
+                    <div class="col">
+                      <ul style="list-style-type: none;">
+                        <li><input type="radio" name="decision" value="Approve"> Approve</li>
+                        <li><input type="radio" name="decision" value="Revision"> Revision</li>
+                        <li><input type="radio" name="decision" value="Reject"> Reject</li>
+                        <li><input type="radio" name="decision" value="Abstention"> Abstention</li>
+                        <li><input type="radio" name="decision" value="Conflict of interest"> Conflict of Interest</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div><br>
+                
+                <div class="float-right">
+                  <button type="button" class="btn btn-outline-danger">Discard</button>
+                  <button type="button" class="btn btn-primary">Submit</button>
+                </div>
+              </div>
+            </div>
+          </div>
        </div>
     </div>
   </div>
