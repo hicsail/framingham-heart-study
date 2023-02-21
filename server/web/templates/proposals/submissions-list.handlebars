@@ -2,33 +2,38 @@
   <div class="row h-100">
     {{>dashboardNav}}
 <div class="col-sm-9 col-md-10">
-    <div style="padding: 30px">  
-        <div calass="row">            
+    <div style="padding: 30px">
+        <div calass="row">
             <div class="col-md-12">
                 <div class="card">
                     <div>
                         {{> proposalFilters}}
-                    </div>                                     
+                    </div>
                     <div class="card-body">
                         {{#each proposals as |proposal|}}
                         <div class="proposal" id={{_id}}>
                             <div class="row">
                                 <div class="col-md-10">
                                     <h5 class="font-weight-bold">
-                                        <a href="/api/S3/getObject/{{fileName}}" name="fileName">{{fileName}}</a>                                        
+                                        <a href="/api/S3/getObject/{{fileName}}" name="fileName">{{fileName}}</a>
                                         <span class="badge badge-pill {{statusBadgeClass feasibilityStatus 'badge'}}">
                                             {{feasibilityStatus}}
-                                        </span>                                  
+                                        </span>
                                     </h5>
                                     <h6>Uploaded on {{formatDate createdAt}} by {{user.name}}</h6>
                                     {{#if feasibilityReviewDate}}
                                         <h6>
                                             Feasibility reviewed on {{formatDate feasibilityReviewDate}} by {{feasibilityReviewer.name}}
                                         </h6>
-                                    {{/if}}                                    
+                                    {{/if}}
                                 </div>
                                 <div class="col-md-2">
                                     <div class="btn-group float-right" role="group">
+                                        {{#if ../user.roles.reviewer}}
+                                            <button type="button" class="btn btn-info" onclick="location.href='../../proposals/review/{{proposal._id}}'">
+                                                Review
+                                            </button>
+                                        {{/if}}
                                         {{#ifEquals feasibilityStatus 'Pending'}}
                                             <button type="button" class="btn btn-success btn-sm" onclick="updateFeasibilityStatus('{{../_id}}', true)">
                                                 Approve
@@ -44,9 +49,9 @@
                         </div>
                         {{/each}}
                     </div>
-                </div>               
-            </div>            
-        </div>               
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </div>
