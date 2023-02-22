@@ -1,59 +1,65 @@
-'use strict';
-const Boom = require('boom');
-const Config = require('../../../config');
-const Proposal = require('../../models/proposal')
-const User = require('../../models/user');
-const ObjectId = require('mongodb').ObjectID;
+"use strict";
+const Boom = require("boom");
+const Config = require("../../../config");
+const Proposal = require("../../models/proposal");
+const User = require("../../models/user");
+const Feedback = require("../../models/feedback");
+const ObjectId = require("mongodb").ObjectID;
 
-const register = function (server, options){
-
+const register = function (server, options) {
   server.route({
-    method: 'GET',
-    path: '/proposals/review/{proposalId}',
+    method: "GET",
+    path: "/proposals/review/{proposalId}",
     options: {
       auth: {
-        strategies: ['session'],
-        scope: ['reviewer', 'root', 'chair']
-      }
+        strategies: ["session"],
+        scope: ["reviewer", "root", "chair"],
+      },
     },
     handler: async function (request, h) {
-
       const user = request.auth.credentials.user;
       const proposalId = request.params.proposalId;
       const proposal = await Proposal.lookupById(proposalId, Proposal.lookups);
-            
-      return h.view('proposals/review',{
-        user: request.auth.credentials.user,                
-        projectName: Config.get('/projectName'),
-        title: 'Reviewer Upload',
-        baseUrl: Config.get('/baseUrl'),
-        proposal
-      })
-    }
+
+      const feedback = await Feedback.findOne({
+        proposalId: proposalId.toString(),
+        userId: user._id.toString(),
+      });
+
+      return h.view("proposals/review", {
+        user: request.auth.credentials.user,
+        projectName: Config.get("/projectName"),
+        title: "Reviewer Upload",
+        baseUrl: Config.get("/baseUrl"),
+        proposal,
+        feedback,
+        reviewedDateString: feedback ? feedback.createdAt.toISOString() : null,
+        isReviewed: feedback ? true : false,
+      });
+    },
   });
 
   server.route({
-    method: 'GET',
-    path: '/proposals/upload',
+    method: "GET",
+    path: "/proposals/upload",
     options: {
       auth: {
-        strategies: ['session'],
-        scope: ['coordinator', 'root']
-      }
+        strategies: ["session"],
+        scope: ["coordinator", "root"],
+      },
     },
     handler: async function (request, h) {
-
       const user = request.auth.credentials.user;
       const proposals = await Proposal.lookup({}, Proposal.lookups);
-            
-      return h.view('proposals/reviewer-upload',{
-        user: request.auth.credentials.user,                
-        projectName: Config.get('/projectName'),
-        title: 'Reviewer Upload',
-        baseUrl: Config.get('/baseUrl'),
-        proposals
-      })
-    }
+
+      return h.view("proposals/reviewer-upload", {
+        user: request.auth.credentials.user,
+        projectName: Config.get("/projectName"),
+        title: "Reviewer Upload",
+        baseUrl: Config.get("/baseUrl"),
+        proposals,
+      });
+    },
   });
 
   server.route({
@@ -70,7 +76,7 @@ const register = function (server, options){
       let sort = { createdAt: -1 };
       let limit = null;
       let page = 1;
-      const pages = [];      
+      const pages = [];
 
       // if there is a date filter
       if ("uploadedAt" in request.query) {
@@ -124,13 +130,14 @@ const register = function (server, options){
         sort,
       };
 
-      
-      if (user.roles.reviewer) { //get proposals that are assigned to the reviwer        
-        request.query.reviewerIds = user._id.toString(); 
+      if (user.roles.reviewer) {
+        //get proposals that are assigned to the reviwer
+        request.query.reviewerIds = user._id.toString();
       }
 
-      if (user.roles.chair) { //get proposals with feasibility status of approved when user is chair        
-        request.query.feasibilityStatus = 'Approved'; 
+      if (user.roles.chair) {
+        //get proposals with feasibility status of approved when user is chair
+        request.query.feasibilityStatus = "Approved";
       }
 
       const proposals = await Proposal.pagedLookup(
@@ -140,6 +147,14 @@ const register = function (server, options){
         options,
         Proposal.lookups
       );
+
+      for (const proposal of proposals.data) {
+        const feedbackCnt = await Feedback.count({
+          proposalId: proposal._id.toString(),
+          userId: user._id.toString(),
+        });
+        proposal.hasFeedback = feedbackCnt > 0;
+      }
 
       return h.view("proposals/submissions-list", {
         user,
@@ -157,14 +172,10 @@ const register = function (server, options){
       });
     },
   });
-}
-
+};
 
 module.exports = {
-    name: 'proposal',
-    dependencies: [
-        'auth',
-        'hapi-anchor-model'
-    ],
-    register
-}
+  name: "proposal",
+  dependencies: ["auth", "hapi-anchor-model"],
+  register,
+};
