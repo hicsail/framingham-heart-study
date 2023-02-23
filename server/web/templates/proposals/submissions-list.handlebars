@@ -31,18 +31,57 @@
                                     <div class="btn-group float-right" role="group">
                                         {{#ifEquals feasibilityStatus 'Pending'}}
                                             <button type="button" class="btn btn-success btn-sm" onclick="updateFeasibilityStatus('{{../_id}}', true)">
-                                                Approve
+                                                {{!-- Approve --}}
+                                                Feasibility Checked
                                             </button>
                                             <button type="button" class="btn btn-danger btn-sm" onclick="updateFeasibilityStatus('{{../_id}}', false)">
-                                                Reject
+                                                {{!-- Reject --}}
+                                                Revise Requested
                                             </button>
                                         {{/ifEquals}}
+
+                                        <div class="col-md-2">
+                                            <div class="btn-group float-right" role="group">
+                                                {{#if user.roles }}
+                                                    {{#unless reviewerIds}}
+                                                    <button type="button" class="btn btn-success btn-sm" onclick="openModal('{{_id}}')">
+                                                         Assign Reviewer 
+                                                    </button> 
+                                                    {{/unless}}
+                                                {{/if}}
+                                            </div>
+                                        </div>
+                                        <div class="modal" id="modal-{{_id}}"tabindex="-1" role="dialog">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title font-weight-bold" id="modal-title">Assign a reviewer for {{fileName}}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true" onclick="closeModal('{{_id}}')">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <select id="reviewerSelect" multiple="multiple">
+                                                            <option disabled selected value> -- select reviewers -- </option>
+                                                            {{#each ../reviewers as |reviewer|}}
+                                                            <option value="{{reviewer._id}}" selected="false">{{reviewer.name}}</option>
+                                                            {{/each}}
+                                                            
+                                                        </select>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-primary" onclick="assignReviewer('{{_id}}')">Assign</button>
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal('{{_id}}')">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <hr />
                         </div>
-                        {{/each}}
+                        {{/each}}   
                     </div>
                 </div>               
             </div>            
@@ -51,4 +90,4 @@
 </div>
 </div>
 </div>
-<script type="text/javascript" src="/public/scripts/proposals/submissions.js"></script>
+<script type="text/javascript" src="/public/scripts/proposals/submissions-list.js"></script>

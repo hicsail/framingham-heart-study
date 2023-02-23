@@ -124,15 +124,17 @@ const register = function (server, options){
         sort,
       };
 
-      
+      let reviewers;
       if (user.roles.reviewer) { //get proposals that are assigned to the reviwer        
         request.query.reviewerIds = user._id.toString(); 
       }
 
       if (user.roles.chair) { //get proposals with feasibility status of approved when user is chair        
         request.query.feasibilityStatus = 'Approved'; 
+        //get object of all available reviewers to be assigned a proposal
+        reviewers = await User.find({roles : {reviewer: true}});
+        
       }
-
       const proposals = await Proposal.pagedLookup(
         request.query,
         page,
@@ -154,6 +156,8 @@ const register = function (server, options){
         totalNumPages: proposals.pages.total,
         total: proposals.items.total,
         notDatatableView: true,
+        reviewers, 
+        
       });
     },
   });
