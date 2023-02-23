@@ -54,7 +54,7 @@
                         <span class="font-weight-bold">Strengths:</span>
                       </div>
                       <div class="col">
-                        <textarea class="form-control" rows="4" id="feedback-significance-strengths">{{feedback.strength.significance}}</textarea>
+                        <textarea class="form-control" rows="4" id="feedback-significance-strength">{{feedback.strength.significance}}</textarea>
                       </div>
                     </div><br>
                     <div class="row">
@@ -62,7 +62,7 @@
                         <span class="font-weight-bold">Weaknesses:</span>
                       </div>
                       <div class="col">
-                        <textarea class="form-control" rows="4" id="feedback-significance-weaknesses">{{feedback.weakness.significance}}</textarea>
+                        <textarea class="form-control" rows="4" id="feedback-significance-weakness">{{feedback.weakness.significance}}</textarea>
                       </div>
                     </div>
                   </div>
@@ -73,7 +73,7 @@
                         <span class="font-weight-bold">Strengths:</span>
                       </div>
                       <div class="col">
-                        <textarea class="form-control" rows="4" id="feedback-innovation-strengths">{{feedback.strength.innovation}}</textarea>
+                        <textarea class="form-control" rows="4" id="feedback-innovation-strength">{{feedback.strength.innovation}}</textarea>
                       </div>
                     </div><br>
                     <div class="row">
@@ -81,7 +81,7 @@
                         <span class="font-weight-bold">Weaknesses:</span>
                       </div>
                       <div class="col">
-                        <textarea class="form-control" rows="4" id="feedback-innovation-weaknesses">{{feedback.weakness.innovation}}</textarea>
+                        <textarea class="form-control" rows="4" id="feedback-innovation-weakness">{{feedback.weakness.innovation}}</textarea>
                       </div>
                     </div>
                   </div>
@@ -95,7 +95,7 @@
                         <span class="font-weight-bold">Strengths:</span>
                       </div>
                       <div class="col">
-                        <textarea class="form-control" rows="4" id="feedback-approach-strengths">{{feedback.strength.approach}}</textarea>
+                        <textarea class="form-control" rows="4" id="feedback-approach-strength">{{feedback.strength.approach}}</textarea>
                       </div>
                     </div><br>
                     <div class="row">
@@ -103,7 +103,7 @@
                         <span class="font-weight-bold">Weaknesses:</span>
                       </div>
                       <div class="col">
-                        <textarea class="form-control" rows="4" id="feedback-approach-weaknesses">{{feedback.weakness.approach}}</textarea>
+                        <textarea class="form-control" rows="4" id="feedback-approach-weakness">{{feedback.weakness.approach}}</textarea>
                       </div>
                     </div>
                   </div>
@@ -113,16 +113,16 @@
                   <h5>Decision</h5>
                   <div class="row">
                     <div class="col-sm-8">
-                      <textarea class="form-control" rows="5" id="feedback-approach" placeholder="Comments">{{feedback.decisionComment}}</textarea>
+                      <textarea class="form-control" rows="5" id="feedback-decision-comment" placeholder="Comments">{{feedback.decisionComment}}</textarea>
                     </div>
                     <div class="col-sm-4">
                       <form>
                         <ul style="list-style-type: none;">
-                          <li><input id="approve" type="radio" name="decision" value="Approve"> Approve</li>
-                          <li><input id="revision" type="radio" name="decision" value="Revision"> Revision</li>
-                          <li><input id="reject" type="radio" name="decision" value="Reject"> Reject</li>
-                          <li><input id="abstention" type="radio" name="decision" value="Abstention"> Abstention</li>
-                          <li><input id="conflict" type="radio" name="decision" value="Conflict of interest"> Conflict of Interest</li>
+                          <li><input id="approve" type="radio" name="decision" value="Approve"><span> Approve</span></li>
+                          <li><input id="revision" type="radio" name="decision" value="Revision"><span> Revision</span></li>
+                          <li><input id="reject" type="radio" name="decision" value="Reject"><span> Reject</span></li>
+                          <li><input id="abstention" type="radio" name="decision" value="Abstention"><span> Abstention</span></li>
+                          <li><input id="conflict" type="radio" name="decision" value="Conflict of interest"><span> Conflict of Interest</span></li>
                         </ul>
                       </form>
                     </div>
@@ -134,7 +134,7 @@
                     <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/submissions'">Back</button>
                   {{else}}
                     <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#discard-review-modal">Discard</button>
-                    <button type="button" class="btn btn-primary" onclick="submitReview()">Submit</button>
+                    <button type="button" class="btn btn-primary" onclick="submitPopup()">Submit</button>
                   {{/if}}
                 </div>
 
@@ -173,7 +173,7 @@
                         <p>Are you sure you want to submit this review? After submission, no changes can be made.</p>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-success">Yes</button>
+                        <button type="button" class="btn btn-success" onclick="submitFeedback('{{proposal._id}}', '{{user._id}}')">Yes</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                       </div>
                     </div>
@@ -186,6 +186,11 @@
     </div>
   </div>
 </div>
+<style>
+  input[type="radio"]:checked + span {
+    font-weight: bold;
+  }
+</style>
 <script>
   if ({{isReviewed}}) {
     document.querySelectorAll('textarea').forEach(function(textarea) {
