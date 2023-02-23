@@ -29,6 +29,34 @@ const register = function (server, options) {
       return { message: "Success", submission: proposal };
     },
   });
+
+  server.route({
+    method: 'PUT',
+    path: '/api/proposals/assign-reviewer/{proposalId}',
+    options: {
+      auth: {
+        strategies: ["simple", "session"],
+        scope: ['chair', 'root']
+      },
+      validate: {
+        payload: Joi.object({
+          reviewerIds: Joi.array()
+        })
+      }
+    },
+    handler: async function (request, h) {
+      const proposalId = request.params.proposalId;
+      const update = {
+        $set:{
+          reviewerIds: request.payload.reviewerIds
+        }
+      }
+      console.log('proposalId: ', proposalId);
+      const proposal = await Proposal.findByIdAndUpdate(proposalId, update);
+      console.log(proposal)
+      return 1;
+    }
+  });
 };
 
 module.exports = {

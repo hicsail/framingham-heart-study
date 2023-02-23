@@ -1,7 +1,7 @@
 "use strict";
 
-const APPROVED = "Feasibility Checked";
-const REJECTED = "Revise Requested";
+const APPROVED = "Approved";
+const REJECTED = "Rejected";
 
 function updateFeasibilityStatus(proposalId, approved) {
   
