@@ -33,7 +33,7 @@ const register = function (server, options) {
         baseUrl: Config.get("/baseUrl"),
         proposal,
         feedback,
-        reviewedDateString: feedback ? feedback.createdAt.toISOString() : null,
+        reviewedDateString: feedback ? feedback.createdAt.toString() : null,
         isReviewed: feedback ? true : false,
       });
     },
