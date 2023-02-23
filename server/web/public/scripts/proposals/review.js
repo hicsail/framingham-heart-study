@@ -14,6 +14,12 @@ for (const textarea of textareas) {
   });
 }
 
+for (const decision of document.getElementsByName("decision")) {
+  decision.addEventListener("change", () => {
+    document.querySelector("form").classList.remove("input-validation-error");
+  });
+}
+
 // window.addEventListener("DOMContentLoaded", () => {
 //   if (localStorage.getItem("location") !== window.location.href) {
 //     localStorage.clear();
@@ -35,6 +41,12 @@ function submitPopup() {
       alert("Please fill all the fields");
       return;
     }
+  }
+
+  if (!document.querySelector("input[name=decision]:checked")) {
+    document.querySelector("form").classList.add("input-validation-error");
+    alert("Please select a decision");
+    return;
   }
 
   $("#submit-review-modal").modal("show");
