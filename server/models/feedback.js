@@ -12,17 +12,17 @@ class Feedback extends AnchorModel {
     Assert.ok(doc.conflict, "Missing conflict argument.");
     Assert.ok(doc.details, "Missing details argument.");
     Assert.ok(
-      doc.significanceWeakness,
+      doc.weakness.significance,
       "Missing significanceWeakness argument."
     );
-    Assert.ok(doc.innovationWeakness, "Missing innovationWeakness argument.");
-    Assert.ok(doc.approachWeakness, "Missing approachWeakness argument.");
+    Assert.ok(doc.weakness.innovation, "Missing innovationWeakness argument.");
+    Assert.ok(doc.weakness.approach, "Missing approachWeakness argument.");
     Assert.ok(
-      doc.significanceStrength,
+      doc.strength.significance,
       "Missing significanceStrength argument."
     );
-    Assert.ok(doc.innovationStrength, "Missing innovationStrength argument.");
-    Assert.ok(doc.approachStrength, "Missing approachStrength argument.");
+    Assert.ok(doc.strength.innovation, "Missing innovationStrength argument.");
+    Assert.ok(doc.strength.approach, "Missing approachStrength argument.");
     Assert.ok(doc.decisionTag, "Missing decisionTag argument.");
     Assert.ok(doc.decisionComment, "Missing decisionComment argument.");
 
@@ -30,17 +30,17 @@ class Feedback extends AnchorModel {
       userId: doc.userId, //userId of the person who submits the feedback
       proposalId: doc.proposalId,
       funding: doc.funding, //temporary field, since eventually we'll get info by parsing pdf not from user
-      conflict: doc.concflict, //temporary field, since eventually we'll get info by parsing pdf not from user
+      conflict: doc.conflict, //temporary field, since eventually we'll get info by parsing pdf not from user
       details: doc.details, //temporary field, since eventually we'll get info by parsing pdf not from user
       weakness: {
-        significance: doc.significanceWeakness,
-        innovation: doc.innovationWeakness,
-        approach: doc.approachWeakness,
+        significance: doc.weakness.significance,
+        innovation: doc.weakness.innovation,
+        approach: doc.weakness.approach,
       },
       strength: {
-        significance: doc.significanceStrength,
-        innovation: doc.innovationStrength,
-        approach: doc.approachStrength,
+        significance: doc.strength.significance,
+        innovation: doc.strength.innovation,
+        approach: doc.strength.approach,
       },
       decisionTag: doc.decisionTag,
       decisionComment: doc.decisionComment,
@@ -84,6 +84,7 @@ Feedback.schema = Joi.object({
 
 Feedback.routes = Hoek.applyToDefaults(AnchorModel.routes, {
   create: {
+    scope: ["reviewer", "root"],
     payload: Joi.object({
       userId: Joi.string().required(),
       proposalId: Joi.string().required(),
@@ -102,7 +103,6 @@ Feedback.routes = Hoek.applyToDefaults(AnchorModel.routes, {
       }).required(),
       decisionTag: Joi.string().required(),
       decisionComment: Joi.string().required(),
-      createdAt: Joi.date().required(),
     }),
   },
 });
