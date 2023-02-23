@@ -28,11 +28,14 @@ for (const textarea of textareas) {
 function submitPopup() {
   const textarea = document.querySelectorAll("textarea");
 
-  textarea.forEach((element) => {
+  for (const element of textarea) {
     if (!element.value.trim()) {
       element.classList.add("border-danger");
+      element.focus();
+      alert("Please fill all the fields");
+      return;
     }
-  });
+  }
 
   $("#submit-review-modal").modal("show");
 
