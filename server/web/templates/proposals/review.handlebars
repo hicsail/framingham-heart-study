@@ -14,23 +14,21 @@
                 {{#if isReviewed}}
                   <span class="text-muted font-italic pull-right">Reviewed at {{reviewedDateString}}</span>
                 {{/if}}
-                <h5 class="card-subtitle mb-2 text-muted">#Applicant Name</h5>
-                
-                <hr>
+                <h5 class="card-subtitle mb-2 text-muted">#Applicant Name</h5><hr>
 
                 <div class="card-text">
-                  <h6><u>Funding, if any</u></h6>
+                  <h5 class="font-weight-bold"><u>Funding, if any</u></h5>
                   <textarea class="form-control" rows="1" id="feedback-funding">{{feedback.funding}}</textarea>
                 </div><br>
                 
                 <div class="card-text">
-                  <h6><u>Conflict of Interest</u></h6>
+                  <h5 class="font-weight-bold"><u>Conflict of Interest</u></h5>
                   <span>Does the PI or any of the Co-Investigators of the larger research team have a potential Financial Conflict of Interest? If yes, please briefly describe the conflict below, including the investigators and research team members involved.</span>
                   <textarea class="form-control" rows="5" id="feedback-conflict">{{feedback.conflict}}</textarea>
                 </div><br>
                 
                 <div class="card-text">
-                  <h6><u>Research Proposal Details</u></h6>
+                  <h5 class="font-weight-bold"><u>Research Proposal Details</u></h5>
                   <span>
                     <ul>
                       <li>Background & Rationale</li>
