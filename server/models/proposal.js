@@ -87,8 +87,8 @@ Proposal.collectionName = "proposals";
 
 Proposal.status = {
   PENDING: "Pending",
-  APPROVED: "Approved",
-  REJECTED: "Rejected",
+  APPROVED: "Feasibility Checked",
+  REJECTED: "Revise Requested",
 };
 
 Proposal.schema = Joi.object({

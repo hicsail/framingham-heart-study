@@ -1,7 +1,7 @@
 "use strict";
 
-const APPROVED = "Approved";
-const REJECTED = "Rejected";
+const APPROVED = "Feasibility Checked";
+const REJECTED = "Revise Requested";
 
 function updateFeasibilityStatus(proposalId, approved) {
   
@@ -20,13 +20,21 @@ function updateFeasibilityStatus(proposalId, approved) {
   });
 }
 
+function openFeasibilityModal(proposalId){
+  const modal = document.getElementById('feasibility-modal-' + proposalId);
+  modal.style.display = "block"; 
+}
+
+function closeFeasibilityModal(proposalId) {
+  const modal = document.getElementById('feasibility-modal-' + proposalId);
+  modal.style.display = "none";
+}
 
  // When the user clicks on the button, open the modal
  function openModal(proposalId) {
-  console.log(proposalId);
+  
   const modal = document.getElementById('modal-' + proposalId);
   modal.style.display = "block"; 
-
 }
 
 function assignReviewer(proposalId){
