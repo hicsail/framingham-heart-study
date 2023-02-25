@@ -51,9 +51,8 @@ const register = function (server, options) {
           reviewerIds: request.payload.reviewerIds
         }
       }
-      console.log('proposalId: ', proposalId);
+  
       const proposal = await Proposal.findByIdAndUpdate(proposalId, update);
-      console.log(proposal)
       return 1;
     }
   });
