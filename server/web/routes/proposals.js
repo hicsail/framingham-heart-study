@@ -130,8 +130,8 @@ const register = function (server, options){
       }
 
       if (user.roles.chair) { //get proposals with feasibility status of approved when user is chair        
-        request.query.feasibilityStatus = 'Approved'; 
-        //get object of all available reviewers to be assigned a proposal
+        request.query.feasibilityStatus = 'Feasibility Checked'; 
+        //get list of all available reviewers to be assigned a proposal
         reviewers = await User.find({roles : {reviewer: true}});
         
       }
@@ -141,7 +141,7 @@ const register = function (server, options){
         limit,
         options,
         Proposal.lookups
-      );
+      );      
 
       return h.view("proposals/submissions-list", {
         user,

@@ -84,7 +84,7 @@ function attachKeyValuesToURL(key, value, url) {
 // once filters have been created, make each filter interdependent
 function linkFilters() {
 
-  $(".selectpicker").each(function () {
+  $("#filters .selectpicker").each(function () {
     if ($(this).attr("id") !== "date") {
       $(this).on("change", function () {
         let url = window.location.href;

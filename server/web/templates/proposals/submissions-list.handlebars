@@ -6,8 +6,8 @@
         <div calass="row">            
             <div class="col-md-12">
                 <div class="card">
-                    <div>
-                        {{> proposalFilters}}
+                    <div id="filters">
+                       {{> proposalFilters}}
                     </div>                                     
                     <div class="card-body">
                         {{#each proposals as |proposal|}}
@@ -48,7 +48,7 @@
                                             {{/ifEquals}}
 
                                         {{!-- Feasibility Modal --}}
-                                         <div class="modal" id="feasibility-modal-{{_id}}"tabindex="-1" role="dialog">
+                                         <div class="modal" id="feasibility-modal-{{_id}}" tabindex="-1" role="dialog">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -65,48 +65,36 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-
-
-                                        <div class="col-md-2">
-                                            <div class="btn-group float-right" role="group">
-                                                 {{#if ../user.roles.chair}} 
-                                                    {{#unless reviewerIds}}
-                                                    <button type="button" class="btn btn-success btn-sm" onclick="openModal('{{_id}}')">
-                                                         Assign Reviewer 
-                                                    </button> 
-                                                    {{/unless}}
-                                                {{/if}}
+                                        </div>                                                                                                    
+                                    </div>                                   
+                                    
+                                    {{#if ../user.roles.chair}}
+                                        {{#unless reviewerIds}}
+                                            <div class="btn-group float-right" role="group">        
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <button type="button" class="btn btn-secondary" onclick="assignReviewer('{{_id}}')">Submit</button>    
+                                                    </div>
+                                                    <select class="selectpicker"
+                                                    id="reviewerSelect" 
+                                                    data-live-search="true" 
+                                                    data-style="btn-white" 
+                                                    data-size="5" 
+                                                    data-title="Select Reviewers"
+                                                    data-selected-text-format="static" 
+                                                    multiple>                     
+                                                        {{#each ../reviewers as |reviewer|}}
+                                                            <option selected value="{{reviewer._id}}"                    
+                                                            >{{reviewer.name}}</option>
+                                                        {{/each}}                                           
+                                                    </select>                                                   
+                                                </div>                                     
                                             </div>
-                                        </div>
+                                        {{else}}  
+                                            salam                                      
+                                        {{/unless}}
+                                    {{/if}}                        
 
-                                        {{!-- Assign Reviewer Modal --}}
-                                        <div class="modal" id="modal-{{_id}}"tabindex="-1" role="dialog">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title font-weight-bold" id="modal-title">Assign a reviewer for {{fileName}}</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true" onclick="closeModal('{{_id}}')">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <select id="reviewerSelect" multiple="multiple">
-                                                            <option disabled selected value> -- select reviewers -- </option>
-                                                            {{#each ../reviewers as |reviewer|}}
-                                                            <option value="{{reviewer._id}}" selected="false">{{reviewer.name}}</option>
-                                                            {{/each}}
-                                                            
-                                                        </select>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-primary" onclick="assignReviewer('{{_id}}')">Assign</button>
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal('{{_id}}')">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             <hr />
@@ -120,4 +108,8 @@
 </div>
 </div>
 </div>
+
+<link rel="stylesheet" href="/public/css/bootstrap-select.min.css"></link>
+<script type="text/javascript" src="/public/js/bootstrap-select.min.js"></script>
+
 <script type="text/javascript" src="/public/scripts/proposals/submissions-list.js"></script>
