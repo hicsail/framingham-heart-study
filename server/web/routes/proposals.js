@@ -70,7 +70,7 @@ const register = function (server, options){
       let sort = { createdAt: -1 };
       let limit = null;
       let page = 1;
-      const pages = [];      
+      const pages = [];         
 
       // if there is a date filter
       if ("uploadedAt" in request.query) {
@@ -135,29 +135,37 @@ const register = function (server, options){
         reviewers = await User.find({roles : {reviewer: true}});
         
       }
-      const proposals = await Proposal.pagedLookup(
+      const result = await Proposal.pagedLookup(
         request.query,
         page,
         limit,
         options,
         Proposal.lookups
-      );      
+      );
 
+      //attach list of full reviewers object to proposals 
+      for (const proposal of result.data) {
+        proposal.assignedReviewers = [];
+        for (const id of proposal.reviewerIds) {
+          const reviewer = await User.findById(id);
+          proposal.assignedReviewers.push(reviewer);
+        }
+      }
+      
       return h.view("proposals/submissions-list", {
         user,
         projectName: Config.get("/projectName"),
         title: "Feasibility Check",
-        proposals: proposals.data, // submissions
-        hasNext: proposals.pages.hasNext,
-        hasPrev: proposals.pages.hasPrev,
-        next: proposals.pages.next,
-        prev: proposals.pages.prev,
-        currentPage: proposals.pages.current,
-        totalNumPages: proposals.pages.total,
-        total: proposals.items.total,
+        proposals: result.data, // submissions
+        hasNext: result.pages.hasNext,
+        hasPrev: result.pages.hasPrev,
+        next: result.pages.next,
+        prev: result.pages.prev,
+        currentPage: result.pages.current,
+        totalNumPages: result.pages.total,
+        total: result.items.total,
         notDatatableView: true,
-        reviewers, 
-        
+        reviewers        
       });
     },
   });
