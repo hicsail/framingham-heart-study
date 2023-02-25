@@ -91,11 +91,11 @@
                                                 </div>                                     
                                             </div>
                                         {{else}}  
-                                            <button type="button" class="btn btn-seoncary" data-toggle="modal" data-target="#reviewersList">
+                                            <button type="button" class="btn btn-seoncary" data-toggle="modal" data-target="#reviewersList-{{_id}}">
                                                 See Reviewers
                                             </button>
                                             <!-- Modal for showing list of reviewers -->
-                                            <div class="modal fade" id="reviewersList" tabindex="-1" role="dialog"aria-hidden="true">
+                                            <div class="modal fade" id="reviewersList-{{_id}}" tabindex="-1" role="dialog"aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
