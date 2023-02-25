@@ -20,18 +20,6 @@ function updateFeasibilityStatus(proposalId, approved) {
   });
 }
 
-function openFeasibilityModal(proposalId){
-  const modal = document.getElementById('feasibility-modal-' + proposalId);
-  modal.style.display = "block"; 
-}
-
-function closeFeasibilityModal(proposalId) {
-  const modal = document.getElementById('feasibility-modal-' + proposalId);
-  modal.style.display = "none";
-}
-
- 
-
 function assignReviewer(proposalId){
 
   const values = $("#reviewerSelect").val();
