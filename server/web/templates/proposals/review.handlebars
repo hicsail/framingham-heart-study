@@ -4,8 +4,207 @@
     <div class="col-sm-9 col-md-10">
       <div style="padding: 30px">        
         <br>
-        <h4>Implement review template</h4>
+        <h3>Framingham Heart Study Brain Tissue Request Review</h3>
+        <hr>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">#Project Title</h4>
+                {{#if isReviewed}}
+                  <span class="text-muted font-italic pull-right">Reviewed at {{reviewedDateString}}</span>
+                {{/if}}
+                <h5 class="card-subtitle mb-2 text-muted">#Applicant Name</h5><hr>
+
+                <div class="card-text">
+                  <h5 class="font-weight-bold"><u>Funding, if any</u></h5>
+                  <textarea class="form-control" rows="1" id="feedback-funding">{{feedback.funding}}</textarea>
+                </div><br>
+                
+                <div class="card-text">
+                  <h5 class="font-weight-bold"><u>Conflict of Interest</u></h5>
+                  <span>Does the PI or any of the Co-Investigators of the larger research team have a potential Financial Conflict of Interest? If yes, please briefly describe the conflict below, including the investigators and research team members involved.</span>
+                  <textarea class="form-control" rows="5" id="feedback-conflict">{{feedback.conflict}}</textarea>
+                </div><br>
+                
+                <div class="card-text">
+                  <h5 class="font-weight-bold"><u>Research Proposal Details</u></h5>
+                  <span>
+                    <ul>
+                      <li>Background & Rationale</li>
+                      <li>Specific Aims</li>
+                      <li>Methods</li>
+                      <li>Data Requested</li>
+                    </ul>
+                  </span>
+                  <textarea class="form-control" rows="5" id="feedback-details">{{feedback.details}}</textarea>
+                </div><hr>
+                
+                <div>
+                  <span class="card-text">Summarize what strengths and weaknesses from the three factors that most informed your decision and include any concerns.</span>
+                </div><br>
+
+                <div class="row">
+                  <div class="col">
+                    <h6>1. Context/background of proposed investigation (Significance):</h6>
+                    <div class="row">
+                      <div class="col-3">
+                        <span class="font-weight-bold">Strengths:</span>
+                      </div>
+                      <div class="col">
+                        <textarea class="form-control" rows="4" id="feedback-significance-strength">{{feedback.strength.significance}}</textarea>
+                      </div>
+                    </div><br>
+                    <div class="row">
+                      <div class="col-3">
+                        <span class="font-weight-bold">Weaknesses:</span>
+                      </div>
+                      <div class="col">
+                        <textarea class="form-control" rows="4" id="feedback-significance-weakness">{{feedback.weakness.significance}}</textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <h6>2. Novel vs. confirmatory nature of proposed investigation (Innovation):</h6>
+                    <div class="row">
+                      <div class="col-3">
+                        <span class="font-weight-bold">Strengths:</span>
+                      </div>
+                      <div class="col">
+                        <textarea class="form-control" rows="4" id="feedback-innovation-strength">{{feedback.strength.innovation}}</textarea>
+                      </div>
+                    </div><br>
+                    <div class="row">
+                      <div class="col-3">
+                        <span class="font-weight-bold">Weaknesses:</span>
+                      </div>
+                      <div class="col">
+                        <textarea class="form-control" rows="4" id="feedback-innovation-weakness">{{feedback.weakness.innovation}}</textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div><br>
+
+                <div class="row justify-content-start">
+                  <div class="col-6">
+                    <h6>3. Feasibility of proposed study (Approach):</h6>
+                    <div class="row">
+                      <div class="col-3">
+                        <span class="font-weight-bold">Strengths:</span>
+                      </div>
+                      <div class="col">
+                        <textarea class="form-control" rows="4" id="feedback-approach-strength">{{feedback.strength.approach}}</textarea>
+                      </div>
+                    </div><br>
+                    <div class="row">
+                      <div class="col-3">
+                        <span class="font-weight-bold">Weaknesses:</span>
+                      </div>
+                      <div class="col">
+                        <textarea class="form-control" rows="4" id="feedback-approach-weakness">{{feedback.weakness.approach}}</textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div><hr>
+
+                <div>
+                  <h5>Decision</h5>
+                  <div class="row">
+                    <div class="col-sm-8">
+                      <textarea class="form-control" rows="5" id="feedback-decision-comment" placeholder="Comments">{{feedback.decisionComment}}</textarea>
+                    </div>
+                    <div class="col-sm-4">
+                      <form>
+                        <ul style="list-style-type: none;">
+                          <li><input id="approve" type="radio" name="decision" value="Approve"><span> Approve</span></li>
+                          <li><input id="revision" type="radio" name="decision" value="Revision"><span> Revision</span></li>
+                          <li><input id="reject" type="radio" name="decision" value="Reject"><span> Reject</span></li>
+                          <li><input id="abstention" type="radio" name="decision" value="Abstention"><span> Abstention</span></li>
+                          <li><input id="conflict" type="radio" name="decision" value="Conflict of interest"><span> Conflict of Interest</span></li>
+                        </ul>
+                      </form>
+                    </div>
+                  </div>
+                </div><br>
+                
+                <div class="float-right">
+                  {{#if isReviewed}}
+                    <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/submissions'">Back</button>
+                  {{else}}
+                    <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#discard-review-modal">Discard</button>
+                    <button type="button" class="btn btn-primary" onclick="submitPopup()">Submit</button>
+                  {{/if}}
+                </div>
+
+                {{!-- discard message modal --}}
+                <div class="modal" id="discard-review-modal" tabindex="-1" role="dialog">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title font-weight-bold" id="modal-title">Discard feedback for proposal {{proposal.fileName}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Are you sure you want to discard this review? Your progress will not be saved.</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" onClick="location.href='../../proposals/submissions'">Yes, discard it</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {{!-- submit review modal --}}
+                <div class="modal" id="submit-review-modal" tabindex="-1" role="dialog">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title font-weight-bold" id="modal-title">
+                          Save feedback for proposal {{proposal.fileName}}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Are you sure you want to submit this review? After submission, no changes can be made.</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-success" onclick="submitFeedback('{{proposal._id}}', '{{user._id}}')">Yes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
        </div>
     </div>
   </div>
 </div>
+<style>
+  .input-validation-error {
+    background-color: #ffeeee;
+    outline: 1px solid #ff0000;
+}
+  input[type="radio"]:checked + span {
+    font-weight: bold;
+  }
+</style>
+<script>
+  if ({{isReviewed}}) {
+    document.querySelectorAll('textarea').forEach(function(textarea) {
+      textarea.disabled = true;
+    });
+
+    document.querySelectorAll('input[type=radio]').forEach(function(radio) {
+      radio.disabled = true;
+    });
+    document.querySelector('input[value="{{feedback.decisionTag}}"]').checked = true;
+  }
+</script>
+<script type="text/javascript" src="/public/scripts/proposals/review.js"></script>

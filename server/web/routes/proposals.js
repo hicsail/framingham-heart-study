@@ -1,59 +1,65 @@
-'use strict';
-const Boom = require('boom');
-const Config = require('../../../config');
-const Proposal = require('../../models/proposal')
-const User = require('../../models/user');
-const ObjectId = require('mongodb').ObjectID;
+"use strict";
+const Boom = require("boom");
+const Config = require("../../../config");
+const Proposal = require("../../models/proposal");
+const User = require("../../models/user");
+const Feedback = require("../../models/feedback");
+const ObjectId = require("mongodb").ObjectID;
 
-const register = function (server, options){
-
+const register = function (server, options) {
   server.route({
-    method: 'GET',
-    path: '/proposals/review/{proposalId}',
+    method: "GET",
+    path: "/proposals/review/{proposalId}",
     options: {
       auth: {
-        strategies: ['session'],
-        scope: ['reviewer', 'root', 'chair']
-      }
+        strategies: ["session"],
+        scope: ["reviewer", "root", "chair"],
+      },
     },
     handler: async function (request, h) {
-
       const user = request.auth.credentials.user;
       const proposalId = request.params.proposalId;
       const proposal = await Proposal.lookupById(proposalId, Proposal.lookups);
-            
-      return h.view('proposals/review',{
-        user: request.auth.credentials.user,                
-        projectName: Config.get('/projectName'),
-        title: 'Reviewer Upload',
-        baseUrl: Config.get('/baseUrl'),
-        proposal
-      })
-    }
+
+      const feedback = await Feedback.findOne({
+        proposalId: proposalId.toString(),
+        userId: user._id.toString(),
+      });
+
+      return h.view("proposals/review", {
+        user: request.auth.credentials.user,
+        projectName: Config.get("/projectName"),
+        title: "Reviewer Upload",
+        baseUrl: Config.get("/baseUrl"),
+        proposal,
+        feedback,
+        reviewedDateString: feedback ? feedback.createdAt.toString() : null,
+        isReviewed: feedback ? true : false,
+      });
+    },
   });
 
   server.route({
-    method: 'GET',
-    path: '/proposals/upload',
+    method: "GET",
+    path: "/proposals/upload",
     options: {
       auth: {
-        strategies: ['session'],
-        scope: ['coordinator', 'root']
-      }
+        strategies: ["session"],
+        scope: ["coordinator", "root"],
+      },
     },
     handler: async function (request, h) {
-
       const user = request.auth.credentials.user;
       const proposals = await Proposal.lookup({}, Proposal.lookups);
-            
-      return h.view('proposals/reviewer-upload',{
-        user: request.auth.credentials.user,                
-        projectName: Config.get('/projectName'),
-        title: 'Reviewer Upload',
-        baseUrl: Config.get('/baseUrl'),
-        proposals
-      })
-    }
+
+      return h.view("proposals/reviewer-upload", {
+        user: request.auth.credentials.user,
+        projectName: Config.get("/projectName"),
+        title: "Reviewer Upload",
+        baseUrl: Config.get("/baseUrl"),
+        proposals,
+      });
+    },
   });
 
   server.route({
@@ -70,7 +76,7 @@ const register = function (server, options){
       let sort = { createdAt: -1 };
       let limit = null;
       let page = 1;
-      const pages = [];         
+      const pages = [];
 
       // if there is a date filter
       if ("uploadedAt" in request.query) {
@@ -133,8 +139,8 @@ const register = function (server, options){
         request.query.feasibilityStatus = 'Feasibility Checked'; 
         //get list of all available reviewers to be assigned a proposal
         reviewers = await User.find({roles : {reviewer: true}});
-        
       }
+
       const result = await Proposal.pagedLookup(
         request.query,
         page,
@@ -142,6 +148,7 @@ const register = function (server, options){
         options,
         Proposal.lookups
       );
+
 
       //attach list of full reviewers object to proposals 
       for (const proposal of result.data) {
@@ -151,7 +158,16 @@ const register = function (server, options){
           proposal.assignedReviewers.push(reviewer);
         }
       }
-      
+
+      //logic for hasfeeback need to change here
+      for (const proposal of result.data) {
+        const feedbackCnt = await Feedback.count({
+          proposalId: proposal._id.toString(),
+          userId: user._id.toString(),
+        });
+        proposal.hasFeedback = feedbackCnt > 0;
+      }
+
       return h.view("proposals/submissions-list", {
         user,
         projectName: Config.get("/projectName"),
@@ -169,14 +185,10 @@ const register = function (server, options){
       });
     },
   });
-}
-
+};
 
 module.exports = {
-    name: 'proposal',
-    dependencies: [
-        'auth',
-        'hapi-anchor-model'
-    ],
-    register
-}
+  name: "proposal",
+  dependencies: ["auth", "hapi-anchor-model"],
+  register,
+};

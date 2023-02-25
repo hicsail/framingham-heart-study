@@ -6,6 +6,7 @@
   "scripts": {
     "start": "nodemon --inspect -e json,js,md,html,handlebars,css server.js",
     "first-time-setup": "node first-time-setup.js",
+    "populate-db": "node populate-db.js",
     "test": "lab -c",
     "lint": "lab -dL --leaks",
     "lint-fix": "lab -dL --lint-fix",

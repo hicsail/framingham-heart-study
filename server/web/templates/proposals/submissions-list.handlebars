@@ -71,6 +71,18 @@
                                         </div>                                   
                                     {{/if}}
 
+                                    {{#if ../user.roles.reviewer}}
+                                        {{#if proposal.hasFeedback}}
+                                            <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}'">
+                                                View My Feedback
+                                            </button>
+                                        {{else}}
+                                            <button type="button" class="btn btn-info" onclick="location.href='../../proposals/review/{{proposal._id}}'">
+                                                Review
+                                            </button>
+                                        {{/if}}
+                                    {{/if}}
+
                                     {{#if ../user.roles.chair}}
                                         {{#unless reviewerIds}}
                                             <div class="btn-group float-right" role="group">        
