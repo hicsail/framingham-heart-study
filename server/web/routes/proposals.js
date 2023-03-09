@@ -195,7 +195,7 @@ const register = function (server, options) {
 
         if (user.roles.chair) {
           proposal.hasFeedback = feedbacks.length === proposal.reviewerIds.length;
-          proposal.hasFeedback &= proposal.reviewerIds.length;
+          proposal.hasFeedback &= Boolean(proposal.reviewerIds.length);
         } else if (user.roles.reviewer) {
           for (const feedback of feedbacks) {
             if (feedback.userId.toString() === user._id.toString()) {
