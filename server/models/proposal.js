@@ -18,6 +18,7 @@ class Proposal extends AnchorModel {
       feasibilityReviewDate: null,
       feasibilityReviewerId: null,
       reviewStatus: null,
+      reviewComment: null,
       reviewDate: null,
     });
     return this.insertOne(document);
@@ -33,6 +34,7 @@ class Proposal extends AnchorModel {
       doc.feasibilityReviewerId = null;
       doc.feasibilityReviewDate = null;
       doc.reviewStatus = null;
+      doc.reviewComment = null;
       doc.reviewDate = null;
       doc.groupId = doc.groupId ? doc.groupId : null;
     }
@@ -65,11 +67,11 @@ class Proposal extends AnchorModel {
     return this.findByIdAndUpdate(docId, update);
   }
 
-  static async updateReviewStatus(docId, userId, reviewStatus) {
+  static async updateReviewStatus(docId, reviewStatus, reviewComment) {
     const update = {
       $set: {
-        reviewerId: userId,
         reviewStatus,
+        reviewComment,
         reviewDate: new Date(),
       },
     };
@@ -100,6 +102,7 @@ Proposal.schema = Joi.object({
   feasibilityReviewerId: Joi.object().required(),
   reviewerIds: Joi.array().required(),
   reviewStatus: Joi.string().required(),
+  reviewComment: Joi.string().required(),
   feasibilityStatus: Joi.string().required(),
   createdAt: Joi.date().required(),
   feasibilityReviewDate: Joi.date().required(),
