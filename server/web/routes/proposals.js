@@ -65,7 +65,9 @@ const register = function (server, options) {
         reviewers,
         results,
         reviewedDateString: feedback ? feedback.createdAt.toString() : null,
+        decisionDateString: Boolean(proposal.reviewStatus) ? proposal.reviewDate.toString() : null,
         isReviewed: feedback ? true : false,
+        isDecided: Boolean(proposal.reviewStatus),
       });
     },
   });

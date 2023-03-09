@@ -26,6 +26,10 @@
                 {{#if isReviewed}}
                   <span class="text-muted font-italic pull-right">Reviewed at {{reviewedDateString}}</span>
                 {{/if}}
+                {{#if isDecided}}
+                  <br><span class="text-muted font-italic pull-right">Decision made at {{decisionDateString}}</span>
+                {{/if}}
+                
                 <h5 class="card-subtitle mb-2 text-muted">#Applicant Name</h5><hr>
 
                 <div class="card-text">
@@ -150,15 +154,43 @@
                     </div>
                   </div>
                 </div><br>
-                
-                <div class="float-right">
-                  {{#if isReviewed}}
-                    <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/submissions'">Back</button>
-                  {{else}}
-                    <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#discard-review-modal">Discard</button>
-                    <button type="button" class="btn btn-primary" onclick="submitPopup()">Submit</button>
-                  {{/if}}
-                </div>
+
+                {{#if user.roles.chair}}
+                  <hr>
+                  <h5>Final Decision</h5>
+                  <div class="row">
+                    <div class="col-sm-8">
+                      <textarea chair-input="true" class="form-control" rows="5" id="final-decision-comment" placeholder="Comments">{{proposal.reviewComment}}</textarea>
+                    </div>
+                    <div class="col-sm-4">
+                      <form>
+                        <ul style="list-style-type: none;">
+                          <li><input id="final-approve" chair-input="true" type="radio" name="final-decision" value="Approve"><span> Approve</span></li>
+                          <li><input id="final-revision" chair-input="true" type="radio" name="final-decision" value="Revise"><span> Revision</span></li>
+                          <li><input id="final-reject" chair-input="true" type="radio" name="final-decision" value="Reject"><span> Reject</span></li>
+                        </ul>
+                      </form>
+                    </div>
+                  </div>
+
+                  <div class="float-right">
+                    {{#if isDecided}}
+                      <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/submissions'">Back</button>
+                    {{else}}
+                      <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#discard-review-modal">Discard</button>
+                      <button type="button" class="btn btn-primary" onclick="submitPopup(Boolean({{user.roles.chair}}))">Submit</button>
+                    {{/if}}
+                  </div>
+                {{else}}
+                  <div class="float-right">
+                    {{#if isReviewed}}
+                      <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/submissions'">Back</button>
+                    {{else}}
+                      <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#discard-review-modal">Discard</button>
+                      <button type="button" class="btn btn-primary" onclick="submitPopup(Boolean({{user.roles.chair}}))">Submit</button>
+                    {{/if}}
+                  </div>
+                {{/if}}
 
                 {{!-- discard message modal --}}
                 <div class="modal" id="discard-review-modal" tabindex="-1" role="dialog">
@@ -182,7 +214,7 @@
                 </div>
 
                 {{!-- submit review modal --}}
-                <div class="modal" id="submit-review-modal" tabindex="-1" role="dialog">
+                <div class="modal" id="submit-feedback-modal" tabindex="-1" role="dialog">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -198,6 +230,29 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-success" onclick="submitFeedback('{{proposal._id}}', '{{user._id}}')">Yes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {{!-- chair decision modal --}}
+                <div class="modal" id="submit-review-modal" tabindex="-1" role="dialog">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title font-weight-bold" id="modal-title">
+                          Save Decision for proposal {{proposal.fileName}}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Are you sure you want to submit this decision? After submission, no changes can be made.</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-success" onclick="submitReview('{{proposal._id}}')">Yes</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                       </div>
                     </div>
@@ -227,17 +282,25 @@
     selector.addEventListener('change', function() {
       location.href = `../../proposals/review/{{proposal._id}}/${selector.value}`;
     });
+
+    if ({{isDecided}}) {
+      document.querySelectorAll('[chair-input]').forEach(function(input) {
+        input.disabled = true;
+      });
+
+      document.querySelector('input[value="{{proposal.reviewStatus}}"][chair-input]').checked = true;
+    }
   }
 
   if ({{isReviewed}}) {
-    document.querySelectorAll('textarea').forEach(function(textarea) {
+    document.querySelectorAll('textarea:not([chair-input])').forEach(function(textarea) {
       textarea.disabled = true;
     });
 
-    document.querySelectorAll('input[type=radio]').forEach(function(radio) {
+    document.querySelectorAll('input[type=radio]:not([chair-input])').forEach(function(radio) {
       radio.disabled = true;
     });
-    document.querySelector('input[value="{{feedback.decisionTag}}"]').checked = true;
+    document.querySelector('input[value="{{feedback.decisionTag}}"]:not([chair-input])').checked = true;
   }
 </script>
 <script type="text/javascript" src="/public/scripts/proposals/review.js"></script>

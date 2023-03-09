@@ -52,6 +52,32 @@ const register = function (server, options) {
       return 1;
     },
   });
+
+  server.route({
+    method: "PUT",
+    path: "/api/proposals/review/status/{proposalId}",
+    options: {
+      auth: {
+        strategies: ["simple", "session"],
+        scope: ["chair", "root"],
+      },
+      validate: {
+        payload: Joi.object({
+          reviewStatus: Joi.string(),
+          reviewComment: Joi.string(),
+        }),
+      },
+    },
+    handler: async function (request, h) {
+      const proposalId = request.params.proposalId;
+      const status = request.payload.reviewStatus;
+      const comment = request.payload.reviewComment;
+
+      const proposal = await Proposal.updateReviewStatus(proposalId, status, comment);
+
+      return { message: "Success", submission: proposal };
+    },
+  });
 };
 
 module.exports = {

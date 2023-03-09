@@ -31,7 +31,7 @@ for (const decision of document.getElementsByName("decision")) {
 //   }
 // });
 
-function submitPopup() {
+function submitPopup(isChair) {
   const textarea = document.querySelectorAll("textarea");
 
   for (const element of textarea) {
@@ -49,7 +49,8 @@ function submitPopup() {
     return;
   }
 
-  $("#submit-review-modal").modal("show");
+  if (isChair) $("#submit-review-modal").modal("show");
+  else $("#submit-feedback-modal").modal("show");
 
   return;
 }
@@ -82,11 +83,33 @@ function submitFeedback(proposalId, userId) {
     }
   }
 
-  console.log(doc);
-
   $.ajax({
     url: `/api/feedbacks`,
     type: "POST",
+    data: JSON.stringify(doc),
+    contentType: "application/json",
+    success: function (result) {
+      location.reload();
+    },
+    error: function (result) {
+      errorAlert(result.responseJSON.message);
+    },
+  });
+}
+
+function submitReview(proposalId) {
+  const doc = { reviewComment: $("#final-decision-comment")[0].value };
+
+  for (const decision of $("input[name=final-decision]")) {
+    if (decision.checked) {
+      doc.reviewStatus = decision.value;
+      break;
+    }
+  }
+
+  $.ajax({
+    url: `/api/proposals/review/status/${proposalId}`,
+    type: "PUT",
     data: JSON.stringify(doc),
     contentType: "application/json",
     success: function (result) {
