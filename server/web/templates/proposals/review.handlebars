@@ -7,6 +7,18 @@
         <h3>Framingham Heart Study Brain Tissue Request Review</h3>
         <hr>
         <div class="row">
+          {{#if user.roles.chair}}
+            {{#each results as |result|}}
+              <div class="col" style="margin-bottom:10px">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title text-center">{{result.name}}</h4>
+                    <h5 class="card-text text-center">{{result.value}}</h5>
+                  </div>
+                </div>
+              </div>
+            {{/each}}
+          {{/if}}
           <div class="col-sm-12">
             <div class="card">
               <div class="card-body">
@@ -40,9 +52,21 @@
                   <textarea class="form-control" rows="5" id="feedback-details">{{feedback.details}}</textarea>
                 </div><hr>
                 
-                <div>
-                  <span class="card-text">Summarize what strengths and weaknesses from the three factors that most informed your decision and include any concerns.</span>
-                </div><br>
+                <div class="row">
+                  <div class="col-md-10">
+                    <span class="card-text">Summarize what strengths and weaknesses from the three factors that most informed your decision and include any concerns.</span>
+                  </div>
+                  <div class="col-md-2">
+                    {{#if user.roles.chair}}
+                      <select id="reviewer-selector" class="form-select">
+                        {{#each reviewers as |reviewer|}}
+                          <option value="{{reviewer._id}}">{{reviewer.name}}</option>
+                        {{/each}}
+                      </select>
+                    {{/if}}
+                  </div>
+                </div>
+                <br>
 
                 <div class="row">
                   <div class="col">
@@ -196,6 +220,15 @@
   }
 </style>
 <script>
+  if ({{user.roles.chair}}) {
+    const selector = document.querySelector('#reviewer-selector')
+    selector.querySelector('option[value="{{feedback.userId}}"]').selected = true;
+
+    selector.addEventListener('change', function() {
+      location.href = `../../proposals/review/{{proposal._id}}/${selector.value}`;
+    });
+  }
+
   if ({{isReviewed}}) {
     document.querySelectorAll('textarea').forEach(function(textarea) {
       textarea.disabled = true;
