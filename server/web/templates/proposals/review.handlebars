@@ -220,7 +220,7 @@
   }
 </style>
 <script>
-  if ({{user.roles.chair}}) {
+  if ("{{user.roles.chair}}") {
     const selector = document.querySelector('#reviewer-selector')
     selector.querySelector('option[value="{{feedback.userId}}"]').selected = true;
 
