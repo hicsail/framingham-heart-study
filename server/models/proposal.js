@@ -17,6 +17,8 @@ class Proposal extends AnchorModel {
       feasibilityStatus: this.status.PENDING,
       feasibilityReviewDate: null,
       feasibilityReviewerId: null,
+      reviewStatus: null,
+      reviewDate: null,
     });
     return this.insertOne(document);
   }
@@ -30,6 +32,8 @@ class Proposal extends AnchorModel {
       doc.feasibilityStatus = this.status.PENDING;
       doc.feasibilityReviewerId = null;
       doc.feasibilityReviewDate = null;
+      doc.reviewStatus = null;
+      doc.reviewDate = null;
       doc.groupId = doc.groupId ? doc.groupId : null;
     }
 
@@ -82,6 +86,12 @@ Proposal.status = {
   REJECTED: "Revise Requested",
 };
 
+Proposal.decision = {
+  APPROVE: "Approve",
+  REJECT: "Reject",
+  REVISE: "Revise",
+};
+
 Proposal.schema = Joi.object({
   _id: Joi.object().required(),
   groupId: Joi.string().required(),
@@ -89,9 +99,11 @@ Proposal.schema = Joi.object({
   userId: Joi.object().required(),
   feasibilityReviewerId: Joi.object().required(),
   reviewerIds: Joi.array().required(),
+  reviewStatus: Joi.string().required(),
   feasibilityStatus: Joi.string().required(),
   createdAt: Joi.date().required(),
   feasibilityReviewDate: Joi.date().required(),
+  reviewDate: Joi.date().required(),
 });
 
 Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
