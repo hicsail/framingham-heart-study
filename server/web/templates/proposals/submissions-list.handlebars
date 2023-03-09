@@ -84,6 +84,12 @@
                                     {{/if}}
 
                                     {{#if ../user.roles.chair}}
+                                        <div class="">
+                                        {{#if proposal.hasFeedback}}
+                                            <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}/'">
+                                                Review Proposal
+                                            </button>
+                                        {{/if}}
                                         {{#unless reviewerIds}}
                                             <div class="btn-group float-right" role="group">        
                                                 <div class="input-group">
@@ -133,6 +139,7 @@
                                                 </div>
                                             </div>                                      
                                         {{/unless}}
+                                        </div>
                                     {{/if}}                        
 
                                 </div>
