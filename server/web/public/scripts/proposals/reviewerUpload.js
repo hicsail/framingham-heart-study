@@ -52,6 +52,8 @@ async function uploadFile(elem, userId) {
                 data: JSON.stringify(filesPayload),
                 success: function (result) {                                       
                     successAlert('Files uploaded');
+                    //send another ajax call?
+                    sendEmail(filesPayload);
                     location.reload();
                 },
                 error: function (result) {
@@ -60,6 +62,31 @@ async function uploadFile(elem, userId) {
             });
         }
     });    
+}
+
+
+function sendEmail(filesPayload){
+  let fileNameArr = [];
+  filesPayload.forEach(element => {
+    fileNameArr.push(element.fileName)
+  });
+  const payload = {
+    templateName: 'proposal-upload',
+    fileNames: fileNameArr
+  }
+  
+  $.ajax({
+    type: 'POST',
+    url: '/api/email/',
+    contentType: 'application/json',
+    data: JSON.stringify(payload),
+    success: function (result) {
+      successAlert('Emails sent');
+    },
+    error: function (result){
+      errorAlert(result.responseJSON.message);
+    }
+  })
 }
 
 function onClickUploadFile() { 

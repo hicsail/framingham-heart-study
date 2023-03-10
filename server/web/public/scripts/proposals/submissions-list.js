@@ -31,10 +31,30 @@ function assignReviewer(proposalId){
       data: JSON.stringify({ reviewerIds: values }),
       success: function (result) {
           successAlert('Successfully assigned a reviewer');
+          sendEmail(proposalId);
           location.reload();
       },
       error: function (result) {
           errorAlert(result.responseJSON.message);
       }
   }); 
+}
+
+function sendEmail(proposalId){
+  const payload = {
+    templateName: 'reviewers-to-review-proposal',
+    proposalId,
+  }
+  $.ajax({
+    type: 'POST',
+    url: '/api/email/',
+    contentType: 'application/json',
+    data: JSON.stringify(payload),
+    success: function (result) {
+      successAlert('Emails sent');
+    },
+    error: function (result){
+      errorAlert(result.responseJSON.message);
+    }
+  })
 }

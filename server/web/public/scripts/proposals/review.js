@@ -83,19 +83,37 @@ function submitFeedback(proposalId, userId) {
       break;
     }
   }
-
-  console.log(doc);
-
+  
   $.ajax({
     url: `/api/feedbacks`,
     type: "POST",
     data: JSON.stringify(doc),
     contentType: "application/json",
     success: function (result) {
+      sendEmail(proposalId);
       location.reload();
     },
     error: function (result) {
       errorAlert(result.responseJSON.message);
     },
   });
+}
+
+function sendEmail(proposalId){
+  const payload = {
+    templateName: 'all-reviews-submitted',
+    proposalId,
+  }
+  $.ajax({
+    type: 'POST',
+    url: '/api/email/',
+    contentType: 'application/json',
+    data: JSON.stringify(payload),
+    success: function (result) {
+      successAlert('Emails sent');
+    },
+    error: function (result){
+      errorAlert(result.responseJSON.message);
+    }
+  })
 }
