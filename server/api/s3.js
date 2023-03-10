@@ -26,7 +26,6 @@ const register = function (server, options) {
       
                   const fileName = request.payload.file.hapi.filename;
                   const files = await Proposal.find({name: fileName});
-                  console.log('name of file is: ', fileName);
                   if (files.length > 0) {  
                     return false; //since this api is supposed to be followed by another ajax api call, we return any way
                   }
@@ -38,7 +37,6 @@ const register = function (server, options) {
             ]
         },
         handler: async function (request, h) {
-         
           if (!request.pre.fileNameIsUnique) {
             return {'success': false, 'fileName': ''};
           }  
@@ -134,7 +132,6 @@ async function getObjectFromS3(fileName, bucketName) {
 }
 
 async function uploadToS3(fileStream, fileName, bucketName) {
-
     const s3 = new AWS.S3({
       accessKeyId: Config.get('/S3/accessKeyId'),
       secretAccessKey: Config.get('/S3/secretAccessKey')
@@ -177,13 +174,12 @@ async function uploadToS3(fileStream, fileName, bucketName) {
         reject(s3Err);      
       }
       else {         
-        console.log(data)
         resolve(`${data}`);  
       }   
     });  
   }); 
 }
-
+  
   module.exports = {
     name: 'proposalFileUpload',
     dependencies: [
