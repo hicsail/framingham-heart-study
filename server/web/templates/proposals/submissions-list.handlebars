@@ -13,7 +13,7 @@
                         {{#each proposals as |proposal|}}
                         <div class="proposal" id={{_id}}>
                             <div class="row">
-                                <div class="col-md-10">
+                                <div class="col-md-8">
                                     <h5 class="font-weight-bold">
                                         <a href="/api/S3/getObject/{{fileName}}" name="fileName">{{fileName}}</a>                                        
                                         <span class="badge badge-pill {{statusBadgeClass feasibilityStatus 'badge'}}">
@@ -27,7 +27,7 @@
                                         </h6>
                                     {{/if}}                                    
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-4 text-right">
                                     {{#if ../user.roles.coordinator}}
                                         <div class="btn-group float-right" role="group">
                                             {{#ifNotEquals feasibilityStatus 'Feasibility Checked'}}
@@ -47,7 +47,7 @@
                                             {{/ifEquals}}-->
 
                                             {{!-- Feasibility Modal --}}
-                                            <div class="modal" id="feasibility-modal-{{_id}}" tabindex="-1" role="dialog">
+                                            <div class="modal text-left" id="feasibility-modal-{{_id}}" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -84,6 +84,7 @@
                                     {{/if}}
 
                                     {{#if ../user.roles.chair}}
+                                        <div>                                        
                                         {{#unless reviewerIds}}
                                             <div class="btn-group float-right" role="group">        
                                                 <div class="input-group">
@@ -105,34 +106,42 @@
                                                     </select>                                                   
                                                 </div>                                     
                                             </div>
-                                        {{else}}  
-                                            <button type="button" class="btn btn-seoncary" data-toggle="modal" data-target="#reviewersList-{{_id}}">
-                                                See Reviewers
-                                            </button>
-                                            <!-- Modal for showing list of reviewers -->
-                                            <div class="modal fade" id="reviewersList-{{_id}}" tabindex="-1" role="dialog"aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title font-weight-bold">Reviewer's list for {{proposal.fileName}}</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            {{#with proposal.assignedReviewers as |reviewers|}}
-                                                                {{#each reviewers as |reviewer|}}
-                                                                    <p>{{reviewer.name}}, {{reviewer.email}}</p>
-                                                                {{/each}}
-                                                            {{/with}}                                  
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>                           
+                                        {{else}}
+                                            <div class="btn-group" role="group">
+                                                {{#if proposal.hasFeedback}}
+                                                    <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}/'">
+                                                        Review Proposal
+                                                    </button>
+                                                {{/if}}                                                 
+                                                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#reviewersList-{{_id}}">
+                                                    See Reviewers
+                                                </button>                                                
+                                                <!-- Modal for showing list of reviewers -->
+                                                <div class="modal fade text-left" id="reviewersList-{{_id}}" tabindex="-1" role="dialog"aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title font-weight-bold">Reviewer's list for {{proposal.fileName}}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                {{#with proposal.assignedReviewers as |reviewers|}}
+                                                                    {{#each reviewers as |reviewer|}}
+                                                                        <p>{{reviewer.name}}, {{reviewer.email}}</p>
+                                                                    {{/each}}
+                                                                {{/with}}                                  
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>                           
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>                                      
+                                                </div>                                                       
+                                            </div>                                                        
                                         {{/unless}}
+                                        </div>
                                     {{/if}}                        
 
                                 </div>
