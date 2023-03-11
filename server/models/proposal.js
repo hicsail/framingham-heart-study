@@ -33,7 +33,7 @@ class Proposal extends AnchorModel {
       doc.feasibilityStatus = this.status.PENDING; 
       doc.feasibilityReviewerId = null;           
       doc.feasibilityReviewDate = null;
-      doc.groupId = doc.groupId ? doc.groupId : null;     
+      doc.groupId = doc.groupId ? doc.groupId : null;          
     }
 
     const files = await this.insertMany(docs);
@@ -81,6 +81,85 @@ class Proposal extends AnchorModel {
 
     return this.findByIdAndUpdate(docId, update);
   }
+
+  static parse(content, numPages) {
+    
+    let result = {};
+    const textBlockAnchorDict = {
+      'details': {
+        'separator1': 'General Research Proposal',
+        'separator2': 'Literature References'
+      },
+      'funding': {
+        'separator1': 'Executive Committee Review',
+        'separator2': 'Participant Burden'
+      },
+      'conflict': {
+        'separator1': 'Third-party involvement',
+        'separator2': 'Title and Abstract'
+      },
+      'applicantName': {
+        'separator1': 'Principal Investigator\nName:',
+        'separator2': 'Institution'
+      },
+      'applicationId': {
+        'separator1': 'Application ID',
+        'separator2': 'Date Submitted'
+      },
+      'projectTitle': {
+        'separator1': 'Application ID',
+        'separator2': 'Date Submitted'
+      }
+    }
+
+    //remove footer from text 
+    let footers = [];
+    for (let i=1; i<=numPages; ++i) {
+      footers.push('Page ' + i + '/' + numPages);
+    } 
+    for (const footer of footers) {
+      content = content.replace(footer, '');  
+    }
+
+    //remove header from text
+    const separator1 = textBlockAnchorDict['applicationId']['separator1'];
+    const separator2 = textBlockAnchorDict['applicationId']['separator2'];
+    try {
+      const applicationId = (content.split(separator1)[1]).split(separator2)[0].split('\n')[0].replace(': ', ''); 
+      const header = 'FHS Data Application Proposal - ID: ' + applicationId;    
+      content = content.replace(new RegExp(header, 'g'), '');
+    } 
+    catch(e) {
+      console.log("ApplicationId not found.")
+    }  
+
+    //parse for relevant sections 
+    for (const key in textBlockAnchorDict) {
+      const separator1 = textBlockAnchorDict[key]['separator1'];
+      const separator2 = textBlockAnchorDict[key]['separator2'];      
+      if (separator1 && separator2) {
+        try {
+          const textBlock = (content.split(separator1)[1]).split(separator2)[0].trim();          
+          if (key === 'applicationId') {
+            result[key] = textBlock.split('\n')[0];            
+          }
+          else if (key === 'projectTitle') {
+            result[key] = textBlock.split('\n')[1];
+          }
+          else {
+            result[key] = textBlock;
+          }          
+        }
+        catch(e) {          
+          result[key] = null;
+        }        
+      }
+      else {
+        result[key] = null;
+      }          
+    }    
+    return result;              
+  }  
 }
 
 Proposal.collectionName = "proposals";
@@ -100,7 +179,7 @@ Proposal.schema = Joi.object({
   reviewerIds: Joi.array().required(),
   feasibilityStatus: Joi.string().required(),   
   createdAt: Joi.date().required(),
-  feasibilityReviewDate: Joi.date().required()  
+  feasibilityReviewDate: Joi.date().required()   
 });
 
 Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
@@ -114,7 +193,7 @@ Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
     disabled: false,
     payload: Joi.object({
       userId: Joi.string().required(),
-      fileName: Joi.string().required()           
+      fileName: Joi.string().required()                  
     })
   },
 });

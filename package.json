@@ -59,6 +59,8 @@
     "nodemailer": "4.x.x",
     "nodemailer-markdown": "1.x.x",
     "object-assign": "4.x.x",
+    "pdf-parse": "^1.1.1",
+    "pdf2json": "^3.0.3",
     "slug": "0.9.x",
     "useragent": "2.x.x",
     "uuid": "3.x.x",
