@@ -8,9 +8,6 @@ class Feedback extends AnchorModel {
   static async create(doc) {
     Assert.ok(doc.userId, "Missing userId argument.");
     Assert.ok(doc.proposalId, "Missing proposalId argument.");
-    Assert.ok(doc.funding, "Missing funding argument.");
-    Assert.ok(doc.conflict, "Missing conflict argument.");
-    Assert.ok(doc.details, "Missing details argument.");
     Assert.ok(
       doc.weakness.significance,
       "Missing significanceWeakness argument."
@@ -28,10 +25,7 @@ class Feedback extends AnchorModel {
 
     const document = new this({
       userId: doc.userId, //userId of the person who submits the feedback
-      proposalId: doc.proposalId,
-      funding: doc.funding, //temporary field, since eventually we'll get info by parsing pdf not from user
-      conflict: doc.conflict, //temporary field, since eventually we'll get info by parsing pdf not from user
-      details: doc.details, //temporary field, since eventually we'll get info by parsing pdf not from user
+      proposalId: doc.proposalId,      
       weakness: {
         significance: doc.weakness.significance,
         innovation: doc.weakness.innovation,
@@ -63,10 +57,7 @@ Feedback.status = {
 Feedback.schema = Joi.object({
   _id: Joi.object().required(),
   userId: Joi.string().required(),
-  proposalId: Joi.string().required(),
-  funding: Joi.string().required(),
-  conflict: Joi.string().required(),
-  details: Joi.string().required(),
+  proposalId: Joi.string().required(),  
   weakness: Joi.object({
     significance: Joi.string().required(),
     innovation: Joi.string().required(),
@@ -87,10 +78,7 @@ Feedback.routes = Hoek.applyToDefaults(AnchorModel.routes, {
     scope: ["reviewer", "root"],
     payload: Joi.object({
       userId: Joi.string().required(),
-      proposalId: Joi.string().required(),
-      funding: Joi.string().required(),
-      conflict: Joi.string().required(),
-      details: Joi.string().required(),
+      proposalId: Joi.string().required(),      
       weakness: Joi.object({
         significance: Joi.string().required(),
         innovation: Joi.string().required(),

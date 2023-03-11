@@ -58,10 +58,7 @@ function submitPopup(isChair) {
 function submitFeedback(proposalId, userId) {
   const doc = {
     proposalId,
-    userId,
-    funding: $("#feedback-funding")[0].value,
-    conflict: $("#feedback-conflict")[0].value,
-    details: $("#feedback-details")[0].value,
+    userId,    
     weakness: {
       significance: $("#feedback-significance-weakness")[0].value,
       innovation: $("#feedback-innovation-weakness")[0].value,
