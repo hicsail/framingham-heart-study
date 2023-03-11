@@ -107,9 +107,7 @@ const register = function (server, options) {
         parsedInfo,
         applicationId,
         applicantName,
-        projectTitle,
-        reviewedDateString: feedback ? feedback.createdAt.toString() : null,
-        decisionDateString: Boolean(proposal.reviewStatus) ? proposal.reviewDate.toString() : null,
+        projectTitle,        
         isReviewed: feedback ? true : false,
         isDecided: Boolean(proposal.reviewStatus),
       });

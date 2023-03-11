@@ -4,12 +4,27 @@
     <div class="col-sm-9 col-md-10">
       <div style="padding: 30px">        
         <br>
-        <h3>Framingham Heart Study Brain Tissue Request Review</h3>
+        <h3 class="text-center font-weight-bold">Framingham Heart Study Brain Tissue Request Review</h3>
         <p class="text-center">Application ID: {{applicationId}}</p>
         <br>
-        <h3 class="text-center font-weight-bold">Project Title: {{projectTitle}}</h3>
+        
+        <h4 class="text-center font-weight-bold">
+          Project Title: {{projectTitle}}
+          {{#ifEquals proposal.reviewStatus 'Approve'}}
+            <span class="badge badge-pill badge-success">Approved</span>
+          {{/ifEquals}}
+          {{#ifEquals proposal.reviewStatus 'Reject'}}
+            <span class="badge badge-pill badge-danger">Rejected</span>
+          {{/ifEquals}}
+          {{#ifEquals proposal.reviewStatus 'Revise'}}
+            <span class="badge badge-pill badge-wanrning">Revise Reuqested</span>
+          {{/ifEquals}} 
+        </h4>       
+        
         <h3 class="text-center">Applicant Name: {{applicantName}}</h3>
-        <hr>
+        {{#if isDecided}}
+          <p class="text-secondary font-italic text-center">Decision made at {{formatDate proposal.reviewDate}}</p>
+        {{/if}}        
         <div class="row">
           <div class="col">
             <ul class="nav nav-tabs">
@@ -27,7 +42,7 @@
               {{#each parsedInfo}}                
                 <div class="card tab-pane fade {{#ifEquals @key 'details'}} show in active {{/ifEquals}}" id='{{@key}}' role="tabpanel">                
                   <div class="card-body" style="max-height: 400px; overflow-y:auto;">
-                  <h5 class="card-title"></h5>
+                    <h5 class="card-title"></h5>
                     {{#if this}}                  
                       {{#each this}}
                         {{#ifEquals @../key 'details'}}
@@ -62,54 +77,30 @@
           {{/if}}
           <div class="col-sm-12">
             <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">#Project Title</h4>
-                {{#if isReviewed}}
-                  <span class="text-muted font-italic pull-right">Reviewed at {{reviewedDateString}}</span>
-                {{/if}}
-                {{#if isDecided}}
-                  <br><span class="text-muted font-italic pull-right">Decision made at {{decisionDateString}}</span>
-                {{/if}}
-                
-                <h5 class="card-subtitle mb-2 text-muted">#Applicant Name</h5><hr>
-
-                <div class="card-text">
-                  <h5 class="font-weight-bold"><u>Funding, if any</u></h5>
-                  <textarea class="form-control" rows="1" id="feedback-funding">{{feedback.funding}}</textarea>
-                </div><br>
-                
-                <div class="card-text">
-                  <h5 class="font-weight-bold"><u>Conflict of Interest</u></h5>
-                  <span>Does the PI or any of the Co-Investigators of the larger research team have a potential Financial Conflict of Interest? If yes, please briefly describe the conflict below, including the investigators and research team members involved.</span>
-                  <textarea class="form-control" rows="5" id="feedback-conflict">{{feedback.conflict}}</textarea>
-                </div><br>
-                
-                <div class="card-text">
-                  <h5 class="font-weight-bold"><u>Research Proposal Details</u></h5>
-                  <span>
-                    <ul>
-                      <li>Background & Rationale</li>
-                      <li>Specific Aims</li>
-                      <li>Methods</li>
-                      <li>Data Requested</li>
-                    </ul>
-                  </span>
-                  <textarea class="form-control" rows="5" id="feedback-details">{{feedback.details}}</textarea>
-                </div><hr>
-                
+              <div class="card-header bg-info text-white font-weight-bold text-center">
+                Framingham Heart Study Brain Tissue Request Review Form
+              </div>
+              <div class="card-body">                
+                <div class="row">
+                  <div class="col">               
+                    {{#if isReviewed}}
+                      <span class="font-italic">Reviewed at {{formatDate feedback.createdAt}} </span>
+                      {{#if user.roles.chair}}
+                        by 
+                        <select id="reviewer-selector" class="form-select">
+                          {{#each reviewers as |reviewer|}}
+                            <option value="{{reviewer._id}}">{{reviewer.name}}</option>
+                          {{/each}}
+                        </select>
+                      {{/if}}
+                    {{/if}}                    
+                  </div>                  
+                </div>
+                <br><br>
                 <div class="row">
                   <div class="col-md-10">
-                    <span class="card-text">Summarize what strengths and weaknesses from the three factors that most informed your decision and include any concerns.</span>
-                  </div>
-                  <div class="col-md-2">
-                    {{#if user.roles.chair}}
-                      <select id="reviewer-selector" class="form-select">
-                        {{#each reviewers as |reviewer|}}
-                          <option value="{{reviewer._id}}">{{reviewer.name}}</option>
-                        {{/each}}
-                      </select>
-                    {{/if}}
-                  </div>
+                    <h5 class="font-weight-bold">Summarize what strengths and weaknesses from the three factors that most informed your decision and include any concerns.</h5>
+                  </div>                  
                 </div>
                 <br>
 
