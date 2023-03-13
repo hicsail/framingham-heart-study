@@ -138,7 +138,8 @@ const config = {
   },
   EmailList: {
     proposalUpload: ['tdstein@bu.edu','amckee@bu.edu'],
-    harruda: ['harruda@bu.edu']
+    relevantPeople: ['harruda@bu.edu'],
+    ccAddress: ['npdataau@bu.edu']
   }
 };
 

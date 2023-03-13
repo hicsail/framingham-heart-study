@@ -10,9 +10,6 @@ var format = require('date-fns/format')
 
 const register = function (server, options) {  
 
-  /*
-    Notifies the user with userId when a reviewer submits a review on either a brief/proposal
-  */ 
   server.route({
     method: 'POST',
     path: '/api/email/',
@@ -32,7 +29,6 @@ const register = function (server, options) {
       /*
         Case for when Chair assigns reviewers to a proposal. Emails are sent to all selected reviewers
       */
-      
         if(template === 'reviewers-to-review-proposal'){
             subject = 'You have been assigned to review a proposal';
             const proposalDoc = await Proposal.findById(request.payload.proposalId); 
@@ -45,14 +41,12 @@ const register = function (server, options) {
             const today = new Date();
             const laterDate = addDays(today, 28);
             const daysAfter = format(laterDate, 'MM/dd/yyyy');
-
-            reviewerEmails = ['zimlim@bu.edu'];
             emailOptions = {
                 subject: subject,
                 to: {
                     address: reviewerEmails
                 },
-                cc: ['npdataau@bu.edu ']
+                cc: Config.get('/EmailList/ccAddress')
             };
             emailTemplateData = {
                 fileName: proposalDoc.fileName, // only a single file name
@@ -69,11 +63,9 @@ const register = function (server, options) {
             emailOptions = {
                 subject: subject,
                 to: {
-                    // hardcode recepients into config file
-                    // ['harruda@bu.edu']
-                    address: Config.get('/EmailList/harruda')
+                    address: Config.get('/EmailList/relevantPeople')
                 },
-                cc: ['npdataau@bu.edu ']
+                cc: Config.get('/EmailList/ccAddress')
             };
             emailTemplateData = {
                 fileName: request.payload.fileName, // only a single file name
@@ -112,7 +104,7 @@ const register = function (server, options) {
                     to: {
                         address: chairEmail
                     },
-                    cc: ['npdataau@bu.edu ']
+                    cc: Config.get('/EmailList/ccAddress')
                 };
 
                 for(let feedback in feedbackDocs){
@@ -159,10 +151,9 @@ const register = function (server, options) {
             emailOptions = {
                 subject: subject,
                 to: {
-                    // hardcode recepients into config file
-                    address: ['zimlim@bu.edu']
-                }
-                // cc: ['npdataau@bu.edu ']
+                    address: Config.get('/EmailList/proposalUpload')
+                },
+                cc: Config.get('/EmailList/ccAddress')
             };
             emailTemplateData = {
                 'fileNames': fileNameStr
