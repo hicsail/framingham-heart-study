@@ -22,8 +22,7 @@ function updateFeasibilityStatus(proposalId, approved) {
 
 function assignReviewer(proposalId){
 
-  const values = $("#reviewerSelect").val();
-
+  const values = $("#reviewerSelect-" + proposalId).val();  
   $.ajax({
       type: 'PUT',
       url: '/api/proposals/assign-reviewer/' + proposalId,

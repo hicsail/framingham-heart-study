@@ -31,7 +31,7 @@ for (const decision of document.getElementsByName("decision")) {
 //   }
 // });
 
-function submitPopup() {
+function submitPopup(isChair) {
   const textarea = document.querySelectorAll("textarea");
 
   for (const element of textarea) {
@@ -49,7 +49,8 @@ function submitPopup() {
     return;
   }
 
-  $("#submit-review-modal").modal("show");
+  if (isChair) $("#submit-review-modal").modal("show");
+  else $("#submit-feedback-modal").modal("show");
 
   return;
 }
@@ -57,40 +58,36 @@ function submitPopup() {
 function submitFeedback(proposalId, userId) {
   const doc = {
     proposalId,
-    userId,
-    funding: document.getElementById("feedback-funding").value,
-    conflict: document.getElementById("feedback-conflict").value,
-    details: document.getElementById("feedback-details").value,
+    userId,    
     weakness: {
-      significance: document.getElementById("feedback-significance-weakness")
-        .value,
-      innovation: document.getElementById("feedback-innovation-weakness").value,
-      approach: document.getElementById("feedback-approach-weakness").value,
+      significance: $("#feedback-significance-weakness")[0].value,
+      innovation: $("#feedback-innovation-weakness")[0].value,
+      approach: $("#feedback-approach-weakness")[0].value,
     },
     strength: {
-      significance: document.getElementById("feedback-significance-strength")
-        .value,
-      innovation: document.getElementById("feedback-innovation-strength").value,
-      approach: document.getElementById("feedback-approach-strength").value,
+      significance: $("#feedback-significance-strength")[0].value,
+      innovation: $("#feedback-innovation-strength")[0].value,
+      approach: $("#feedback-approach-strength")[0].value,
     },
 
-    decisionComment: document.getElementById("feedback-decision-comment").value,
+    decisionComment: $("#feedback-decision-comment")[0].value,
   };
 
-  for (const decision of document.getElementsByName("decision")) {
+  for (const decision of $("input[name=decision]")) {
     if (decision.checked) {
       doc.decisionTag = decision.value;
       break;
     }
   }
   
+
   $.ajax({
     url: `/api/feedbacks`,
     type: "POST",
     data: JSON.stringify(doc),
     contentType: "application/json",
     success: function (result) {
-      sendEmail(proposalId);
+      sendEmail(proposalId,'all-reviews-submitted');
       location.reload();
     },
     error: function (result) {
@@ -99,12 +96,37 @@ function submitFeedback(proposalId, userId) {
   });
 }
 
-function sendEmail(proposalId){
+function submitReview(proposalId) {
+  const doc = { reviewComment: $("#final-decision-comment")[0].value };
+
+  for (const decision of $("input[name=final-decision]")) {
+    if (decision.checked) {
+      doc.reviewStatus = decision.value;
+      break;
+    }
+  }
+
+  $.ajax({
+    url: `/api/proposals/review/status/${proposalId}`,
+    type: "PUT",
+    data: JSON.stringify(doc),
+    contentType: "application/json",
+    success: function (result) {
+      sendEmail(proposalId, 'chair-finalized-decision');
+      location.reload();
+    },
+    error: function (result) {
+      errorAlert(result.responseJSON.message);
+    },
+  });
+}
+
+function sendEmail(proposalId, template){
   const payload = {
-    templateName: 'all-reviews-submitted',
+    templateName: template,
     proposalId,
   }
-  $.ajax({
+  $.ajax({ 
     type: 'POST',
     url: '/api/email/',
     contentType: 'application/json',

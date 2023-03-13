@@ -57,9 +57,11 @@ const register = function (server, options) {
       /*
         Case for when Chair finalizes decision for a proposal. Not done. Feature not implemented yet
       */ 
-        
         if(template === 'chair-finalized-decision'){
             subject = 'BROC Chair has finalized decision';
+            const proposalDoc = await Proposal.findById(request.payload.proposalId);
+            const finalizedReviewStatus = proposalDoc.reviewStatus;
+            const additionalComments = proposalDoc.reviewComment;
             emailOptions = {
                 subject: subject,
                 to: {
@@ -69,8 +71,8 @@ const register = function (server, options) {
             };
             emailTemplateData = {
                 fileName: request.payload.fileName, // only a single file name
-                finalizedReviewStatus: request.payload.finalizedReviewStatus, // get from proposal model
-                additionalComments: request.payload.additionalComments, // get from proposal model
+                finalizedReviewStatus, // get from proposal model
+                additionalComments // get from proposal model
             };
         }
 

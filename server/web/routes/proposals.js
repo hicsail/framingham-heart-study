@@ -5,11 +5,13 @@ const Proposal = require("../../models/proposal");
 const User = require("../../models/user");
 const Feedback = require("../../models/feedback");
 const ObjectId = require("mongodb").ObjectID;
+const AWS = require('aws-sdk');
+const PDFParse = require('pdf-parse');
 
 const register = function (server, options) {
   server.route({
     method: "GET",
-    path: "/proposals/review/{proposalId}",
+    path: "/proposals/review/{proposalId}/{reviewerId?}",
     options: {
       auth: {
         strategies: ["session"],
@@ -19,13 +21,80 @@ const register = function (server, options) {
     handler: async function (request, h) {
       const user = request.auth.credentials.user;
       const proposalId = request.params.proposalId;
+      const reviewerId = request.params.reviewerId ? request.params.reviewerId : null;
       const proposal = await Proposal.lookupById(proposalId, Proposal.lookups);
+      let parsedInfo;
+      let applicationId;
+      let applicantName;
+      let projectTitle;
 
-      const feedback = await Feedback.findOne({
-        proposalId: proposalId.toString(),
-        userId: user._id.toString(),
-      });
+      let feedback = null;
+      let reviewers = [];
 
+      if (user.roles.reviewer) {
+        feedback = await Feedback.findOne({
+          proposalId: proposalId.toString(),
+          userId: user._id.toString(),
+        });
+      }
+
+      const resultsDict = {};
+      for (const decision of Object.keys(Feedback.status)) {
+        resultsDict[Feedback.status[decision]] = 0;
+      }
+
+      if (user.roles.chair) {
+        const feedbacks = await Feedback.find({ proposalId: proposalId.toString() });
+        feedback = feedbacks[0];
+        for (let idx = 0; idx < feedbacks.length; idx++) {
+          if (feedbacks[idx].userId === reviewerId) {
+            feedback = feedbacks[idx];
+          }
+
+          resultsDict[feedbacks[idx].decisionTag] += 1;
+          const reviewer = await User.findById(feedbacks[idx].userId);
+          reviewers.push(reviewer);
+        }
+      }
+      const results = [];
+      for (const result of Object.entries(resultsDict)) {
+        results.push({ name: result[0], value: result[1] });
+      }
+
+      try {
+        const fileStream = await getObjectFromS3(proposal.fileName);        
+        parsedInfo = await parseProposal(fileStream);        
+        applicationId = parsedInfo['applicationId'];
+        applicantName = parsedInfo['applicantName'];
+        projectTitle = parsedInfo['projectTitle'];
+      } 
+      catch (err) {              
+        throw Boom.badRequest('Unable to parse proposal file because ' + err.message);
+      }
+
+      const keysToRemove = ['applicationId', 'applicantName', 'projectTitle'];
+      for (const key of keysToRemove) {
+        delete parsedInfo[key];  
+      }      
+      for (const key in parsedInfo) {
+        if (key === 'details' && parsedInfo[key]) {
+          const subTitles = ['Background and Rationale', 'Specific Aims', 'Methods', 'Sample Size Calculations'];
+          let text = parsedInfo[key];
+          parsedInfo[key] = {};         
+          for (let i=0; i<subTitles.length; ++i) {
+            if (i !== subTitles.length-1) {
+              parsedInfo[key][subTitles[i]] = (text.split(subTitles[i])[1]).split(subTitles[i+1])[0];  
+            }
+            else {
+              parsedInfo[key][subTitles[i]] = text.split(subTitles[i])[1]; 
+            }
+          }          
+        }
+        else if (parsedInfo[key]) {
+          parsedInfo[key] = parsedInfo[key].split('\n');           
+        }       
+      }
+      
       return h.view("proposals/review", {
         user: request.auth.credentials.user,
         projectName: Config.get("/projectName"),
@@ -33,8 +102,14 @@ const register = function (server, options) {
         baseUrl: Config.get("/baseUrl"),
         proposal,
         feedback,
-        reviewedDateString: feedback ? feedback.createdAt.toString() : null,
+        reviewers,
+        results,
+        parsedInfo,
+        applicationId,
+        applicantName,
+        projectTitle,        
         isReviewed: feedback ? true : false,
+        isDecided: Boolean(proposal.reviewStatus),
       });
     },
   });
@@ -83,12 +158,8 @@ const register = function (server, options) {
         let start;
         let end;
         if (request.query["uploadedAt"].includes(":")) {
-          start = new Date(
-            request.query["uploadedAt"].split(":")[0]
-          ).toISOString();
-          end = new Date(
-            request.query["uploadedAt"].split(":")[1]
-          ).toISOString();
+          start = new Date(request.query["uploadedAt"].split(":")[0]).toISOString();
+          end = new Date(request.query["uploadedAt"].split(":")[1]).toISOString();
         } else {
           const date = new Date(request.query["uploadedAt"]);
           start = date.toISOString();
@@ -131,14 +202,16 @@ const register = function (server, options) {
       };
 
       let reviewers;
-      if (user.roles.reviewer) { //get proposals that are assigned to the reviwer        
-        request.query.reviewerIds = user._id.toString(); 
+      if (user.roles.reviewer) {
+        //get proposals that are assigned to the reviwer
+        request.query.reviewerIds = user._id.toString();
       }
 
-      if (user.roles.chair) { //get proposals with feasibility status of approved when user is chair        
-        request.query.feasibilityStatus = 'Feasibility Checked'; 
+      if (user.roles.chair) {
+        //get proposals with feasibility status of approved when user is chair
+        request.query.feasibilityStatus = "Feasibility Checked";
         //get list of all available reviewers to be assigned a proposal
-        reviewers = await User.find({roles : {reviewer: true}});
+        reviewers = await User.find({ roles: { reviewer: true } });
       }
 
       const result = await Proposal.pagedLookup(
@@ -149,8 +222,7 @@ const register = function (server, options) {
         Proposal.lookups
       );
 
-
-      //attach list of full reviewers object to proposals 
+      //attach list of full reviewers object to proposals
       for (const proposal of result.data) {
         proposal.assignedReviewers = [];
         for (const id of proposal.reviewerIds) {
@@ -163,11 +235,23 @@ const register = function (server, options) {
 
       //logic for hasfeeback need to change here
       for (const proposal of result.data) {
-        const feedbackCnt = await Feedback.count({
+        const feedbacks = await Feedback.find({
           proposalId: proposal._id.toString(),
-          userId: user._id.toString(),
         });
-        proposal.hasFeedback = feedbackCnt > 0;
+
+        if (user.roles.chair) {
+          proposal.hasFeedback = feedbacks.length === proposal.reviewerIds.length;
+          proposal.hasFeedback &= Boolean(proposal.reviewerIds.length);
+        } else if (user.roles.reviewer) {
+          for (const feedback of feedbacks) {
+            if (feedback.userId.toString() === user._id.toString()) {
+              proposal.hasFeedback = true;
+              break;
+            }
+          }
+        } else {
+          proposal.hasFeedback = false;
+        }
       }
 
       return h.view("proposals/submissions-list", {
@@ -183,11 +267,49 @@ const register = function (server, options) {
         totalNumPages: result.pages.total,
         total: result.items.total,
         notDatatableView: true,
-        reviewers        
+        reviewers,
       });
     },
   });
 };
+
+async function parseProposal(fileStream) { 
+  
+  return new Promise((resolve, reject) => { 
+    PDFParse(fileStream).then(function(data) {       
+      const parsedInfo = Proposal.parse(data.text, data.numpages);     
+      resolve(parsedInfo);               
+    })
+    .catch(function(error){
+      reject(error);
+    });     
+  });
+}
+
+async function getObjectFromS3(fileName) {
+
+  const s3 = new AWS.S3({
+    accessKeyId: Config.get('/S3/accessKeyId'),
+    secretAccessKey: Config.get('/S3/secretAccessKey')
+  });
+  
+  const params = {
+    Bucket: Config.get('/S3/bucketName'),
+    Key: fileName
+  };
+
+  return new Promise((resolve, reject) => {    
+    s3.getObject(params, (s3Err, data) => {          
+      if (s3Err) {        
+        reject(s3Err);      
+      }
+      else {        
+        resolve(data.Body);  
+      }   
+    });  
+  });  
+}
+
 
 module.exports = {
   name: "proposal",
