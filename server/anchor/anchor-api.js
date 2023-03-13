@@ -131,7 +131,6 @@ const register = function (server,serverOptions) {
           
           const model = request.pre.model;
           const joiSchema = model.routes.create.payload;
-          //console.log(JoiToJson(joiSchema));
           const obj = joiSchema.validate(request.payload);
           
           if (obj.error) {
@@ -264,7 +263,6 @@ const register = function (server,serverOptions) {
       }]
     },
     handler: async function (request,h) {
-      console.log('Handler here');
       return await request.pre.model.routes.insertMany.handler(request,h);
     }
 
