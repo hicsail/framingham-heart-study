@@ -135,7 +135,7 @@ const config = {
       production: process.env.S3_SECRET_ACCESS_KEY, 
       local: process.env.S3_SECRET_ACCESS_KEY,     
       $default: ''
-    } 
+    }
   }
 };
 
