@@ -20,6 +20,12 @@ class Proposal extends AnchorModel {
       reviewStatus: null,
       reviewComment: null,
       reviewDate: null,
+      postReviewInfo: {
+        tissueInPreparation: false,
+        tissueShipped: false,
+        brainDataReturned: false,
+        clinicalDataTransfered: false
+      }
     });
     return this.insertOne(document);
   }
@@ -29,6 +35,13 @@ class Proposal extends AnchorModel {
       Assert.ok(doc.userId, "Missing userId argument.");
       Assert.ok(doc.fileName, "Missing file name argument.");
 
+      const postReviewInfo =  {
+        tissueInPreparation: false,
+        tissueShipped: false,
+        brainDataReturned: false,
+        clinicalDataTransfered: false
+      };
+
       doc.reviewerIds = [];
       doc.feasibilityStatus = this.status.PENDING;
       doc.feasibilityReviewerId = null;
@@ -37,6 +50,7 @@ class Proposal extends AnchorModel {
       doc.reviewComment = null;
       doc.reviewDate = null;
       doc.groupId = doc.groupId ? doc.groupId : null;
+      doc.postReviewInfo = postReviewInfo;
     }
 
     const files = await this.insertMany(docs);
@@ -186,6 +200,12 @@ Proposal.schema = Joi.object({
   createdAt: Joi.date().required(),
   feasibilityReviewDate: Joi.date().required(),
   reviewDate: Joi.date().required(),
+  postReviewInfo: Joi.object({
+    tissueInPreparation: Joi.boolean().required(),
+    tissueShipped: Joi.boolean().required(),
+    brainDataReturned: Joi.boolean().required(),
+    clinicalDataTransfered: Joi.boolean().required()   
+  }).required()
 });
 
 Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
@@ -208,6 +228,13 @@ Proposal.payload = Joi.object({
   feasibilityStatus: Joi.string()
     .valid(Proposal.status.APPROVED, Proposal.status.REJECTED)
     .required(),
+});
+
+Proposal.postReviewInfoPayload = Joi.object({
+  tissueInPreparation: Joi.boolean().optional(),
+  tissueShipped: Joi.boolean().optional(),
+  brainDataReturned: Joi.boolean().optional(),
+  clinicalDataTransfered: Joi.boolean().optional()    
 });
 
 Proposal.lookups = [
