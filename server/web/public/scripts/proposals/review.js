@@ -31,7 +31,7 @@ for (const decision of document.getElementsByName("decision")) {
 //   }
 // });
 
-function submitPopup(isChair) {
+function submitPopup(finalDecisionMode) {
   const textarea = document.querySelectorAll("textarea");
 
   for (const element of textarea) {
@@ -49,9 +49,12 @@ function submitPopup(isChair) {
     return;
   }
 
-  if (isChair) $("#submit-review-modal").modal("show");
-  else $("#submit-feedback-modal").modal("show");
-
+  if (finalDecisionMode) {
+    $("#submit-review-modal").modal("show");
+  }
+  else {
+    $("#submit-feedback-modal").modal("show");
+  }
   return;
 }
 

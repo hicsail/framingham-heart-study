@@ -7,9 +7,9 @@
         <h3 class="text-center font-weight-bold">Framingham Heart Study Brain Tissue Request Review</h3>
         <p class="text-center">Application ID: {{applicationId}}</p>
         <br>
-        
+
         <h4 class="text-center font-weight-bold">
-          Project Title: {{projectTitle}}
+          Project Title: {{projectTitle}}          
           {{#ifEquals proposal.reviewStatus 'Approve'}}
             <span class="badge badge-pill badge-success">Approved</span>
           {{/ifEquals}}
@@ -17,7 +17,7 @@
             <span class="badge badge-pill badge-danger">Rejected</span>
           {{/ifEquals}}
           {{#ifEquals proposal.reviewStatus 'Revise'}}
-            <span class="badge badge-pill badge-wanrning">Revise Reuqested</span>
+            <span class="badge badge-pill badge-warning">Revise Reuqested</span>
           {{/ifEquals}} 
         </h4>       
         
@@ -63,13 +63,13 @@
         </div>
         <br><br>        
         <div class="row">
-          {{#if user.roles.chair}}
-            {{#each results as |result|}}
+          {{#if finalDecisionMode}}
+            {{#each decisionTagDict}}
               <div class="col" style="margin-bottom:10px">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title text-center">{{result.name}}</h4>
-                    <h5 class="card-text text-center">{{result.value}}</h5>
+                    <h4 class="card-title text-center">{{@key}}</h4>
+                    <h5 class="card-text text-center">{{this}}</h5>
                   </div>
                 </div>
               </div>
@@ -187,7 +187,7 @@
                   </div>
                 </div><br>
 
-                {{#if user.roles.chair}}
+                {{#if finalDecisionMode}}                  
                   <hr>
                   <h5>Final Decision</h5>
                   <div class="row">
@@ -210,7 +210,7 @@
                       <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/submissions'">Back</button>
                     {{else}}
                       <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#discard-review-modal">Discard</button>
-                      <button type="button" class="btn btn-primary" onclick="submitPopup(Boolean({{user.roles.chair}}))">Submit</button>
+                      <button type="button" class="btn btn-primary" onclick="submitPopup(Boolean({{finalDecisionMode}}))">Submit</button>
                     {{/if}}
                   </div>
                 {{else}}
@@ -219,7 +219,7 @@
                       <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/submissions'">Back</button>
                     {{else}}
                       <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#discard-review-modal">Discard</button>
-                      <button type="button" class="btn btn-primary" onclick="submitPopup(Boolean({{user.roles.chair}}))">Submit</button>
+                      <button type="button" class="btn btn-primary" onclick="submitPopup(Boolean({{finalDecisionMode}}))">Submit</button>
                     {{/if}}
                   </div>
                 {{/if}}

@@ -77,7 +77,7 @@
                                                 View My Feedback
                                             </button>
                                         {{else}}
-                                            <button type="button" class="btn btn-info" onclick="location.href='../../proposals/review/{{proposal._id}}'">
+                                            <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}'">
                                                 Review
                                             </button>
                                         {{/if}}
@@ -110,8 +110,14 @@
                                             <div class="btn-group" role="group">
                                                 {{#if proposal.hasFeedback}}
                                                     <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}/'">
-                                                        Review Proposal
+                                                        Final Review Proposal
                                                     </button>
+                                                {{else}}
+                                                    {{#if proposal.isAssignedToChair}}
+                                                        <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}'">
+                                                            Review
+                                                        </button>
+                                                    {{/if}}
                                                 {{/if}}                                                 
                                                 <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#reviewersList-{{_id}}">
                                                     See Reviewers

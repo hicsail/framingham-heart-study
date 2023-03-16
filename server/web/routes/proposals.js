@@ -23,43 +23,52 @@ const register = function (server, options) {
       const proposalId = request.params.proposalId;
       const reviewerId = request.params.reviewerId ? request.params.reviewerId : null;
       const proposal = await Proposal.lookupById(proposalId, Proposal.lookups);
+      //this is the mode when chair can switch between all reviewers feedbacks and submit final decision
+      let  finalDecisionMode = false;  
+
+      if (!proposal) {
+        throw Boom.notFound('Unable to find proposal!');
+      }
       let parsedInfo;
       let applicationId;
       let applicantName;
       let projectTitle;
+      let feedbacks;
+      let decisionTagDict = {};
 
       let feedback = null;
-      let reviewers = [];
+      let reviewers = [];        
 
-      if (user.roles.reviewer) {
+      if (user.roles.chair && !finalDecisionMode) {
+        for (const decision of Object.keys(Feedback.status)) {
+          decisionTagDict[Feedback.status[decision]] = 0;
+        }
+        feedbacks = await Feedback.find({ proposalId: proposalId.toString() });
+        if (proposal.reviewerIds.length === feedbacks.length) {
+          finalDecisionMode = true;
+        }
+        feedback = feedbacks[0];
+        for (const fb of feedbacks) {
+          if (fb.userId === reviewerId) {
+            feedback = fb;
+          }
+
+          decisionTagDict[fb.decisionTag] += 1;
+          const reviewer = await User.findById(fb.userId);
+          reviewers.push(reviewer);
+        }
+      }
+      /*const results = [];
+      for (const result of Object.entries(resultsDict)) {
+        results.push({ name: result[0], value: result[1] });
+      }*/
+
+      if (!finalDecisionMode) {
         feedback = await Feedback.findOne({
           proposalId: proposalId.toString(),
           userId: user._id.toString(),
         });
-      }
-
-      const resultsDict = {};
-      for (const decision of Object.keys(Feedback.status)) {
-        resultsDict[Feedback.status[decision]] = 0;
-      }
-
-      if (user.roles.chair) {
-        const feedbacks = await Feedback.find({ proposalId: proposalId.toString() });
-        feedback = feedbacks[0];
-        for (let idx = 0; idx < feedbacks.length; idx++) {
-          if (feedbacks[idx].userId === reviewerId) {
-            feedback = feedbacks[idx];
-          }
-
-          resultsDict[feedbacks[idx].decisionTag] += 1;
-          const reviewer = await User.findById(feedbacks[idx].userId);
-          reviewers.push(reviewer);
-        }
-      }
-      const results = [];
-      for (const result of Object.entries(resultsDict)) {
-        results.push({ name: result[0], value: result[1] });
-      }
+      }    
 
       try {
         const fileStream = await getObjectFromS3(proposal.fileName);        
@@ -103,13 +112,14 @@ const register = function (server, options) {
         proposal,
         feedback,
         reviewers,
-        results,
+        decisionTagDict,
         parsedInfo,
         applicationId,
         applicantName,
-        projectTitle,        
+        projectTitle, 
+        finalDecisionMode,       
         isReviewed: feedback ? true : false,
-        isDecided: Boolean(proposal.reviewStatus),
+        isDecided: Boolean(proposal.reviewStatus)        
       });
     },
   });
@@ -210,8 +220,8 @@ const register = function (server, options) {
       if (user.roles.chair) {
         //get proposals with feasibility status of approved when user is chair
         request.query.feasibilityStatus = "Feasibility Checked";
-        //get list of all available reviewers to be assigned a proposal
-        reviewers = await User.find({ roles: { reviewer: true } });
+        //get list of all available reviewers and chair as default options for reviewers 
+        reviewers = await User.find({ $or:[{ roles: { reviewer: true } }, { roles: { chair: true } } ]});
       }
 
       const result = await Proposal.pagedLookup(
@@ -240,6 +250,7 @@ const register = function (server, options) {
         if (user.roles.chair) {
           proposal.hasFeedback = feedbacks.length === proposal.reviewerIds.length;
           proposal.hasFeedback &= Boolean(proposal.reviewerIds.length);
+          proposal.isAssignedToChair = proposal.reviewerIds.includes(user._id.toString());
         } else if (user.roles.reviewer) {
           for (const feedback of feedbacks) {
             if (feedback.userId.toString() === user._id.toString()) {
