@@ -14,16 +14,11 @@ $(document).ready(() => {
   });
 });
 
-function onCheckboxClicked(cb, id) {
-  let userRole = $(cb).attr("id");
-  if (cb.checked) {
-    promote(id, userRole)
-    $(cb).prop("checked", true);
-  }
-  else{
-    demote(id, userRole)
-    $(cb).prop("checked", false);
-  }
+function onCheckboxClicked(elem, userId) {
+  
+  const groupName = $(elem).attr("name");  
+  const role = $("input[name='" + groupName + "']").filter(":checked").val();
+  promote(userId, role);  
 }
 
 function promote(id, role) {
@@ -40,6 +35,7 @@ function changeRole(id, role, method) {
     type: method,
     success: function (result) {
       successAlert('User Role Successfully Updated');
+      location.reload();
     },
     error: function (result) {
       errorAlert(result.responseJSON.message);
