@@ -73,9 +73,9 @@ const register = function (server, options) {
       try {
         const fileStream = await getObjectFromS3(proposal.fileName);        
         parsedInfo = await parseProposal(fileStream);        
-        applicationId = parsedInfo['applicationId'];
-        applicantName = parsedInfo['applicantName'];
-        projectTitle = parsedInfo['projectTitle'];
+        applicationId = proposal['parsingResults'] && proposal['parsingResults']['applicationId'] ? proposal['parsingResults']['applicationId'] : parsedInfo['applicationId'];
+        applicantName = proposal['parsingResults'] && proposal['parsingResults']['applicantName'] ? proposal['parsingResults']['applicantName'] : parsedInfo['applicantName'];
+        projectTitle = proposal['parsingResults'] && proposal['parsingResults']['projectTitle'] ? proposal['parsingResults']['projectTitle'] : parsedInfo['projectTitle'];
       } 
       catch (err) {              
         throw Boom.badRequest('Unable to parse proposal file because ' + err.message);
@@ -88,7 +88,7 @@ const register = function (server, options) {
       for (const key in parsedInfo) {
         if (key === 'details' && parsedInfo[key]) {
           const subTitles = ['Background and Rationale', 'Specific Aims', 'Methods', 'Sample Size Calculations'];
-          let text = parsedInfo[key];
+          let text = proposal['parsingResults'] && proposal['parsingResults']['details'] ? proposal['parsingResults']['details'] : parsedInfo[key];
           parsedInfo[key] = {};         
           for (let i=0; i<subTitles.length; ++i) {
             if (i !== subTitles.length-1) {
@@ -100,7 +100,7 @@ const register = function (server, options) {
           }          
         }
         else if (parsedInfo[key]) {
-          parsedInfo[key] = parsedInfo[key].split('\n');           
+          parsedInfo[key] = proposal['parsingResults'] && proposal['parsingResults'][key] ? proposal['parsingResults'][key] : parsedInfo[key].split('\n');           
         }       
       }
       
