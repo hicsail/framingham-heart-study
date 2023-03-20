@@ -4,7 +4,6 @@ const APPROVED = "Feasibility Checked";
 const REJECTED = "Revise Requested";
 
 function updateFeasibilityStatus(proposalId, approved) {
-  
   const status = approved ? APPROVED : REJECTED;
   $.ajax({
     type: "PUT",
@@ -12,7 +11,7 @@ function updateFeasibilityStatus(proposalId, approved) {
     contentType: "application/json",
     data: JSON.stringify({ feasibilityStatus: status }),
     success: function (result) {
-      location.reload();      
+      location.reload();
     },
     error: function (result) {
       errorAlert(result.responseJSON.message);
@@ -20,20 +19,19 @@ function updateFeasibilityStatus(proposalId, approved) {
   });
 }
 
-function assignReviewer(proposalId){
-
-  const values = $("#reviewerSelect-" + proposalId).val();  
+function assignReviewer(proposalId) {
+  const values = $("#reviewerSelect-" + proposalId).val();
   $.ajax({
-      type: 'PUT',
-      url: '/api/proposals/assign-reviewer/' + proposalId,
-      contentType: "application/json",
-      data: JSON.stringify({ reviewerIds: values }),
-      success: function (result) {
-          successAlert('Successfully assigned a reviewer');
-          location.reload();
-      },
-      error: function (result) {
-          errorAlert(result.responseJSON.message);
-      }
-  }); 
+    type: "PUT",
+    url: "/api/proposals/assign-reviewer/" + proposalId,
+    contentType: "application/json",
+    data: JSON.stringify({ reviewerIds: values }),
+    success: function (result) {
+      successAlert("Successfully assigned a reviewer");
+      location.reload();
+    },
+    error: function (result) {
+      errorAlert(result.responseJSON.message);
+    },
+  });
 }

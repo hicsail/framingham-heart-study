@@ -14,6 +14,7 @@ class Proposal extends AnchorModel {
       userId: doc.userId, //userId of the person who uploads the doc
       groupId: doc.groupId ? doc.groupId : null, // we link proposals (revised ones) using groupId
       reviewerIds: [], // list of assigned reviwers
+      reviewerAssignmentDate: null,
       feasibilityStatus: this.status.PENDING,
       feasibilityReviewDate: null,
       feasibilityReviewerId: null,
@@ -44,6 +45,7 @@ class Proposal extends AnchorModel {
       };
 
       doc.reviewerIds = [];
+      doc.reviewerAssignmentDate = null;
       doc.feasibilityStatus = this.status.PENDING;
       doc.feasibilityReviewerId = null;
       doc.feasibilityReviewDate = null;
