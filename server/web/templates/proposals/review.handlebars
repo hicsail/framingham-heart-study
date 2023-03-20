@@ -10,20 +10,20 @@
 
         <h4 class="text-center font-weight-bold">
           Project Title: {{projectTitle}}          
-          {{#ifEquals proposal.reviewStatus 'Approve'}}
+          {{#ifEquals proposal.finalReviewStatus 'Approve'}}
             <span class="badge badge-pill badge-success">Approved</span>
           {{/ifEquals}}
-          {{#ifEquals proposal.reviewStatus 'Reject'}}
+          {{#ifEquals proposal.finalReviewStatus 'Reject'}}
             <span class="badge badge-pill badge-danger">Rejected</span>
           {{/ifEquals}}
-          {{#ifEquals proposal.reviewStatus 'Revise'}}
+          {{#ifEquals proposal.finalReviewStatus 'Revise'}}
             <span class="badge badge-pill badge-warning">Revise Reuqested</span>
           {{/ifEquals}} 
         </h4>       
         
         <h3 class="text-center">Applicant Name: {{applicantName}}</h3>
         {{#if isDecided}}
-          <p class="text-secondary font-italic text-center">Decision made at {{formatDate proposal.reviewDate}}</p>
+          <p class="text-secondary font-italic text-center">Decision made at {{formatDate proposal.finalReviewDate}}</p>
         {{/if}}        
         <div class="row">
           <div class="col">
@@ -192,7 +192,7 @@
                   <h5>Final Decision</h5>
                   <div class="row">
                     <div class="col-sm-8">
-                      <textarea chair-input="true" class="form-control" rows="5" id="final-decision-comment" placeholder="Comments">{{proposal.reviewComment}}</textarea>
+                      <textarea chair-input="true" class="form-control" rows="5" id="final-decision-comment" placeholder="Comments">{{proposal.finalReviewComment}}</textarea>
                     </div>
                     <div class="col-sm-4">
                       <form>
@@ -320,7 +320,7 @@
         input.disabled = true;
       });
 
-      document.querySelector('input[value="{{proposal.reviewStatus}}"][chair-input]').checked = true;
+      document.querySelector('input[value="{{proposal.finalReviewStatus}}"][chair-input]').checked = true;
     }
   }
 

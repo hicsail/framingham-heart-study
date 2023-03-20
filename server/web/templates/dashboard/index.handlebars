@@ -22,7 +22,7 @@
               {{#each proposals as |proposal|}}
                 <tr>
                   <td>{{fileName}}</td> 
-                  <td>{{formatDate reviewDate}}</td>
+                  <td>{{formatDate finalReviewDate}}</td>
                   <td>
                     <div class="form-check ml-4">
                       <input type="checkbox" class="form-check-input" id="tissue-prep-{{_id}}" onchange="onchangeTissuePrep(this, '{{_id}}')" {{#if postReviewInfo.tissueInPreparation}}checked{{/if}}>

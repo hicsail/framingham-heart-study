@@ -15,10 +15,9 @@ const register = function (server, options) {
       },
     },
     handler: async function (request, h) {
-    
       const user = request.auth.credentials.user;
-      const approvedProposals = await Proposal.find({reviewStatus: 'Approve'});
-      
+      const approvedProposals = await Proposal.find({ finalReviewStatus: "Approve" });
+
       return h.view("dashboard/index", {
         user,
         proposals: approvedProposals,
