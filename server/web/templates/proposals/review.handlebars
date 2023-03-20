@@ -9,7 +9,7 @@
         <br>
 
         <h4 class="text-center font-weight-bold">
-          Project Title: {{projectTitle}}          
+          Project Title: <a href="/api/S3/getObject/{{proposal.fileName}}">{{projectTitle}}</a>
           {{#ifEquals proposal.finalReviewStatus 'Approve'}}
             <span class="badge badge-pill badge-success">Approved</span>
           {{/ifEquals}}
