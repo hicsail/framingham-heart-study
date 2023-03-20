@@ -5,8 +5,8 @@ const Feedback = require('../models/feedback');
 const User = require('../models/user');
 const Mailer = require('../mailer');
 const Config = require('../../config');
-var addDays = require('date-fns/addDays')
-var format = require('date-fns/format')
+var addDays = require('date-fns/addDays');
+var format = require('date-fns/format');
 
 const register = function (server, options) {  
 
@@ -55,7 +55,7 @@ const register = function (server, options) {
         }
       
       /*
-        Case for when Chair finalizes decision for a proposal. Not done. Feature not implemented yet
+        Case for when Chair finalizes decision for a proposal. 
       */ 
         if(template === 'chair-finalized-decision'){
             subject = 'BROC Chair has finalized decision';
@@ -146,14 +146,14 @@ const register = function (server, options) {
       /*
         Case for when a file is uploaded by coordinator
       */
-        if(template === 'proposal-upload'){
+        if(template === 'proposal-upload'){      
             const filesNames = request.payload.fileNames;
             subject = 'New proposal has been uploaded';
             const fileNameStr = filesNames.join(', ');
             emailOptions = {
                 subject: subject,
                 to: {
-                    address: Config.get('/EmailList/proposalUpload')
+                  address: Config.get('/EmailList/proposalUpload')
                 },
                 cc: Config.get('/EmailList/ccAddress')
             };
@@ -166,8 +166,7 @@ const register = function (server, options) {
             await Mailer.sendEmail(emailOptions, template, emailTemplateData);
         }catch (err) {
             request.log(['mailer', 'error'], err);
-        }     
-
+        }
       return ({ message: 'Success'});      
     }
   });   
