@@ -141,7 +141,7 @@ const register = function (server, options) {
       const user = request.auth.credentials.user;
       const proposals = await Proposal.lookup({}, Proposal.lookups);
 
-      return h.view("proposals/reviewer-upload", {
+      return h.view("proposals/coordinator-upload", {
         user: request.auth.credentials.user,
         projectName: Config.get("/projectName"),
         title: "Reviewer Upload",
