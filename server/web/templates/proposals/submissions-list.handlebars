@@ -19,6 +19,9 @@
                                         <span class="badge badge-pill {{statusBadgeClass feasibilityStatus 'badge'}}">
                                             {{feasibilityStatus}}
                                         </span>
+                                        <span class="badge badge-pill {{statusBadgeClass finalReviewStatus 'badge'}}">
+                                            {{finalReviewStatus}}
+                                        </span>
                                     </h5>
                                     <h6>Uploaded on {{formatDate createdAt}} by {{user.name}}</h6>
                                     {{#if feasibilityReviewDate}}
