@@ -215,9 +215,11 @@ Proposal.schema = Joi.object({
 
 Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
   create: {
+    scope: ["coordinator", "root"],
     payload: Joi.object({
       userId: Joi.string().required(),
       fileName: Joi.string().required(),
+      groupId: Joi.string().optional(),
     }),
   },
   insertMany: {

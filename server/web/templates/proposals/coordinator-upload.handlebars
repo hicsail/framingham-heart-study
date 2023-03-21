@@ -57,7 +57,15 @@
                   <td><span class="badge badge-info">{{feasibilityStatus}}</span></td>
                   <td><span class="badge badge-info">{{finalReviewStatus}}</span></td>
                   <td><button class="btn btn-danger" onClick="onClickDeleteFile('{{fileName}}', '{{_id}}')" data-toggle="modal" data-target="#delete-file-modal" {{#ifNotEquals userId ../user._id}}disabled{{/ifNotEquals}}>Delete</button></td>
-                  <td>{{#ifEquals finalReviewStatus "Revise"}}<button class="btn btn-primary" onClick="">Re-upload</button>{{/ifEquals}}</td>
+                  <td>{{#ifEquals finalReviewStatus "Revise"}}<button class="btn btn-primary" onClick="onClickReuploadFile()">Re-upload</button>{{/ifEquals}}</td>
+                  <input
+                    class="btn btn-sm btn-light d-none"
+                    type="file"
+                    id="reupload-file-input"
+                    name="proposalFile"
+                    accept="application/pdf"
+                    onchange="reuploadFile(this,'{{../user._id}}', '{{_id}}')"
+                  />
                 </tr>
               {{/each}}
             </table>
