@@ -63,7 +63,7 @@ async function uploadFile(elem, userId) {
   });
 }
 
-async function reuploadFile(element, userId, proposalId) {
+async function reuploadFile(element, userId, groupId, proposalId) {
   const file = $(element).prop("files")[0];
   const formData = new FormData();
   formData.append("file", file);
@@ -87,7 +87,8 @@ async function reuploadFile(element, userId, proposalId) {
     const payload = {
       userId, //userId of the person who uploads the doc
       fileName: call.fileName,
-      groupId: proposalId,
+      groupId: groupId ? groupId : proposalId,
+      parentId: proposalId,
     };
 
     $.ajax({
@@ -112,8 +113,10 @@ function onClickUploadFile() {
   $("#proposal-file-input").click();
 }
 
-function onClickReuploadFile() {
-  $("#reupload-file-input").click();
+function onClickReuploadFile(proposalId) {
+  console.log(proposalId);
+  console.log($(`#reupload-file-input-${proposalId}`));
+  $(`#reupload-file-input-${proposalId}`).click();
 }
 
 function deleteFile() {
