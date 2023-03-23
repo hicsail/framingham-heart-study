@@ -12,7 +12,7 @@ All designated reviewers have submitted their reviews for FHS proposal name "{{f
 <br>
 {{COICount}} Conflict of Interest
 
-Please log into the BROC review system URL to review their comments and finalize the decision.
+Please log into the BROC review system {{loginURL}} to review their comments and finalize the decision.
 
 Thank you,
 Brain Repository Oversight Committee (BROC)

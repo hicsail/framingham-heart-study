@@ -1,6 +1,6 @@
 Hi,
 
-BROC has reviewed the proposal "{{fileName}}". Based on the reviewers' comments (refer to attached), the decision was made: {{finalizedReviewStatus}}
+BROC has reviewed the proposal "{{fileName}}". Based on the reviewers' comments, the decision was made: {{finalizedReviewStatus}}
 
 
 {{additionalComments}}
