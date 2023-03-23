@@ -67,6 +67,7 @@ async function uploadFile(elem, userId) {
 
 function sendEmail(filesPayload){
   let fileNameArr = [];
+  const proposalId = filesPayload[0]._id
   filesPayload.forEach(element => {
     fileNameArr.push(element.fileName)
   });
@@ -77,7 +78,7 @@ function sendEmail(filesPayload){
   
   $.ajax({
     type: 'POST',
-    url: '/api/email/',
+    url: '/api/email/' + proposalId,
     contentType: 'application/json',
     data: JSON.stringify(payload),
     success: function (result) {

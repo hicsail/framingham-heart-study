@@ -128,7 +128,7 @@ function sendEmail(proposalId, template){
   }
   $.ajax({ 
     type: 'POST',
-    url: '/api/email/',
+    url: '/api/email/' + proposalId,
     contentType: 'application/json',
     data: JSON.stringify(payload),
     success: function (result) {

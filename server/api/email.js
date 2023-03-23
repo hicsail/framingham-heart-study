@@ -12,7 +12,7 @@ const register = function (server, options) {
 
   server.route({
     method: 'POST',
-    path: '/api/email/',
+    path: '/api/email/{proposalId}',
     options: {
       auth: {
         strategies: ['simple', 'session'],
@@ -21,6 +21,8 @@ const register = function (server, options) {
     },      
     handler: async function (request, h) {
     
+      const proposalId = request.params.proposalId;
+      const proposalDoc = await Proposal.findById(proposalId); 
       let template = request.payload.templateName;
       let subject;  
       let emailOptions;         
@@ -31,11 +33,10 @@ const register = function (server, options) {
       */
         if(template === 'reviewers-to-review-proposal'){
             subject = 'You have been assigned to review a proposal';
-            const proposalDoc = await Proposal.findById(request.payload.proposalId); 
             const reviewerIds = proposalDoc.reviewerIds;
             var reviewerEmails = [];
-            for(let id in reviewerIds){
-                const reviewer = await User.findById(reviewerIds[id]);
+            for(const id of reviewerIds){
+                const reviewer = await User.findById(id);
                 reviewerEmails.push(reviewer.email);
             }
             const today = new Date();
@@ -50,7 +51,8 @@ const register = function (server, options) {
             };
             emailTemplateData = {
                 fileName: proposalDoc.fileName, // only a single file name
-                daysAfter: daysAfter.toString()
+                dueDate: daysAfter.toString(),
+                loginURL: Config.get('/baseUrl') + 'login'
             };
         }
       
@@ -59,7 +61,6 @@ const register = function (server, options) {
       */ 
         if(template === 'chair-finalized-decision'){
             subject = 'BROC Chair has finalized decision';
-            const proposalDoc = await Proposal.findById(request.payload.proposalId);
             const finalizedReviewStatus = proposalDoc.reviewStatus;
             const additionalComments = proposalDoc.reviewComment;
             emailOptions = {
@@ -72,7 +73,8 @@ const register = function (server, options) {
             emailTemplateData = {
                 fileName: request.payload.fileName, // only a single file name
                 finalizedReviewStatus, // get from proposal model
-                additionalComments // get from proposal model
+                additionalComments, // get from proposal model
+                loginURL: Config.get('/baseUrl') + 'login'
             };
         }
 
@@ -83,7 +85,6 @@ const register = function (server, options) {
             const proposalId = request.payload.proposalId
             const feedbackDocs = await Feedback.find({proposalId: proposalId});
             const feedbackCount = feedbackDocs.length;
-            const proposalDoc = await Proposal.findById(proposalId);
             const reviewerCount = proposalDoc.reviewerIds.length;
             let approveCount = 0;
             let revisionCount = 0;
@@ -135,7 +136,8 @@ const register = function (server, options) {
                     revisionCount,
                     rejectCount,
                     abstentionCount,
-                    COICount
+                    COICount,
+                    loginURL: Config.get('/baseUrl') + 'login'
                 };
             }else{
                 return 0; 
@@ -158,7 +160,8 @@ const register = function (server, options) {
                 cc: Config.get('/EmailList/ccAddress')
             };
             emailTemplateData = {
-                'fileNames': fileNameStr
+                'fileNames': fileNameStr,
+                loginURL: Config.get('/baseUrl') + 'login'
             };
         }
 
