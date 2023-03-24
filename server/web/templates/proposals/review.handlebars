@@ -5,11 +5,11 @@
       <div style="padding: 30px">        
         <br>
         <h3 class="text-center font-weight-bold">Framingham Heart Study Brain Tissue Request Review</h3>
-        <p class="text-center">Application ID: {{applicationId}}</p>
+        <p class="text-center">Application ID: {{parsedInfo.applicationId}}</p>
         <br>
 
         <h4 class="text-center font-weight-bold">
-          Project Title: {{projectTitle}}
+          Project Title: {{parsedInfo.projectTitle}}
           {{#ifEquals proposal.finalReviewStatus 'Approve'}}
             <span class="badge badge-pill badge-success">Approved</span>
           {{/ifEquals}}
@@ -21,7 +21,7 @@
           {{/ifEquals}} 
         </h4>       
         
-        <h3 class="text-center">Applicant Name: {{applicantName}}</h3>
+        <h3 class="text-center">Applicant Name: {{parsedInfo.applicantName}}</h3>
         {{#if isDecided}}
           <p class="text-secondary font-italic text-center">Decision made at {{formatDate proposal.finalReviewDate}}</p>
         {{/if}}        
@@ -42,7 +42,7 @@
               {{#each parsedInfo}}                
                 <div class="card tab-pane fade {{#ifEquals @key 'details'}} show in active {{/ifEquals}}" id='{{@key}}' role="tabpanel">                
                   <div class="card-body" style="max-height: 400px; overflow-y:auto;">
-                    <h5 class="card-title"></h5>
+                    <h5 class="card-title"></h5>                    
                     {{#if this}}                  
                       {{#each this}}
                         {{#ifEquals @../key 'details'}}

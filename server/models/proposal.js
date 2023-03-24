@@ -28,8 +28,16 @@ class Proposal extends AnchorModel {
         tissueInPreparation: false,
         tissueShipped: false,
         brainDataReturned: false,
-        clinicalDataTransfered: false,
+        clinicalDataTransfered: false
       },
+      parsingResults: {
+        applicantName: null,
+        applicationId: null,
+        projectTitle: null,
+        details: null,
+        conflict: null,
+        funding: null  
+      }
     });
 
     if (document.parentId) {
@@ -48,8 +56,17 @@ class Proposal extends AnchorModel {
         tissueInPreparation: false,
         tissueShipped: false,
         brainDataReturned: false,
-        clinicalDataTransfered: false,
+        clinicalDataTransfered: false
       };
+
+      const parsingResults = {
+        applicantName: null,
+        applicationId: null,
+        projectTitle: null,
+        details: null,
+        conflict: null,
+        funding: null  
+      };     
 
       doc.reviewerIds = [];
       doc.reviewerAssignmentDate = null;
@@ -64,6 +81,7 @@ class Proposal extends AnchorModel {
       doc.groupId = doc.groupId ? doc.groupId : null;
       doc.parentId = doc.parentId ? doc.parentId : null;
       doc.postReviewInfo = postReviewInfo;
+      doc.parsingResults = parsingResults;
     }
 
     const files = await this.insertMany(docs);
@@ -220,7 +238,14 @@ Proposal.schema = Joi.object({
     tissueInPreparation: Joi.boolean().required(),
     tissueShipped: Joi.boolean().required(),
     brainDataReturned: Joi.boolean().required(),
-    clinicalDataTransfered: Joi.boolean().required(),
+    clinicalDataTransfered: Joi.boolean().required()   
+  parsingResults: Joi.object({
+    applicantName: Joi.string().required(),
+    applicationId: Joi.string().required(),
+    projectTitle: Joi.string().required(),
+    details: Joi.string().required(),
+    conflict: Joi.string().required() ,
+    funding: Joi.string().optional().allow(null).allow('')    
   }).required(),
 });
 
@@ -255,6 +280,15 @@ Proposal.postReviewInfoPayload = Joi.object({
   brainDataReturned: Joi.boolean().optional(),
   clinicalDataTransfered: Joi.boolean().optional(),
 });
+
+Proposal.parsingResultsPayload = Joi.object({
+  applicantName: Joi.string().required(),
+  applicationId: Joi.string().required(),
+  projectTitle: Joi.string().required(),
+  details: Joi.string().required(),
+  conflict: Joi.string().required(),
+  funding: Joi.string().optional().allow(null).allow(''),
+}),
 
 Proposal.lookups = [
   {
