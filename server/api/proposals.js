@@ -192,27 +192,8 @@ const register = function (server, options) {
       } 
       catch (err) {              
         throw Boom.badRequest('Unable to parse proposal file because ' + err.message);
-      }
-          
-      /*for (const key in parsingResults) {
-        if (key === 'details' && parsingResults[key]) {
-          const subTitles = ['Background and Rationale', 'Specific Aims', 'Methods', 'Sample Size Calculations'];
-          let text = parsingResults[key];
-          parsingResults[key] = {};         
-          for (let i=0; i<subTitles.length; ++i) {
-            if (i !== subTitles.length-1) {
-              parsingResults[key][subTitles[i]] = (text.split(subTitles[i])[1]).split(subTitles[i+1])[0];  
-            }
-            else {
-              parsingResults[key][subTitles[i]] = text.split(subTitles[i])[1]; 
-            }
-          }          
-        }
-        else if (parsingResults[key]) {
-          parsingResults[key] = parsingResults[key];           
-        }       
-      }*/     
-
+      }         
+      
       return { message: "Success", 
               proposal: proposal, 
               parsingResults:parsingResults 
