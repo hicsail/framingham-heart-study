@@ -5,8 +5,8 @@ const Proposal = require("../../models/proposal");
 const User = require("../../models/user");
 const Feedback = require("../../models/feedback");
 const ObjectId = require("mongodb").ObjectID;
-const AWS = require('aws-sdk');
-const PDFParse = require('pdf-parse');
+const AWS = require("aws-sdk");
+const PDFParse = require("pdf-parse");
 
 const register = function (server, options) {
   server.route({
@@ -24,10 +24,10 @@ const register = function (server, options) {
       const reviewerId = request.params.reviewerId ? request.params.reviewerId : null;
       const proposal = await Proposal.lookupById(proposalId, Proposal.lookups);
       //this is the mode when chair can switch between all reviewers feedbacks and submit final decision
-      let  finalDecisionMode = false;  
+      let finalDecisionMode = false;
 
       if (!proposal) {
-        throw Boom.notFound('Unable to find proposal!');
+        throw Boom.notFound("Unable to find proposal!");
       }
       let parsedInfo;
       let applicationId;
@@ -37,7 +37,7 @@ const register = function (server, options) {
       let decisionTagDict = {};
 
       let feedback = null;
-      let reviewers = [];        
+      let reviewers = [];
 
       if (user.roles.chair && !finalDecisionMode) {
         for (const decision of Object.keys(Feedback.status)) {
@@ -68,42 +68,46 @@ const register = function (server, options) {
           proposalId: proposalId.toString(),
           userId: user._id.toString(),
         });
-      }    
+      }
 
       try {
-        const fileStream = await getObjectFromS3(proposal.fileName);        
-        parsedInfo = await parseProposal(fileStream);        
-        applicationId = parsedInfo['applicationId'];
-        applicantName = parsedInfo['applicantName'];
-        projectTitle = parsedInfo['projectTitle'];
-      } 
-      catch (err) {              
-        throw Boom.badRequest('Unable to parse proposal file because ' + err.message);
+        const fileStream = await getObjectFromS3(proposal.fileName);
+        parsedInfo = await parseProposal(fileStream);
+        applicationId = parsedInfo["applicationId"];
+        applicantName = parsedInfo["applicantName"];
+        projectTitle = parsedInfo["projectTitle"];
+      } catch (err) {
+        throw Boom.badRequest("Unable to parse proposal file because " + err.message);
       }
 
-      const keysToRemove = ['applicationId', 'applicantName', 'projectTitle'];
+      const keysToRemove = ["applicationId", "applicantName", "projectTitle"];
       for (const key of keysToRemove) {
-        delete parsedInfo[key];  
-      }      
-      for (const key in parsedInfo) {
-        if (key === 'details' && parsedInfo[key]) {
-          const subTitles = ['Background and Rationale', 'Specific Aims', 'Methods', 'Sample Size Calculations'];
-          let text = parsedInfo[key];
-          parsedInfo[key] = {};         
-          for (let i=0; i<subTitles.length; ++i) {
-            if (i !== subTitles.length-1) {
-              parsedInfo[key][subTitles[i]] = (text.split(subTitles[i])[1]).split(subTitles[i+1])[0];  
-            }
-            else {
-              parsedInfo[key][subTitles[i]] = text.split(subTitles[i])[1]; 
-            }
-          }          
-        }
-        else if (parsedInfo[key]) {
-          parsedInfo[key] = parsedInfo[key].split('\n');           
-        }       
+        delete parsedInfo[key];
       }
-      
+      for (const key in parsedInfo) {
+        if (key === "details" && parsedInfo[key]) {
+          const subTitles = [
+            "Background and Rationale",
+            "Specific Aims",
+            "Methods",
+            "Sample Size Calculations",
+          ];
+          let text = parsedInfo[key];
+          parsedInfo[key] = {};
+          for (let i = 0; i < subTitles.length; ++i) {
+            if (i !== subTitles.length - 1) {
+              parsedInfo[key][subTitles[i]] = text
+                .split(subTitles[i])[1]
+                .split(subTitles[i + 1])[0];
+            } else {
+              parsedInfo[key][subTitles[i]] = text.split(subTitles[i])[1];
+            }
+          }
+        } else if (parsedInfo[key]) {
+          parsedInfo[key] = parsedInfo[key].split("\n");
+        }
+      }
+
       return h.view("proposals/review", {
         user: request.auth.credentials.user,
         projectName: Config.get("/projectName"),
@@ -116,10 +120,10 @@ const register = function (server, options) {
         parsedInfo,
         applicationId,
         applicantName,
-        projectTitle, 
-        finalDecisionMode,       
+        projectTitle,
+        finalDecisionMode,
         isReviewed: feedback ? true : false,
-        isDecided: Boolean(proposal.reviewStatus)        
+        isDecided: Boolean(proposal.reviewStatus),
       });
     },
   });
@@ -220,8 +224,10 @@ const register = function (server, options) {
       if (user.roles.chair) {
         //get proposals with feasibility status of approved when user is chair
         request.query.feasibilityStatus = "Feasibility Checked";
-        //get list of all available reviewers and chair as default options for reviewers 
-        reviewers = await User.find({ $or:[{ roles: { reviewer: true } }, { roles: { chair: true } } ]});
+        //get list of all available reviewers and chair as default options for reviewers
+        reviewers = await User.find({
+          $or: [{ roles: { reviewer: true } }, { roles: { chair: true } }],
+        });
       }
 
       const result = await Proposal.pagedLookup(
@@ -251,6 +257,7 @@ const register = function (server, options) {
           proposal.hasFeedback = feedbacks.length === proposal.reviewerIds.length;
           proposal.hasFeedback &= Boolean(proposal.reviewerIds.length);
           proposal.isAssignedToChair = proposal.reviewerIds.includes(user._id.toString());
+          proposal.history = await findAllProposalsInSameGroup(proposal);
         } else if (user.roles.reviewer) {
           for (const feedback of feedbacks) {
             if (feedback.userId.toString() === user._id.toString()) {
@@ -282,43 +289,89 @@ const register = function (server, options) {
   });
 };
 
-async function parseProposal(fileStream) { 
-  
-  return new Promise((resolve, reject) => { 
-    PDFParse(fileStream).then(function(data) {       
-      const parsedInfo = Proposal.parse(data.text, data.numpages);     
-      resolve(parsedInfo);               
-    })
-    .catch(function(error){
-      reject(error);
-    });     
+async function parseProposal(fileStream) {
+  return new Promise((resolve, reject) => {
+    PDFParse(fileStream)
+      .then(function (data) {
+        const parsedInfo = Proposal.parse(data.text, data.numpages);
+        resolve(parsedInfo);
+      })
+      .catch(function (error) {
+        reject(error);
+      });
   });
 }
 
 async function getObjectFromS3(fileName) {
-
   const s3 = new AWS.S3({
-    accessKeyId: Config.get('/S3/accessKeyId'),
-    secretAccessKey: Config.get('/S3/secretAccessKey')
+    accessKeyId: Config.get("/S3/accessKeyId"),
+    secretAccessKey: Config.get("/S3/secretAccessKey"),
   });
-  
+
   const params = {
-    Bucket: Config.get('/S3/bucketName'),
-    Key: fileName
+    Bucket: Config.get("/S3/bucketName"),
+    Key: fileName,
   };
 
-  return new Promise((resolve, reject) => {    
-    s3.getObject(params, (s3Err, data) => {          
-      if (s3Err) {        
-        reject(s3Err);      
+  return new Promise((resolve, reject) => {
+    s3.getObject(params, (s3Err, data) => {
+      if (s3Err) {
+        reject(s3Err);
+      } else {
+        resolve(data.Body);
       }
-      else {        
-        resolve(data.Body);  
-      }   
-    });  
-  });  
+    });
+  });
 }
 
+async function findAllProposalsInSameGroup(proposal, includeSelf = false) {
+  const history = [];
+  let original = null;
+  if (proposal.hasChild || proposal.parentId) {
+    // find all revised proposals
+    const revisedProposal = await Proposal.find({
+      groupId: proposal.groupId ? proposal.groupId : proposal._id.toString(),
+    });
+
+    if (proposal.groupId) {
+      // if current proposal is a revised proposal, add the original proposal to the list
+      console.log(`current proposal is a revised proposal`);
+      original = await Proposal.findById(proposal.groupId);
+    } else {
+      // if current proposal is the original proposal, add itself to the list
+      console.log(`current proposal is the original proposal`);
+      original = proposal;
+    }
+
+    revisedProposal.push(original);
+
+    for (const prop of revisedProposal) {
+      if (!includeSelf && prop._id.toString() === proposal._id.toString()) continue;
+
+      history.push({
+        id: prop._id.toString(),
+        fileName: prop.fileName,
+        date: prop.createdAt,
+        dateString: prop.createdAt.toDateString(),
+      });
+    }
+
+    history.sort((a, b) => {
+      return b.date - a.date;
+    });
+  } else original = proposal;
+
+  return {
+    list: history,
+    hasHistory: history.length > Number(includeSelf),
+    original: {
+      id: original._id.toString(),
+      fileName: original.fileName,
+      date: original.createdAt,
+      dateString: original.createdAt.toDateString(),
+    },
+  };
+}
 
 module.exports = {
   name: "proposal",
