@@ -1,5 +1,6 @@
 'use strict';
 const Boom = require('boom');
+const Joi = require('joi');
 const Proposal = require('../models/proposal');
 const Feedback = require('../models/feedback');
 const User = require('../models/user');
@@ -18,9 +19,9 @@ const register = function (server, options) {
         strategies: ['simple', 'session'],
         scope: ['reviewer', 'root', 'coordinator', 'chair']
       },
-      validation: {
+      validate: {
         payload: {
-          templateName : Joi.string().required(),
+          templateName : Joi.string().valid(['reviewers-to-review-proposal', 'chair-finalized-decision', 'all-reviews-submitted', 'proposal-upload']).required(),
           fileName: Joi.string()
 
         }

@@ -52,7 +52,6 @@ async function uploadFile(elem, userId) {
                 data: JSON.stringify(filesPayload),
                 success: function (result) {                                       
                     successAlert('Files uploaded');
-                    //send another ajax call?
                     sendEmail(filesPayload);
                     location.reload();
                 },
@@ -67,7 +66,7 @@ async function uploadFile(elem, userId) {
 
 function sendEmail(filesPayload){
   let fileNameArr = [];
-  const proposalId = filesPayload[0]._id
+  const proposalId = filesPayload[0].userId;
   filesPayload.forEach(element => {
     fileNameArr.push(element.fileName)
   });

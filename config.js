@@ -64,7 +64,8 @@ const config = {
     autoIndex: true
   },
   nodemailer: {
-    host: 'smtp.gmail.com',
+    host: 'smtp.office365.com',    
+    service: 'Outlook365',
     port: 465,
     secure: true,
     auth: {
