@@ -361,6 +361,7 @@ async function findAllProposalsInSameGroup(proposal, includeSelf = false) {
   return {
     list: history,
     hasHistory: history.length > Number(includeSelf),
+    isOriginal: proposal._id.toString() === original._id.toString(),
     original: {
       id: original._id.toString(),
       fileName: original.fileName,
