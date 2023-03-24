@@ -17,6 +17,13 @@ const register = function (server, options) {
       auth: {
         strategies: ['simple', 'session'],
         scope: ['reviewer', 'root', 'coordinator', 'chair']
+      },
+      validation: {
+        payload: {
+          templateName : Joi.string().required(),
+          fileName: Joi.string()
+
+        }
       }      
     },      
     handler: async function (request, h) {
@@ -71,7 +78,7 @@ const register = function (server, options) {
                 cc: Config.get('/EmailList/ccAddress')
             };
             emailTemplateData = {
-                fileName: request.payload.fileName, // only a single file name
+                fileName: proposalDoc.fileName, // only a single file name
                 finalizedReviewStatus, // get from proposal model
                 additionalComments, // get from proposal model
                 loginURL: Config.get('/baseUrl') + 'login'
@@ -82,7 +89,6 @@ const register = function (server, options) {
         Case for when all reviewers has submit their reviews. Emails sent to BROC Chair
        */
         if(template === 'all-reviews-submitted'){
-            const proposalId = request.payload.proposalId
             const feedbackDocs = await Feedback.find({proposalId: proposalId});
             const feedbackCount = feedbackDocs.length;
             const reviewerCount = proposalDoc.reviewerIds.length;
@@ -149,9 +155,8 @@ const register = function (server, options) {
         Case for when a file is uploaded by coordinator
       */
         if(template === 'proposal-upload'){      
-            const filesNames = request.payload.fileNames;
+            const fileName = request.payload.fileName; //can be multiple file names
             subject = 'New proposal has been uploaded';
-            const fileNameStr = filesNames.join(', ');
             emailOptions = {
                 subject: subject,
                 to: {
@@ -160,7 +165,7 @@ const register = function (server, options) {
                 cc: Config.get('/EmailList/ccAddress')
             };
             emailTemplateData = {
-                'fileNames': fileNameStr,
+                fileName,
                 loginURL: Config.get('/baseUrl') + 'login'
             };
         }

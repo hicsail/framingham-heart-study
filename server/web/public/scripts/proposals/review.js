@@ -124,7 +124,7 @@ function submitReview(proposalId) {
 function sendEmail(proposalId, template){
   const payload = {
     templateName: template,
-    proposalId,
+    fileName: ''
   }
   $.ajax({ 
     type: 'POST',

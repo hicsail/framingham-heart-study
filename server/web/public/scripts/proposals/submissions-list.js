@@ -42,7 +42,7 @@ function assignReviewer(proposalId){
 function sendEmail(proposalId){
   const payload = {
     templateName: 'reviewers-to-review-proposal',
-    proposalId,
+    fileName: ''
   }
   $.ajax({
     type: 'POST',

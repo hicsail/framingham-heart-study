@@ -73,7 +73,7 @@ function sendEmail(filesPayload){
   });
   const payload = {
     templateName: 'proposal-upload',
-    fileNames: fileNameArr
+    fileName: fileNameArr.join(', ')
   }
   
   $.ajax({
