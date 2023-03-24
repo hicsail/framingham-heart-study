@@ -28,7 +28,7 @@ class Proposal extends AnchorModel {
         tissueInPreparation: false,
         tissueShipped: false,
         brainDataReturned: false,
-        clinicalDataTransfered: false
+        clinicalDataTransfered: false,
       },
       parsingResults: {
         applicantName: null,
@@ -36,8 +36,8 @@ class Proposal extends AnchorModel {
         projectTitle: null,
         details: null,
         conflict: null,
-        funding: null  
-      }
+        funding: null,
+      },
     });
 
     if (document.parentId) {
@@ -56,7 +56,7 @@ class Proposal extends AnchorModel {
         tissueInPreparation: false,
         tissueShipped: false,
         brainDataReturned: false,
-        clinicalDataTransfered: false
+        clinicalDataTransfered: false,
       };
 
       const parsingResults = {
@@ -65,8 +65,8 @@ class Proposal extends AnchorModel {
         projectTitle: null,
         details: null,
         conflict: null,
-        funding: null  
-      };     
+        funding: null,
+      };
 
       doc.reviewerIds = [];
       doc.reviewerAssignmentDate = null;
@@ -238,15 +238,16 @@ Proposal.schema = Joi.object({
     tissueInPreparation: Joi.boolean().required(),
     tissueShipped: Joi.boolean().required(),
     brainDataReturned: Joi.boolean().required(),
-    clinicalDataTransfered: Joi.boolean().required()   
-  parsingResults: Joi.object({
-    applicantName: Joi.string().required(),
-    applicationId: Joi.string().required(),
-    projectTitle: Joi.string().required(),
-    details: Joi.string().required(),
-    conflict: Joi.string().required() ,
-    funding: Joi.string().optional().allow(null).allow('')    
-  }).required(),
+    clinicalDataTransfered: Joi.boolean().required(),
+    parsingResults: Joi.object({
+      applicantName: Joi.string().required(),
+      applicationId: Joi.string().required(),
+      projectTitle: Joi.string().required(),
+      details: Joi.string().required(),
+      conflict: Joi.string().required(),
+      funding: Joi.string().optional().allow(null).allow(""),
+    }).required(),
+  }),
 });
 
 Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
@@ -281,37 +282,36 @@ Proposal.postReviewInfoPayload = Joi.object({
   clinicalDataTransfered: Joi.boolean().optional(),
 });
 
-Proposal.parsingResultsPayload = Joi.object({
+(Proposal.parsingResultsPayload = Joi.object({
   applicantName: Joi.string().required(),
   applicationId: Joi.string().required(),
   projectTitle: Joi.string().required(),
   details: Joi.string().required(),
   conflict: Joi.string().required(),
-  funding: Joi.string().optional().allow(null).allow(''),
-}),
-
-Proposal.lookups = [
-  {
-    from: require("./user"),
-    local: "userId",
-    foreign: "_id",
-    as: "user",
-    one: true,
-  },
-  {
-    from: require("./user"),
-    local: "feasibilityReviewerId",
-    foreign: "_id",
-    as: "feasibilityReviewer",
-    one: true,
-  },
-  {
-    from: require("./user"),
-    local: "finalReviewerId",
-    foreign: "_id",
-    as: "finalReviewer",
-    one: true,
-  },
-];
+  funding: Joi.string().optional().allow(null).allow(""),
+})),
+  (Proposal.lookups = [
+    {
+      from: require("./user"),
+      local: "userId",
+      foreign: "_id",
+      as: "user",
+      one: true,
+    },
+    {
+      from: require("./user"),
+      local: "feasibilityReviewerId",
+      foreign: "_id",
+      as: "feasibilityReviewer",
+      one: true,
+    },
+    {
+      from: require("./user"),
+      local: "finalReviewerId",
+      foreign: "_id",
+      as: "finalReviewer",
+      one: true,
+    },
+  ]);
 
 module.exports = Proposal;
