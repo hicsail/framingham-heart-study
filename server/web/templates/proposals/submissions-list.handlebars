@@ -154,20 +154,21 @@
                                         <div class="bottom-right">
                                         {{#and history.hasHistory hasFeedback}}
                                             <button class="btn btn-primary dropdown-toggle" type="button" id="proposal-history" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Other Versions
+                                                {{#ifNotEquals ../history.original.id proposal._id}}
+                                                    All proposals
+                                                {{else}}
+                                                    Revised proposals
+                                                {{/ifNotEquals}}
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="proposal-history">
+                                                {{#ifNotEquals ../history.original.id proposal._id}}
+                                                    <a class="dropdown-item" href="/api/S3/getObject/{{../../history.original.fileName}}">{{../../history.original.fileName}} (Uploaded on {{../../history.original.dateString}})</a>
+                                                    <div class="dropdown-divider"></div>
+                                                {{/ifNotEquals}}
                                                 {{#each ../history.list as |prop|}}
                                                     <a class="dropdown-item" href="/api/S3/getObject/{{prop.fileName}}">{{prop.fileName}} (Uploaded on {{prop.dateString}})</a>
                                                 {{/each}}
                                             </div>
-                                            {{#ifNotEquals ../history.original.id proposal._id}}
-                                                <a href="/api/S3/getObject/{{../../history.original.fileName}}">
-                                                    <button class="btn btn-secondary">
-                                                        Original Version
-                                                    </button>
-                                                </a>
-                                            {{/ifNotEquals}}
                                         {{/and}}
                                         </div>
                                     {{/if}}                        

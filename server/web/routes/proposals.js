@@ -342,8 +342,6 @@ async function findAllProposalsInSameGroup(proposal, includeSelf = false) {
       original = proposal;
     }
 
-    revisedProposal.push(original);
-
     for (const prop of revisedProposal) {
       if (!includeSelf && prop._id.toString() === proposal._id.toString()) continue;
 
