@@ -4,7 +4,12 @@ const User = require('../../models/user');
 module.exports = (postReviewInfo, key, options) => { //Only enable a check box if all its prev checkboxes are checked 
 
 	if (!postReviewInfo) {
-		return options.fn(this);	
+		if (key === 'tissueInPreparation') {
+			return options.fn(this);	
+		}
+		else {
+			return options.inverse(this);	
+		}			
 	}
 	let disabled = false;
 	const orders = ['tissueInPreparation', 
