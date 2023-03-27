@@ -5,6 +5,7 @@
       <div style="padding: 30px">
         <h3 class="font-weight-bold" style="font-size:1.8em;">Hello, {{user.name}}!</h3>
         <br>
+        {{#if user.roles.coordinator}}
         <h4>Table for approved proposals (manual tracking)</h4>
         <div class="card mt-2">
           <div style="padding: 20px;">
@@ -58,6 +59,7 @@
             </table>
           </div>
         </div>
+        {{/if}}
        </div>
     </div>
   </div>

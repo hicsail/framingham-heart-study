@@ -14,8 +14,8 @@ const register = function (server, options) {
         //scope: PermissionConfigTable.GET['/dashboard'] || DefaultScopes
       },
     },
-    handler: async function (request, h) {
-    
+    handler: async function (request, h) {  
+
       const user = request.auth.credentials.user;
       const approvedProposals = await Proposal.find({reviewStatus: 'Approve'});
       
