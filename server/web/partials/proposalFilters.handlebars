@@ -81,12 +81,27 @@
         data-live-search="true"
         data-style="btn-white"
       >
-        <option value="All">Filter By Status (All)</option>
+        <option value="All">Filter By Feasibility Status (All)</option>
         <option value="Pending">Pending</option>
         <option value="Feasibility Checked">Feasibility Checked</option>
         <option value="Revise Requested">Revise Requested</option>
       </select>
     </div>
+    {{#if user.roles.chair}}
+    <div class="col">
+      <select
+        class="selectpicker"
+        id="finalReviewStatus"
+        data-live-search="true"
+        data-style="btn-white"
+      >
+        <option value="All">Filter By Final Review Status (All)</option>
+        <option value="Approve">Approve</option>
+        <option value="Revise">Revise</option>
+        <option value="Reject">Reject</option>
+      </select>
+    </div>
+    {{/if}}
   </div>
       <br>
     <div class="row ml-2 mr-2">
