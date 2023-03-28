@@ -29,14 +29,7 @@ const register = function (server, options) {
       if (!proposal) {
         throw Boom.notFound("Unable to find proposal!");
       }
-      let parsedInfo = {
-        details: null,
-        funding: null,
-        conflict: null,
-        applicationId: null,
-        applicantName: null,
-        projectTitle: null,
-      };
+      let parsedInfo;
       let applicationId;
       let applicantName;
       let projectTitle;
@@ -65,6 +58,10 @@ const register = function (server, options) {
           reviewers.push(reviewer);
         }
       }
+      /*const results = [];
+      for (const result of Object.entries(resultsDict)) {
+        results.push({ name: result[0], value: result[1] });
+      }*/
 
       if (!finalDecisionMode) {
         feedback = await Feedback.findOne({
@@ -76,16 +73,18 @@ const register = function (server, options) {
       try {
         const fileStream = await getObjectFromS3(proposal.fileName);
         parsedInfo = await parseProposal(fileStream);
+        applicationId = parsedInfo["applicationId"];
+        applicantName = parsedInfo["applicantName"];
+        projectTitle = parsedInfo["projectTitle"];
       } catch (err) {
-        console.log("Unable to parse proposal file because " + err.message);
+        throw Boom.badRequest("Unable to parse proposal file because " + err.message);
       }
 
+      const keysToRemove = ["applicationId", "applicantName", "projectTitle"];
+      for (const key of keysToRemove) {
+        delete parsedInfo[key];
+      }
       for (const key in parsedInfo) {
-        //check to see if coordinator has updated parsing results in proposal collection
-        if (proposal["parsingResults"] && proposal["parsingResults"][key]) {
-          parsedInfo[key] = proposal["parsingResults"][key];
-        }
-        let text = parsedInfo[key];
         if (key === "details" && parsedInfo[key]) {
           const subTitles = [
             "Background and Rationale",
@@ -93,6 +92,7 @@ const register = function (server, options) {
             "Methods",
             "Sample Size Calculations",
           ];
+          let text = parsedInfo[key];
           parsedInfo[key] = {};
           for (let i = 0; i < subTitles.length; ++i) {
             if (i !== subTitles.length - 1) {
@@ -105,8 +105,6 @@ const register = function (server, options) {
           }
         } else if (parsedInfo[key]) {
           parsedInfo[key] = parsedInfo[key].split("\n");
-        } else if (parsedInfo[key]) {
-          parsedInfo[key] = text.split("\n");
         }
       }
 
@@ -120,6 +118,9 @@ const register = function (server, options) {
         reviewers,
         decisionTagDict,
         parsedInfo,
+        applicationId,
+        applicantName,
+        projectTitle,
         finalDecisionMode,
         isReviewed: feedback ? true : false,
         isDecided: Boolean(proposal.reviewStatus),

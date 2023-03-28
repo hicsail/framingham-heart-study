@@ -25,14 +25,6 @@ class Proposal extends AnchorModel {
         tissueShipped: false,
         brainDataReturned: false,
         clinicalDataTransfered: false
-      },
-      parsingResults: {
-        applicantName: null,
-        applicationId: null,
-        projectTitle: null,
-        details: null,
-        conflict: null,
-        funding: null  
       }
     });
     return this.insertOne(document);
@@ -50,15 +42,6 @@ class Proposal extends AnchorModel {
         clinicalDataTransfered: false
       };
 
-      const parsingResults = {
-        applicantName: null,
-        applicationId: null,
-        projectTitle: null,
-        details: null,
-        conflict: null,
-        funding: null  
-      };     
-
       doc.reviewerIds = [];
       doc.feasibilityStatus = this.status.PENDING;
       doc.feasibilityReviewerId = null;
@@ -68,7 +51,6 @@ class Proposal extends AnchorModel {
       doc.reviewDate = null;
       doc.groupId = doc.groupId ? doc.groupId : null;
       doc.postReviewInfo = postReviewInfo;
-      doc.parsingResults = parsingResults;
     }
 
     const files = await this.insertMany(docs);
@@ -223,15 +205,7 @@ Proposal.schema = Joi.object({
     tissueShipped: Joi.boolean().required(),
     brainDataReturned: Joi.boolean().required(),
     clinicalDataTransfered: Joi.boolean().required()   
-  }).required(),
-  parsingResults: Joi.object({
-    applicantName: Joi.string().required(),
-    applicationId: Joi.string().required(),
-    projectTitle: Joi.string().required(),
-    details: Joi.string().required(),
-    conflict: Joi.string().required() ,
-    funding: Joi.string().optional().allow(null).allow('')    
-  }).required(),
+  }).required()
 });
 
 Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
@@ -262,15 +236,6 @@ Proposal.postReviewInfoPayload = Joi.object({
   brainDataReturned: Joi.boolean().optional(),
   clinicalDataTransfered: Joi.boolean().optional()    
 });
-
-Proposal.parsingResultsPayload = Joi.object({
-  applicantName: Joi.string().required(),
-  applicationId: Joi.string().required(),
-  projectTitle: Joi.string().required(),
-  details: Joi.string().required(),
-  conflict: Joi.string().required(),
-  funding: Joi.string().optional().allow(null).allow(''),
-}),
 
 Proposal.lookups = [
   {

@@ -33,9 +33,6 @@
                                 <div class="col-md-4 text-right">
                                     {{#if ../user.roles.coordinator}}
                                         <div class="btn-group float-right" role="group">
-                                            <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#parsing-results-modal" onclick="onclickParsingResultsModal('{{_id}}')">
-                                                Edit Parsing Resutls
-                                            </button>
                                             {{#ifNotEquals feasibilityStatus 'Feasibility Checked'}}
                                                 <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#feasibility-modal-{{../_id}}">
                                                 Approve Feasibility
@@ -183,10 +180,7 @@
                             </div>
                             <hr />
                         </div>
-                        {{/each}} 
-                        <!-- parsing modal-->
-                        {{> parsingResultsEditModal}}
-
+                        {{/each}}   
                     </div>
                 </div>               
             </div>            
