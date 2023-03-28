@@ -5,8 +5,8 @@ const Proposal = require("../../models/proposal");
 const User = require("../../models/user");
 const Feedback = require("../../models/feedback");
 const ObjectId = require("mongodb").ObjectID;
-const AWS = require('aws-sdk');
-const PDFParse = require('pdf-parse');
+const AWS = require("aws-sdk");
+const PDFParse = require("pdf-parse");
 
 const register = function (server, options) {
   server.route({
@@ -24,18 +24,19 @@ const register = function (server, options) {
       const reviewerId = request.params.reviewerId ? request.params.reviewerId : null;
       const proposal = await Proposal.lookupById(proposalId, Proposal.lookups);
       //this is the mode when chair can switch between all reviewers feedbacks and submit final decision
-      let  finalDecisionMode = false;  
+      let finalDecisionMode = false;
 
       if (!proposal) {
-        throw Boom.notFound('Unable to find proposal!');
+        throw Boom.notFound("Unable to find proposal!");
       }
-      let parsedInfo = {'details': null, 
-                        'funding': null, 
-                        'conflict': null,
-                        'applicationId': null,
-                        'applicantName': null,
-                        'projectTitle': null
-                      };
+      let parsedInfo = {
+        details: null,
+        funding: null,
+        conflict: null,
+        applicationId: null,
+        applicantName: null,
+        projectTitle: null,
+      };
       let applicationId;
       let applicantName;
       let projectTitle;
@@ -43,7 +44,7 @@ const register = function (server, options) {
       let decisionTagDict = {};
 
       let feedback = null;
-      let reviewers = [];        
+      let reviewers = [];
 
       if (user.roles.chair && !finalDecisionMode) {
         for (const decision of Object.keys(Feedback.status)) {
@@ -63,46 +64,52 @@ const register = function (server, options) {
           const reviewer = await User.findById(fb.userId);
           reviewers.push(reviewer);
         }
-      }      
+      }
 
       if (!finalDecisionMode) {
         feedback = await Feedback.findOne({
           proposalId: proposalId.toString(),
           userId: user._id.toString(),
         });
-      }    
+      }
 
       try {
-        const fileStream = await getObjectFromS3(proposal.fileName);        
-        parsedInfo = await parseProposal(fileStream);      
-      } 
-      catch (err) {              
-        console.log('Unable to parse proposal file because ' + err.message);
-      }     
+        const fileStream = await getObjectFromS3(proposal.fileName);
+        parsedInfo = await parseProposal(fileStream);
+      } catch (err) {
+        console.log("Unable to parse proposal file because " + err.message);
+      }
 
       for (const key in parsedInfo) {
         //check to see if coordinator has updated parsing results in proposal collection
-        if (proposal['parsingResults'] && proposal['parsingResults'][key]) {
-          parsedInfo[key] = proposal['parsingResults'][key];
+        if (proposal["parsingResults"] && proposal["parsingResults"][key]) {
+          parsedInfo[key] = proposal["parsingResults"][key];
         }
         let text = parsedInfo[key];
-        if (key === 'details' && parsedInfo[key]) {
-          const subTitles = ['Background and Rationale', 'Specific Aims', 'Methods', 'Sample Size Calculations'];
-          parsedInfo[key] = {};         
-          for (let i=0; i<subTitles.length; ++i) {
-            if (i !== subTitles.length-1) {
-              parsedInfo[key][subTitles[i]] = (text.split(subTitles[i])[1]).split(subTitles[i+1])[0];  
+        if (key === "details" && parsedInfo[key]) {
+          const subTitles = [
+            "Background and Rationale",
+            "Specific Aims",
+            "Methods",
+            "Sample Size Calculations",
+          ];
+          parsedInfo[key] = {};
+          for (let i = 0; i < subTitles.length; ++i) {
+            if (i !== subTitles.length - 1) {
+              parsedInfo[key][subTitles[i]] = text
+                .split(subTitles[i])[1]
+                .split(subTitles[i + 1])[0];
+            } else {
+              parsedInfo[key][subTitles[i]] = text.split(subTitles[i])[1];
             }
-            else {
-              parsedInfo[key][subTitles[i]] = text.split(subTitles[i])[1]; 
-            }
-          }          
+          }
+        } else if (parsedInfo[key]) {
+          parsedInfo[key] = parsedInfo[key].split("\n");
+        } else if (parsedInfo[key]) {
+          parsedInfo[key] = text.split("\n");
         }
-        else if (parsedInfo[key]){          
-          parsedInfo[key] = text.split('\n');           
-        }       
       }
-      
+
       return h.view("proposals/review", {
         user: request.auth.credentials.user,
         projectName: Config.get("/projectName"),
@@ -112,10 +119,10 @@ const register = function (server, options) {
         feedback,
         reviewers,
         decisionTagDict,
-        parsedInfo,        
-        finalDecisionMode,       
+        parsedInfo,
+        finalDecisionMode,
         isReviewed: feedback ? true : false,
-        isDecided: Boolean(proposal.reviewStatus)        
+        isDecided: Boolean(proposal.finalReviewStatus),
       });
     },
   });
@@ -133,7 +140,7 @@ const register = function (server, options) {
       const user = request.auth.credentials.user;
       const proposals = await Proposal.lookup({}, Proposal.lookups);
 
-      return h.view("proposals/reviewer-upload", {
+      return h.view("proposals/coordinator-upload", {
         user: request.auth.credentials.user,
         projectName: Config.get("/projectName"),
         title: "Reviewer Upload",
@@ -216,8 +223,10 @@ const register = function (server, options) {
       if (user.roles.chair) {
         //get proposals with feasibility status of approved when user is chair
         request.query.feasibilityStatus = "Feasibility Checked";
-        //get list of all available reviewers and chair as default options for reviewers 
-        reviewers = await User.find({ $or:[{ roles: { reviewer: true } }, { roles: { chair: true } } ]});
+        //get list of all available reviewers and chair as default options for reviewers
+        reviewers = await User.find({
+          $or: [{ roles: { reviewer: true } }, { roles: { chair: true } }],
+        });
       }
 
       const result = await Proposal.pagedLookup(
@@ -278,43 +287,40 @@ const register = function (server, options) {
   });
 };
 
-async function parseProposal(fileStream) { 
-  
-  return new Promise((resolve, reject) => { 
-    PDFParse(fileStream).then(function(data) {       
-      const parsedInfo = Proposal.parse(data.text, data.numpages);     
-      resolve(parsedInfo);               
-    })
-    .catch(function(error){
-      reject(error);
-    });     
+async function parseProposal(fileStream) {
+  return new Promise((resolve, reject) => {
+    PDFParse(fileStream)
+      .then(function (data) {
+        const parsedInfo = Proposal.parse(data.text, data.numpages);
+        resolve(parsedInfo);
+      })
+      .catch(function (error) {
+        reject(error);
+      });
   });
 }
 
 async function getObjectFromS3(fileName) {
-
   const s3 = new AWS.S3({
-    accessKeyId: Config.get('/S3/accessKeyId'),
-    secretAccessKey: Config.get('/S3/secretAccessKey')
+    accessKeyId: Config.get("/S3/accessKeyId"),
+    secretAccessKey: Config.get("/S3/secretAccessKey"),
   });
-  
+
   const params = {
-    Bucket: Config.get('/S3/bucketName'),
-    Key: fileName
+    Bucket: Config.get("/S3/bucketName"),
+    Key: fileName,
   };
 
-  return new Promise((resolve, reject) => {    
-    s3.getObject(params, (s3Err, data) => {          
-      if (s3Err) {        
-        reject(s3Err);      
+  return new Promise((resolve, reject) => {
+    s3.getObject(params, (s3Err, data) => {
+      if (s3Err) {
+        reject(s3Err);
+      } else {
+        resolve(data.Body);
       }
-      else {        
-        resolve(data.Body);  
-      }   
-    });  
-  });  
+    });
+  });
 }
-
 
 module.exports = {
   name: "proposal",

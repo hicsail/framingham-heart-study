@@ -9,21 +9,21 @@
         <br>
 
         <h4 class="text-center font-weight-bold">
-          Project Title: {{parsedInfo.projectTitle}}          
-          {{#ifEquals proposal.reviewStatus 'Approve'}}
+          Project Title: {{parsedInfo.projectTitle}}
+          {{#ifEquals proposal.finalReviewStatus 'Approve'}}
             <span class="badge badge-pill badge-success">Approved</span>
           {{/ifEquals}}
-          {{#ifEquals proposal.reviewStatus 'Reject'}}
+          {{#ifEquals proposal.finalReviewStatus 'Reject'}}
             <span class="badge badge-pill badge-danger">Rejected</span>
           {{/ifEquals}}
-          {{#ifEquals proposal.reviewStatus 'Revise'}}
-            <span class="badge badge-pill badge-warning">Revise Reuqested</span>
+          {{#ifEquals proposal.finalReviewStatus 'Revise'}}
+            <span class="badge badge-pill badge-warning">Revise Requested</span>
           {{/ifEquals}} 
         </h4>       
         
         <h3 class="text-center">Applicant Name: {{parsedInfo.applicantName}}</h3>
         {{#if isDecided}}
-          <p class="text-secondary font-italic text-center">Decision made at {{formatDate proposal.reviewDate}}</p>
+          <p class="text-secondary font-italic text-center">Decision made at {{formatDate proposal.finalReviewDate}}</p>
         {{/if}}        
         <div class="row">
           <div class="col">
@@ -59,6 +59,7 @@
                 </div>                
               {{/each}}
             </div>
+            <p class="text-right font-italic">Download: <a href="/api/S3/getObject/{{proposal.fileName}}">{{proposal.fileName}}</a></p>
           </div>
         </div>
         <br><br>        
@@ -169,7 +170,7 @@
 
                 <div>
                   <h5>Decision</h5>
-                  <div class="row">
+                  <div name="decision-section" class="row">
                     <div class="col-sm-8">
                       <textarea class="form-control" rows="5" id="feedback-decision-comment" placeholder="Comments">{{feedback.decisionComment}}</textarea>
                     </div>
@@ -190,9 +191,9 @@
                 {{#if finalDecisionMode}}                  
                   <hr>
                   <h5>Final Decision</h5>
-                  <div class="row">
+                  <div name="decision-section" class="row">
                     <div class="col-sm-8">
-                      <textarea chair-input="true" class="form-control" rows="5" id="final-decision-comment" placeholder="Comments">{{proposal.reviewComment}}</textarea>
+                      <textarea chair-input="true" class="form-control" rows="5" id="final-decision-comment" placeholder="Comments (optional)">{{proposal.finalReviewComment}}</textarea>
                     </div>
                     <div class="col-sm-4">
                       <form>
@@ -320,7 +321,7 @@
         input.disabled = true;
       });
 
-      document.querySelector('input[value="{{proposal.reviewStatus}}"][chair-input]').checked = true;
+      document.querySelector('input[value="{{proposal.finalReviewStatus}}"][chair-input]').checked = true;
     }
   }
 

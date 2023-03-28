@@ -13,18 +13,22 @@ class Proposal extends AnchorModel {
       fileName: doc.fileName,
       userId: doc.userId, //userId of the person who uploads the doc
       groupId: doc.groupId ? doc.groupId : null, // we link proposals (revised ones) using groupId
+      parentId: doc.parentId ? doc.parentId : null, // it will tell you which proposal this is revised from within the same group
       reviewerIds: [], // list of assigned reviwers
+      reviewerAssignmentDate: null,
       feasibilityStatus: this.status.PENDING,
       feasibilityReviewDate: null,
       feasibilityReviewerId: null,
-      reviewStatus: null,
-      reviewComment: null,
-      reviewDate: null,
+      finalReviewStatus: null,
+      finalReviewComment: null,
+      finalReviewerId: null,
+      finalReviewDate: null,
+      hasChild: false,
       postReviewInfo: {
         tissueInPreparation: false,
         tissueShipped: false,
         brainDataReturned: false,
-        clinicalDataTransfered: false
+        clinicalDataTransfered: false,
       },
       parsingResults: {
         applicantName: null,
@@ -32,9 +36,14 @@ class Proposal extends AnchorModel {
         projectTitle: null,
         details: null,
         conflict: null,
-        funding: null  
-      }
+        funding: null,
+      },
     });
+
+    if (document.parentId) {
+      this.findByIdAndUpdate(document.parentId, { $set: { hasChild: true } });
+    }
+
     return this.insertOne(document);
   }
 
@@ -43,11 +52,11 @@ class Proposal extends AnchorModel {
       Assert.ok(doc.userId, "Missing userId argument.");
       Assert.ok(doc.fileName, "Missing file name argument.");
 
-      const postReviewInfo =  {
+      const postReviewInfo = {
         tissueInPreparation: false,
         tissueShipped: false,
         brainDataReturned: false,
-        clinicalDataTransfered: false
+        clinicalDataTransfered: false,
       };
 
       const parsingResults = {
@@ -56,17 +65,21 @@ class Proposal extends AnchorModel {
         projectTitle: null,
         details: null,
         conflict: null,
-        funding: null  
-      };     
+        funding: null,
+      };
 
       doc.reviewerIds = [];
+      doc.reviewerAssignmentDate = null;
       doc.feasibilityStatus = this.status.PENDING;
       doc.feasibilityReviewerId = null;
       doc.feasibilityReviewDate = null;
-      doc.reviewStatus = null;
-      doc.reviewComment = null;
-      doc.reviewDate = null;
+      doc.finalReviewStatus = null;
+      doc.finalReviewComment = null;
+      doc.finalReviewerId = null;
+      doc.finalReviewDate = null;
+      doc.hasChild = false;
       doc.groupId = doc.groupId ? doc.groupId : null;
+      doc.parentId = doc.parentId ? doc.parentId : null;
       doc.postReviewInfo = postReviewInfo;
       doc.parsingResults = parsingResults;
     }
@@ -83,8 +96,8 @@ class Proposal extends AnchorModel {
     return this.find({ feasibilityStatus });
   }
 
-  static async findManyByReviewStatus(reviewStatus) {
-    return this.find({ reviewStatus });
+  static async findManyByReviewStatus(finalReviewStatus) {
+    return this.find({ finalReviewStatus });
   }
 
   static async updateFeasibilityStatus(docId, userId, feasibilityStatus) {
@@ -99,12 +112,13 @@ class Proposal extends AnchorModel {
     return this.findByIdAndUpdate(docId, update);
   }
 
-  static async updateReviewStatus(docId, reviewStatus, reviewComment) {
+  static async updateFinalReviewStatus(docId, userId, finalReviewStatus, finalReviewComment) {
     const update = {
       $set: {
-        reviewStatus,
-        reviewComment,
-        reviewDate: new Date(),
+        finalReviewStatus,
+        finalReviewComment,
+        finalReviewerId: userId,
+        finalReviewDate: new Date(),
       },
     };
 
@@ -112,83 +126,81 @@ class Proposal extends AnchorModel {
   }
 
   static parse(content, numPages) {
-    
     let result = {};
     const textBlockAnchorDict = {
-      'details': {
-        'separator1': 'General Research Proposal',
-        'separator2': 'Literature References'
+      details: {
+        separator1: "General Research Proposal",
+        separator2: "Literature References",
       },
-      'funding': {
-        'separator1': 'Executive Committee Review',
-        'separator2': 'Participant Burden'
+      funding: {
+        separator1: "Executive Committee Review",
+        separator2: "Participant Burden",
       },
-      'conflict': {
-        'separator1': 'Third-party involvement',
-        'separator2': 'Title and Abstract'
+      conflict: {
+        separator1: "Third-party involvement",
+        separator2: "Title and Abstract",
       },
-      'applicantName': {
-        'separator1': 'Principal Investigator\nName:',
-        'separator2': 'Institution'
+      applicantName: {
+        separator1: "Principal Investigator\nName:",
+        separator2: "Institution",
       },
-      'applicationId': {
-        'separator1': 'Application ID',
-        'separator2': 'Date Submitted'
+      applicationId: {
+        separator1: "Application ID",
+        separator2: "Date Submitted",
       },
-      'projectTitle': {
-        'separator1': 'Application ID',
-        'separator2': 'Date Submitted'
-      }
-    }
+      projectTitle: {
+        separator1: "Application ID",
+        separator2: "Date Submitted",
+      },
+    };
 
-    //remove footer from text 
+    //remove footer from text
     let footers = [];
-    for (let i=1; i<=numPages; ++i) {
-      footers.push('Page ' + i + '/' + numPages);
-    } 
+    for (let i = 1; i <= numPages; ++i) {
+      footers.push("Page " + i + "/" + numPages);
+    }
     for (const footer of footers) {
-      content = content.replace(footer, '');  
+      content = content.replace(footer, "");
     }
 
     //remove header from text
-    const separator1 = textBlockAnchorDict['applicationId']['separator1'];
-    const separator2 = textBlockAnchorDict['applicationId']['separator2'];
+    const separator1 = textBlockAnchorDict["applicationId"]["separator1"];
+    const separator2 = textBlockAnchorDict["applicationId"]["separator2"];
     try {
-      const applicationId = (content.split(separator1)[1]).split(separator2)[0].split('\n')[0].replace(': ', ''); 
-      const header = 'FHS Data Application Proposal - ID: ' + applicationId;    
-      content = content.replace(new RegExp(header, 'g'), '');
-    } 
-    catch(e) {
-      console.log("ApplicationId not found.")
-    }  
+      const applicationId = content
+        .split(separator1)[1]
+        .split(separator2)[0]
+        .split("\n")[0]
+        .replace(": ", "");
+      const header = "FHS Data Application Proposal - ID: " + applicationId;
+      content = content.replace(new RegExp(header, "g"), "");
+    } catch (e) {
+      console.log("ApplicationId not found.");
+    }
 
-    //parse for relevant sections 
+    //parse for relevant sections
     for (const key in textBlockAnchorDict) {
-      const separator1 = textBlockAnchorDict[key]['separator1'];
-      const separator2 = textBlockAnchorDict[key]['separator2'];      
+      const separator1 = textBlockAnchorDict[key]["separator1"];
+      const separator2 = textBlockAnchorDict[key]["separator2"];
       if (separator1 && separator2) {
         try {
-          const textBlock = (content.split(separator1)[1]).split(separator2)[0].trim();          
-          if (key === 'applicationId') {
-            result[key] = textBlock.split('\n')[0];            
-          }
-          else if (key === 'projectTitle') {
-            result[key] = textBlock.split('\n')[1];
-          }
-          else {
+          const textBlock = content.split(separator1)[1].split(separator2)[0].trim();
+          if (key === "applicationId") {
+            result[key] = textBlock.split("\n")[0];
+          } else if (key === "projectTitle") {
+            result[key] = textBlock.split("\n")[1];
+          } else {
             result[key] = textBlock;
-          }          
-        }
-        catch(e) {          
+          }
+        } catch (e) {
           result[key] = null;
-        }        
-      }
-      else {
+        }
+      } else {
         result[key] = null;
-      }          
-    }    
-    return result;              
-  }  
+      }
+    }
+    return result;
+  }
 }
 
 Proposal.collectionName = "proposals";
@@ -208,45 +220,52 @@ Proposal.decision = {
 Proposal.schema = Joi.object({
   _id: Joi.object().required(),
   groupId: Joi.string().required(),
+  parentId: Joi.string().required(),
   fileName: Joi.string().required(),
   userId: Joi.object().required(),
-  feasibilityReviewerId: Joi.object().required(),
-  reviewerIds: Joi.array().required(),
-  reviewStatus: Joi.string().required(),
-  reviewComment: Joi.string().required(),
-  feasibilityStatus: Joi.string().required(),
   createdAt: Joi.date().required(),
+  feasibilityStatus: Joi.string().required(),
+  feasibilityReviewerId: Joi.object().required(),
   feasibilityReviewDate: Joi.date().required(),
-  reviewDate: Joi.date().required(),
+  reviewerIds: Joi.array().required(),
+  reviewerAssignmentDate: Joi.date().required(),
+  finalReviewStatus: Joi.string().required(),
+  finalReviewComment: Joi.string().required(),
+  finalReviewerId: Joi.object().required(),
+  finalReviewDate: Joi.date().required(),
+  hasChild: Joi.boolean().required(),
   postReviewInfo: Joi.object({
     tissueInPreparation: Joi.boolean().required(),
     tissueShipped: Joi.boolean().required(),
     brainDataReturned: Joi.boolean().required(),
-    clinicalDataTransfered: Joi.boolean().required()   
-  }).required(),
-  parsingResults: Joi.object({
-    applicantName: Joi.string().required(),
-    applicationId: Joi.string().required(),
-    projectTitle: Joi.string().required(),
-    details: Joi.string().required(),
-    conflict: Joi.string().required() ,
-    funding: Joi.string().optional().allow(null).allow('')    
-  }).required(),
+    clinicalDataTransfered: Joi.boolean().required(),
+    parsingResults: Joi.object({
+      applicantName: Joi.string().required(),
+      applicationId: Joi.string().required(),
+      projectTitle: Joi.string().required(),
+      details: Joi.string().required(),
+      conflict: Joi.string().required(),
+      funding: Joi.string().optional().allow(null).allow(""),
+    }).required(),
+  }),
 });
 
 Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
   create: {
+    scope: ["coordinator", "root"],
     payload: Joi.object({
       userId: Joi.string().required(),
       fileName: Joi.string().required(),
+      groupId: Joi.string().optional(),
+      parentId: Joi.string().optional(),
     }),
   },
   insertMany: {
     disabled: false,
     payload: Joi.object({
       userId: Joi.string().required(),
-      fileName: Joi.string().required()                   
-    })
+      fileName: Joi.string().required(),
+    }),
   },
 });
 
@@ -260,33 +279,39 @@ Proposal.postReviewInfoPayload = Joi.object({
   tissueInPreparation: Joi.boolean().optional(),
   tissueShipped: Joi.boolean().optional(),
   brainDataReturned: Joi.boolean().optional(),
-  clinicalDataTransfered: Joi.boolean().optional()    
+  clinicalDataTransfered: Joi.boolean().optional(),
 });
 
-Proposal.parsingResultsPayload = Joi.object({
+(Proposal.parsingResultsPayload = Joi.object({
   applicantName: Joi.string().required(),
   applicationId: Joi.string().required(),
   projectTitle: Joi.string().required(),
   details: Joi.string().required(),
   conflict: Joi.string().required(),
-  funding: Joi.string().optional().allow(null).allow(''),
-}),
-
-Proposal.lookups = [
-  {
-    from: require("./user"),
-    local: "userId",
-    foreign: "_id",
-    as: "user",
-    one: true,
-  },
-  {
-    from: require("./user"),
-    local: "feasibilityReviewerId",
-    foreign: "_id",
-    as: "feasibilityReviewer",
-    one: true,
-  },
-];
+  funding: Joi.string().optional().allow(null).allow(""),
+})),
+  (Proposal.lookups = [
+    {
+      from: require("./user"),
+      local: "userId",
+      foreign: "_id",
+      as: "user",
+      one: true,
+    },
+    {
+      from: require("./user"),
+      local: "feasibilityReviewerId",
+      foreign: "_id",
+      as: "feasibilityReviewer",
+      one: true,
+    },
+    {
+      from: require("./user"),
+      local: "finalReviewerId",
+      foreign: "_id",
+      as: "finalReviewer",
+      one: true,
+    },
+  ]);
 
 module.exports = Proposal;

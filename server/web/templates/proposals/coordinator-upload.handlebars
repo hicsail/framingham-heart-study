@@ -3,10 +3,10 @@
     {{>dashboardNav}}
     <div class="col-sm-9 col-md-10">
       <div style="padding: 30px">
-        <h3 class="font-weight-bold" style="font-size:1.8em;">Hello, {{user.name}}!</h3>        
-        <br>        
+        <h3 class="font-weight-bold" style="font-size:1.8em;">Hello, {{user.name}}!</h3>
+        <br>
         {{#if user.roles.coordinator}}
-           {{>reviewerUploadForm}}
+           {{>coordinatorUploadForm}}
            <br>
         {{/if}}
         <!-- File Delete modal -->
@@ -30,7 +30,7 @@
               </div>
             </div>
           </div>
-        </div>   
+        </div>
         <div class="card mt-2">
           <div style="padding: 20px;">
             <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -39,10 +39,11 @@
                   <th class="hidden">ID</th>
                   <th>Proposal Name</th>
                   <th>Uploaded By</th>
-                  <th>Upload Date</th>            
+                  <th>Upload Date</th>
                   <th>Feasibility Status</th>
-                  <th>Review Status</th>                
-                  <th>Delete</th>                                            
+                  <th>Review Status</th>
+                  <th>Delete</th>
+                  <th>Upload Revised Proposal</th>
                 </tr>
               </thead>
               {{#each proposals as |proposal|}}
@@ -52,10 +53,23 @@
                     <h4><a href="/api/S3/getObject/{{fileName}}">{{fileName}}</a></h4>
                   </td>
                   <td>{{user.name}}</td>
-                  <td>{{formatDate createdAt}}</td>                            
+                  <td>{{formatDate createdAt}}</td>
                   <td><span class="badge badge-info">{{feasibilityStatus}}</span></td>
-                  <td><span class="badge badge-info">{{reviewStatus}}</span></td>
-                  <td><button class="btn btn-danger" onClick="onClickDeleteFile('{{fileName}}', '{{_id}}')" data-toggle="modal" data-target="#delete-file-modal" {{#ifNotEquals userId ../user._id}}disabled{{/ifNotEquals}}>Delete</button></td>                         
+                  <td><span class="badge badge-info">{{finalReviewStatus}}</span></td>
+                  <td><button class="btn btn-danger" onClick="onClickDeleteFile('{{fileName}}', '{{_id}}')" data-toggle="modal" data-target="#delete-file-modal" {{#ifNotEquals userId ../user._id}}disabled{{/ifNotEquals}}>Delete</button></td>
+                  <td>
+                    {{#ifEquals finalReviewStatus "Revise"}}
+                        <button class="btn btn-primary" onClick="onClickReuploadFile('{{../_id}}')" {{#if ../hasChild}}disabled{{/if}}>Upload Revised Proposal</button>
+                    {{/ifEquals}}
+                  </td>
+                  <input
+                    class="btn btn-sm btn-light d-none"
+                    type="file"
+                    id="reupload-file-input-{{_id}}"
+                    name="proposalFile"
+                    accept="application/pdf"
+                    onchange="reuploadFile(this,'{{../user._id}}', '{{groupId}}', '{{_id}}')"
+                  />
                 </tr>
               {{/each}}
             </table>
@@ -66,7 +80,7 @@
   </div>
 </div>
 
-<script type="text/javascript" src="/public/scripts/proposals/reviewerUpload.js" ></script>
+<script type="text/javascript" src="/public/scripts/proposals/coordinatorUpload.js" ></script>
 <style>
  label {
     font-weight: bold;
