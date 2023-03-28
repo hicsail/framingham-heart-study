@@ -106,7 +106,7 @@
       <br>
     <div class="row ml-2 mr-2">
         <div class="col-md-2">
-            <select class="selectpicker" id="date" data-style="btn-white">
+            <select class="selectpicker" id="uploadedAt-date" data-style="btn-white">
                 <option value="range" role="button">Date Range</option>
                 <option value="exact">Exact Date</option>
             </select>
@@ -114,10 +114,28 @@
         <div class="col-md-10">
             <div class="row">
                 <div class="col">
-                    <input class="form-control bg-white" type="date" id="startDate" onchange="pickDate()" display="none">
+                    <input class="form-control bg-white" type="date" id="uploadedAt-startDate" onchange="pickDate('uploadedAt')" display="none">
                 </div>
                 <div class="col">
-                    <input class="form-control bg-white" type="date" id="endDate" onchange="pickDate()" display="none">
+                    <input class="form-control bg-white" type="date" id="uploadedAt-endDate" onchange="pickDate('uploadedAt')" display="none">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row ml-2 mr-2">
+        <div class="col-md-2">
+            <select class="selectpicker" id="finalReviewDate-date" data-style="btn-white">
+                <option value="range" role="button">Date Range</option>
+                <option value="exact">Exact Date</option>
+            </select>
+        </div>
+        <div class="col-md-10">
+            <div class="row">
+                <div class="col">
+                    <input class="form-control bg-white" type="date" id="finalReviewDate-startDate" onchange="pickDate('finalReviewDate')" display="none">
+                </div>
+                <div class="col">
+                    <input class="form-control bg-white" type="date" id="finalReviewDate-endDate" onchange="pickDate('finalReviewDate')" display="none">
                 </div>
             </div>
         </div>
