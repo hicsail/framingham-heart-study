@@ -2,7 +2,6 @@
 
 //Update filters selected option on UI using query params in the URL
 function UpdateFiltersOnUI(url) {
-
   if (url.includes("?")) {
     let queries = url.split("?")[1].split("&");
     for (let query of queries) {
@@ -22,10 +21,7 @@ function UpdateFiltersOnUI(url) {
           $("#endDate").hide();
         }
       } else {
-        $("#" + prop + " option[value='" + val + "']").attr(
-          "selected",
-          "selected"
-        );
+        $("#" + prop + " option[value='" + val + "']").attr("selected", "selected");
       }
     }
     $(".selectpicker").selectpicker("refresh");
@@ -33,15 +29,11 @@ function UpdateFiltersOnUI(url) {
 }
 
 function searchProposals() {
-
   const searchInput = $("#search-input").val();
   $(".proposal").each(function (i, obj) {
     const proposalTitle = $(this).find('a[name="fileName"]').first().html();
     let display = obj.style.display;
-    if (
-      searchInput &&
-      !proposalTitle.toLowerCase().includes(searchInput.toLowerCase())
-    ) {
+    if (searchInput && !proposalTitle.toLowerCase().includes(searchInput.toLowerCase())) {
       display = "none";
     }
     if (!searchInput) {
@@ -52,7 +44,6 @@ function searchProposals() {
 }
 
 function attachKeyValuesToURL(key, value, url) {
-
   const filterProperties = {};
   if (url.includes("?")) {
     // case when there are already some active filters
@@ -83,7 +74,6 @@ function attachKeyValuesToURL(key, value, url) {
 
 // once filters have been created, make each filter interdependent
 function linkFilters() {
-
   $("#filters .selectpicker").each(function () {
     if ($(this).attr("id") !== "date") {
       $(this).on("change", function () {
@@ -97,24 +87,18 @@ function linkFilters() {
 }
 
 function goToPage(pageNo) {
-
   let url = window.location.href;
   window.location = attachKeyValuesToURL("page", pageNo, url);
 }
 
 $("#date").on("change", function () {
-
   const value = $(this).find("option:selected").attr("value");
   const url = window.location.href;
   if (value === "exact") {
     $("#startDate").show();
     $("#endDate").hide();
     if ($("#startDate").val()) {
-      window.location = attachKeyValuesToURL(
-        "uploadedAt",
-        $("#startDate").val(),
-        url
-      );
+      window.location = attachKeyValuesToURL("uploadedAt", $("#startDate").val(), url);
     }
   } else if (value === "range") {
     $("#startDate").show();
@@ -130,17 +114,12 @@ $("#date").on("change", function () {
 });
 
 function pickDate() {
-
   const filterType = $("#date").val();
   const startDate = $("#startDate").val();
   const endDate = $("#endDate").val();
   const url = window.location.href;
   if (filterType === "range" && startDate && endDate) {
-    window.location = attachKeyValuesToURL(
-      "uploadedAt",
-      startDate + ":" + endDate,
-      url
-    );
+    window.location = attachKeyValuesToURL("uploadedAt", startDate + ":" + endDate, url);
   } else if (filterType === "exact" && startDate) {
     window.location = attachKeyValuesToURL("uploadedAt", startDate, url);
   }
@@ -154,7 +133,6 @@ function pickDate() {
 }
 
 $(document).ready(function () {
-
   linkFilters();
   UpdateFiltersOnUI(window.location.href);
 });
