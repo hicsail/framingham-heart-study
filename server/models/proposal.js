@@ -15,7 +15,6 @@ class Proposal extends AnchorModel {
       groupId: doc.groupId ? doc.groupId : null, // we link proposals (revised ones) using groupId
       parentId: doc.parentId ? doc.parentId : null, // it will tell you which proposal this is revised from within the same group
       reviewerIds: [], // list of assigned reviwers
-      reviewerAssignmentDate: null,
       feasibilityStatus: this.status.PENDING,
       feasibilityReviewDate: null,
       feasibilityReviewerId: null,
@@ -52,7 +51,6 @@ class Proposal extends AnchorModel {
       };
 
       doc.reviewerIds = [];
-      doc.reviewerAssignmentDate = null;
       doc.feasibilityStatus = this.status.PENDING;
       doc.feasibilityReviewerId = null;
       doc.feasibilityReviewDate = null;

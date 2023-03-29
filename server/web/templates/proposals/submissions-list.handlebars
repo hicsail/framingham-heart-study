@@ -2,33 +2,30 @@
   <div class="row h-100">
     {{>dashboardNav}}
 <div class="col-sm-9 col-md-10">
-    <div style="padding: 30px">
-        <div calass="row">
+    <div style="padding: 30px">  
+        <div calass="row">            
             <div class="col-md-12">
                 <div class="card">
                     <div id="filters">
                        {{> proposalFilters}}
-                    </div>
+                    </div>                                     
                     <div class="card-body">
                         {{#each proposals as |proposal|}}
                         <div class="proposal" id={{_id}}>
                             <div class="row">
                                 <div class="col-md-8">
                                     <h5 class="font-weight-bold">
-                                        <a href="/api/S3/getObject/{{fileName}}" name="fileName">{{fileName}}</a>
+                                        <a href="/api/S3/getObject/{{fileName}}" name="fileName">{{fileName}}</a>                                        
                                         <span class="badge badge-pill {{statusBadgeClass feasibilityStatus 'badge'}}">
                                             {{feasibilityStatus}}
-                                        </span>
+                                        </span>                                  
                                     </h5>
                                     <h6>Uploaded on {{formatDate createdAt}} by {{user.name}}</h6>
                                     {{#if feasibilityReviewDate}}
                                         <h6>
                                             Feasibility reviewed on {{formatDate feasibilityReviewDate}} by {{feasibilityReviewer.name}}
                                         </h6>
-                                    {{/if}}
-                                    {{#if reviewerAssignmentDate}}
-                                        <h6>Reviewers assigned on {{formatDate reviewerAssignmentDate}}</h6>
-                                    {{/if}}
+                                    {{/if}}                                    
                                 </div>
                                 <div class="col-md-4 text-right">
                                     {{#if ../user.roles.coordinator}}
@@ -37,7 +34,7 @@
                                                 <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#feasibility-modal-{{../_id}}">
                                                 Approve Feasibility
                                                 </button>
-                                            {{/ifNotEquals}}
+                                            {{/ifNotEquals}}                                            
                                             {{#ifEquals feasibilityStatus 'Pending'}}
                                                 <button type="button" class="btn btn-danger btn-sm" onclick="updateFeasibilityStatus('{{../_id}}', false)">
                                                     Request Revision
@@ -62,7 +59,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            Upon confirmation, the feasibility status cannot be amended thereafter, and an automatic email will be sent to the BROC chair to initiate the review process. Do you want to proceed?
+                                                            Upon confirmation, the feasibility status cannot be amended thereafter, and an automatic email will be sent to the BROC chair to initiate the review process. Do you want to proceed?                                 
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-danger" onclick="updateFeasibilityStatus('{{_id}}', true)">Yes</button>
@@ -70,8 +67,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            </div>                                                                        
+                                        </div>                                   
                                     {{/if}}
 
                                     {{#if ../user.roles.reviewer}}
@@ -87,12 +84,12 @@
                                     {{/if}}
 
                                     {{#if ../user.roles.chair}}
-                                        <div>
+                                        <div>                                        
                                         {{#unless reviewerIds}}
-                                            <div class="btn-group float-right" role="group">
+                                            <div class="btn-group float-right" role="group">        
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
-                                                        <button type="button" class="btn btn-secondary" onclick="assignReviewer('{{_id}}')">Submit</button>
+                                                        <button type="button" class="btn btn-secondary" onclick="assignReviewer('{{_id}}')">Submit</button>    
                                                     </div>
                                                     <select class="selectpicker"
                                                     id="reviewerSelect-{{_id}}" 
@@ -103,11 +100,11 @@
                                                     data-selected-text-format="static" 
                                                     multiple>                     
                                                         {{#each ../reviewers as |reviewer|}}
-                                                            <option selected value="{{reviewer._id}}"
+                                                            <option selected value="{{reviewer._id}}"                    
                                                             >{{reviewer.name}}</option>
-                                                        {{/each}}
-                                                    </select>
-                                                </div>
+                                                        {{/each}}                                           
+                                                    </select>                                                   
+                                                </div>                                     
                                             </div>
                                         {{else}}
                                             <div class="btn-group" role="group">
@@ -121,10 +118,10 @@
                                                             Review
                                                         </button>
                                                     {{/if}}
-                                                {{/if}}
+                                                {{/if}}                                                 
                                                 <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#reviewersList-{{_id}}">
                                                     See Reviewers
-                                                </button>
+                                                </button>                                                
                                                 <!-- Modal for showing list of reviewers -->
                                                 <div class="modal fade text-left" id="reviewersList-{{_id}}" tabindex="-1" role="dialog"aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
@@ -140,27 +137,28 @@
                                                                     {{#each reviewers as |reviewer|}}
                                                                         <p>{{reviewer.name}}, {{reviewer.email}}</p>
                                                                     {{/each}}
-                                                                {{/with}}
+                                                                {{/with}}                                  
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>                           
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
+                                                </div>                                                       
+                                            </div>                                                        
                                         {{/unless}}
                                         </div>
-                                    {{/if}}
+                                    {{/if}}                        
+
                                 </div>
                             </div>
                             <hr />
                         </div>
-                        {{/each}}
+                        {{/each}}   
                     </div>
-                </div>
-            </div>
-        </div>
+                </div>               
+            </div>            
+        </div>               
     </div>
 </div>
 </div>
