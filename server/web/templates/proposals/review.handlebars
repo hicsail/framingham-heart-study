@@ -169,7 +169,7 @@
 
                 <div>
                   <h5>Decision</h5>
-                  <div name="decision-section" class="row">
+                  <div class="row">
                     <div class="col-sm-8">
                       <textarea class="form-control" rows="5" id="feedback-decision-comment" placeholder="Comments">{{feedback.decisionComment}}</textarea>
                     </div>
@@ -190,9 +190,9 @@
                 {{#if finalDecisionMode}}                  
                   <hr>
                   <h5>Final Decision</h5>
-                  <div name="decision-section" class="row">
+                  <div class="row">
                     <div class="col-sm-8">
-                      <textarea chair-input="true" class="form-control" rows="5" id="final-decision-comment" placeholder="Comments (optional)">{{proposal.finalReviewComment}}</textarea>
+                      <textarea chair-input="true" class="form-control" rows="5" id="final-decision-comment" placeholder="Comments">{{proposal.finalReviewComment}}</textarea>
                     </div>
                     <div class="col-sm-4">
                       <form>
