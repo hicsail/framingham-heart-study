@@ -257,6 +257,7 @@ const register = function (server, options) {
           proposal.hasFeedback = feedbacks.length === proposal.reviewerIds.length;
           proposal.hasFeedback &= Boolean(proposal.reviewerIds.length);
           proposal.isAssignedToChair = proposal.reviewerIds.includes(user._id.toString());
+          proposal.history = await findAllProposalsInSameGroup(proposal);
         } else if (user.roles.reviewer) {
           for (const feedback of feedbacks) {
             if (feedback.userId.toString() === user._id.toString()) {
@@ -321,6 +322,55 @@ async function getObjectFromS3(fileName) {
       }
     });
   });
+}
+
+async function findAllProposalsInSameGroup(proposal, includeSelf = false) {
+  const history = [];
+  let original = null;
+  if (proposal.hasChild || proposal.parentId) {
+    // find all revised proposals
+    const revisedProposal = await Proposal.find({
+      groupId: proposal.groupId ? proposal.groupId : proposal._id.toString(),
+    });
+
+    if (proposal.groupId) {
+      // if current proposal is a revised proposal, add the original proposal to the list
+      console.log(`current proposal is a revised proposal`);
+      original = await Proposal.findById(proposal.groupId);
+    } else {
+      // if current proposal is the original proposal, add itself to the list
+      console.log(`current proposal is the original proposal`);
+      original = proposal;
+    }
+
+    revisedProposal.push(original);
+
+    for (const prop of revisedProposal) {
+      if (!includeSelf && prop._id.toString() === proposal._id.toString()) continue;
+
+      history.push({
+        id: prop._id.toString(),
+        fileName: prop.fileName,
+        date: prop.createdAt,
+        dateString: prop.createdAt.toDateString(),
+      });
+    }
+
+    history.sort((a, b) => {
+      return b.date - a.date;
+    });
+  } else original = proposal;
+
+  return {
+    list: history,
+    hasHistory: history.length > Number(includeSelf),
+    original: {
+      id: original._id.toString(),
+      fileName: original.fileName,
+      date: original.createdAt,
+      dateString: original.createdAt.toDateString(),
+    },
+  };
 }
 
 module.exports = {
