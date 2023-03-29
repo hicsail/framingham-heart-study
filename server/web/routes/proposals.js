@@ -335,11 +335,9 @@ async function findAllProposalsInSameGroup(proposal, includeSelf = false) {
 
     if (proposal.groupId) {
       // if current proposal is a revised proposal, add the original proposal to the list
-      console.log(`current proposal is a revised proposal`);
       original = await Proposal.findById(proposal.groupId);
     } else {
       // if current proposal is the original proposal, add itself to the list
-      console.log(`current proposal is the original proposal`);
       original = proposal;
     }
 
