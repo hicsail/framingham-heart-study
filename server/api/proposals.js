@@ -1,9 +1,10 @@
 "user strict";
 const Joi = require("joi");
-const Boom = require("boom");
+const Boom = require('boom');
 const Proposal = require("../models/proposal");
 
 const register = function (server, options) {
+
   server.route({
     method: "PUT",
     path: "/api/proposals/post-review-info/{proposalId}",
@@ -17,31 +18,33 @@ const register = function (server, options) {
       },
     },
     handler: async function (request, h) {
+
       const proposalId = request.params.proposalId;
       const userId = request.auth.credentials.user._id.toString();
       const payload = request.payload;
 
       let proposal = await Proposal.findById(proposalId);
       if (!proposal) {
-        throw Boom.notFound("Proposal not found!");
+        throw Boom.notFound('Proposal not found!');
       }
 
-      let update;
-      if (proposal.postReviewInfo) {
+      let update;      
+      if (proposal.postReviewInfo) {              
         for (const key in payload) {
           proposal.postReviewInfo[key] = payload[key];
-        }
+        }        
         update = {
           $set: {
-            postReviewInfo: proposal.postReviewInfo,
-          },
-        };
-      } else {
+            postReviewInfo: proposal.postReviewInfo        
+          }
+        };              
+      }
+      else {              
         update = {
           $set: {
-            postReviewInfo: payload,
-          },
-        };
+            postReviewInfo: payload          
+          }
+        }; 
       }
       proposal = await Proposal.findByIdAndUpdate(proposalId, update);
       return { message: "Success", submission: proposal };
@@ -68,7 +71,7 @@ const register = function (server, options) {
       const proposal = await Proposal.updateFeasibilityStatus(proposalId, userId, status);
 
       if (!proposal) {
-        throw Boom.notFound("Proposal not found!");
+        throw Boom.notFound('Proposal not found!');
       }
 
       return { message: "Success", submission: proposal };
@@ -99,9 +102,9 @@ const register = function (server, options) {
 
       const proposal = await Proposal.findByIdAndUpdate(proposalId, update);
       if (!proposal) {
-        throw Boom.notFound("Proposal not found!");
+        throw Boom.notFound('Proposal not found!');  
       }
-      return { message: "Success" };
+      return {message: "Success"};
     },
   });
 
@@ -115,18 +118,17 @@ const register = function (server, options) {
       },
       validate: {
         payload: Joi.object({
-          finalReviewStatus: Joi.string(),
-          finalReviewComment: Joi.string(),
+          reviewStatus: Joi.string(),
+          reviewComment: Joi.string(),
         }),
       },
     },
     handler: async function (request, h) {
       const proposalId = request.params.proposalId;
-      const userId = request.auth.credentials.user._id.toString();
-      const status = request.payload.finalReviewStatus;
-      const comment = request.payload.finalReviewComment;
+      const status = request.payload.reviewStatus;
+      const comment = request.payload.reviewComment;
 
-      const proposal = await Proposal.updateFinalReviewStatus(proposalId, userId, status, comment);
+      const proposal = await Proposal.updateReviewStatus(proposalId, status, comment);
 
       return { message: "Success", submission: proposal };
     },

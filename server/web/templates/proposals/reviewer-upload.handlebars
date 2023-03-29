@@ -55,7 +55,7 @@
                   <td>{{user.name}}</td>
                   <td>{{formatDate createdAt}}</td>                            
                   <td><span class="badge badge-info">{{feasibilityStatus}}</span></td>
-                  <td><span class="badge badge-info">{{finalReviewStatus}}</span></td>
+                  <td><span class="badge badge-info">{{reviewStatus}}</span></td>
                   <td><button class="btn btn-danger" onClick="onClickDeleteFile('{{fileName}}', '{{_id}}')" data-toggle="modal" data-target="#delete-file-modal" {{#ifNotEquals userId ../user._id}}disabled{{/ifNotEquals}}>Delete</button></td>
                   <td>
                     {{#ifEquals finalReviewStatus "Revise"}}

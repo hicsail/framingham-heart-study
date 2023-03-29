@@ -18,10 +18,9 @@ class Proposal extends AnchorModel {
       feasibilityStatus: this.status.PENDING,
       feasibilityReviewDate: null,
       feasibilityReviewerId: null,
-      finalReviewStatus: null,
-      finalReviewComment: null,
-      finalReviewerId: null,
-      finalReviewDate: null,
+      reviewStatus: null,
+      reviewComment: null,
+      reviewDate: null,
       hasChild: false,
       postReviewInfo: {
         tissueInPreparation: false,
@@ -54,10 +53,9 @@ class Proposal extends AnchorModel {
       doc.feasibilityStatus = this.status.PENDING;
       doc.feasibilityReviewerId = null;
       doc.feasibilityReviewDate = null;
-      doc.finalReviewStatus = null;
-      doc.finalReviewComment = null;
-      doc.finalReviewerId = null;
-      doc.finalReviewDate = null;
+      doc.reviewStatus = null;
+      doc.reviewComment = null;
+      doc.reviewDate = null;
       doc.hasChild = false;
       doc.groupId = doc.groupId ? doc.groupId : null;
       doc.parentId = doc.parentId ? doc.parentId : null;
@@ -76,8 +74,8 @@ class Proposal extends AnchorModel {
     return this.find({ feasibilityStatus });
   }
 
-  static async findManyByReviewStatus(finalReviewStatus) {
-    return this.find({ finalReviewStatus });
+  static async findManyByReviewStatus(reviewStatus) {
+    return this.find({ reviewStatus });
   }
 
   static async updateFeasibilityStatus(docId, userId, feasibilityStatus) {
@@ -92,13 +90,12 @@ class Proposal extends AnchorModel {
     return this.findByIdAndUpdate(docId, update);
   }
 
-  static async updateFinalReviewStatus(docId, userId, finalReviewStatus, finalReviewComment) {
+  static async updateReviewStatus(docId, reviewStatus, reviewComment) {
     const update = {
       $set: {
-        finalReviewStatus,
-        finalReviewComment,
-        finalReviewerId: userId,
-        finalReviewDate: new Date(),
+        reviewStatus,
+        reviewComment,
+        reviewDate: new Date(),
       },
     };
 
@@ -203,16 +200,14 @@ Proposal.schema = Joi.object({
   parentId: Joi.string().required(),
   fileName: Joi.string().required(),
   userId: Joi.object().required(),
-  createdAt: Joi.date().required(),
-  feasibilityStatus: Joi.string().required(),
   feasibilityReviewerId: Joi.object().required(),
-  feasibilityReviewDate: Joi.date().required(),
   reviewerIds: Joi.array().required(),
-  reviewerAssignmentDate: Joi.date().required(),
-  finalReviewStatus: Joi.string().required(),
-  finalReviewComment: Joi.string().required(),
-  finalReviewerId: Joi.object().required(),
-  finalReviewDate: Joi.date().required(),
+  reviewStatus: Joi.string().required(),
+  reviewComment: Joi.string().required(),
+  feasibilityStatus: Joi.string().required(),
+  createdAt: Joi.date().required(),
+  feasibilityReviewDate: Joi.date().required(),
+  reviewDate: Joi.date().required(),
   hasChild: Joi.boolean().required(),
   postReviewInfo: Joi.object({
     tissueInPreparation: Joi.boolean().required(),

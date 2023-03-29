@@ -51,7 +51,8 @@ function submitPopup(finalDecisionMode) {
 
   if (finalDecisionMode) {
     $("#submit-review-modal").modal("show");
-  } else {
+  }
+  else {
     $("#submit-feedback-modal").modal("show");
   }
   return;
@@ -60,7 +61,7 @@ function submitPopup(finalDecisionMode) {
 function submitFeedback(proposalId, userId) {
   const doc = {
     proposalId,
-    userId,
+    userId,    
     weakness: {
       significance: $("#feedback-significance-weakness")[0].value,
       innovation: $("#feedback-innovation-weakness")[0].value,
@@ -97,11 +98,11 @@ function submitFeedback(proposalId, userId) {
 }
 
 function submitReview(proposalId) {
-  const doc = { finalReviewComment: $("#final-decision-comment")[0].value };
+  const doc = { reviewComment: $("#final-decision-comment")[0].value };
 
   for (const decision of $("input[name=final-decision]")) {
     if (decision.checked) {
-      doc.finalReviewStatus = decision.value;
+      doc.reviewStatus = decision.value;
       break;
     }
   }
