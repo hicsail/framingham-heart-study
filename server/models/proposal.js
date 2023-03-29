@@ -20,6 +20,7 @@ class Proposal extends AnchorModel {
       reviewStatus: null,
       reviewComment: null,
       reviewDate: null,
+      finalReviewerId: null,
       postReviewInfo: {
         tissueInPreparation: false,
         tissueShipped: false,
@@ -49,6 +50,7 @@ class Proposal extends AnchorModel {
       doc.reviewStatus = null;
       doc.reviewComment = null;
       doc.reviewDate = null;
+      doc.finalReviewerId = null;
       doc.groupId = doc.groupId ? doc.groupId : null;
       doc.postReviewInfo = postReviewInfo;
     }
@@ -81,11 +83,12 @@ class Proposal extends AnchorModel {
     return this.findByIdAndUpdate(docId, update);
   }
 
-  static async updateReviewStatus(docId, reviewStatus, reviewComment) {
+  static async updateReviewStatus(docId, userId, reviewStatus, reviewComment) {
     const update = {
       $set: {
         reviewStatus,
         reviewComment,
+        finalReviewerId: userId,
         reviewDate: new Date(),
       },
     };
