@@ -51,8 +51,7 @@ function submitPopup(finalDecisionMode) {
 
   if (finalDecisionMode) {
     $("#submit-review-modal").modal("show");
-  }
-  else {
+  } else {
     $("#submit-feedback-modal").modal("show");
   }
   return;
@@ -61,7 +60,7 @@ function submitPopup(finalDecisionMode) {
 function submitFeedback(proposalId, userId) {
   const doc = {
     proposalId,
-    userId,    
+    userId,
     weakness: {
       significance: $("#feedback-significance-weakness")[0].value,
       innovation: $("#feedback-innovation-weakness")[0].value,
