@@ -201,6 +201,7 @@ Proposal.schema = Joi.object({
   createdAt: Joi.date().required(),
   feasibilityReviewDate: Joi.date().required(),
   reviewDate: Joi.date().required(),
+  finalReviewerId: Joi.object().required(),
   postReviewInfo: Joi.object({
     tissueInPreparation: Joi.boolean().required(),
     tissueShipped: Joi.boolean().required(),
