@@ -35,6 +35,7 @@ function submitPopup(finalDecisionMode) {
   const textarea = document.querySelectorAll("textarea");
 
   for (const element of textarea) {
+    if (element.id === "final-decision-comment") continue;
     if (!element.value.trim()) {
       element.classList.add("border-danger");
       element.focus();
@@ -43,10 +44,12 @@ function submitPopup(finalDecisionMode) {
     }
   }
 
-  if (!document.querySelector("input[name=decision]:checked")) {
-    document.querySelector("form").classList.add("input-validation-error");
-    alert("Please select a decision");
-    return;
+  for (const section of document.querySelectorAll("div[name=decision-section]")) {
+    if (!section.querySelector("input[name$=decision]:checked")) {
+      section.querySelector("form").classList.add("input-validation-error");
+      alert("Please select a decision");
+      return;
+    }
   }
 
   if (finalDecisionMode) {
