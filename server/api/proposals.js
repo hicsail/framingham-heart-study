@@ -125,10 +125,11 @@ const register = function (server, options) {
     },
     handler: async function (request, h) {
       const proposalId = request.params.proposalId;
+      const userId = request.auth.credentials.user._id.toString();
       const status = request.payload.reviewStatus;
       const comment = request.payload.reviewComment;
 
-      const proposal = await Proposal.updateReviewStatus(proposalId, status, comment);
+      const proposal = await Proposal.updateReviewStatus(proposalId, userId, status, comment);
 
       return { message: "Success", proposal: proposal };
     },

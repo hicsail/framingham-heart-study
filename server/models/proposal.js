@@ -20,6 +20,7 @@ class Proposal extends AnchorModel {
       reviewStatus: null,
       reviewComment: null,
       reviewDate: null,
+      finalReviewerId: null,
       postReviewInfo: {
         tissueInPreparation: false,
         tissueShipped: false,
@@ -66,6 +67,7 @@ class Proposal extends AnchorModel {
       doc.reviewStatus = null;
       doc.reviewComment = null;
       doc.reviewDate = null;
+      doc.finalReviewerId = null;
       doc.groupId = doc.groupId ? doc.groupId : null;
       doc.postReviewInfo = postReviewInfo;
       doc.parsingResults = parsingResults;
@@ -99,11 +101,12 @@ class Proposal extends AnchorModel {
     return this.findByIdAndUpdate(docId, update);
   }
 
-  static async updateReviewStatus(docId, reviewStatus, reviewComment) {
+  static async updateReviewStatus(docId, userId, reviewStatus, reviewComment) {
     const update = {
       $set: {
         reviewStatus,
         reviewComment,
+        finalReviewerId: userId,
         reviewDate: new Date(),
       },
     };
@@ -216,6 +219,7 @@ Proposal.schema = Joi.object({
   createdAt: Joi.date().required(),
   feasibilityReviewDate: Joi.date().required(),
   reviewDate: Joi.date().required(),
+  finalReviewerId: Joi.object().required(),
   postReviewInfo: Joi.object({
     tissueInPreparation: Joi.boolean().required(),
     tissueShipped: Joi.boolean().required(),
