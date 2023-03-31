@@ -290,6 +290,13 @@ Proposal.postReviewInfoPayload = Joi.object({
       as: "feasibilityReviewer",
       one: true,
     },
+    {
+      from: require("./user"),
+      local: "finalReviewerId",
+      foreign: "_id",
+      as: "finalReviewer",
+      one: true,
+    },
   ]);
 
 module.exports = Proposal;
