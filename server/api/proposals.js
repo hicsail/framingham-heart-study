@@ -151,10 +151,14 @@ const register = function (server, options) {
     },
     handler: async function (request, h) {
 
-      const proposalId = request.params.proposalId;      
+      const userId = request.auth.credentials.user._id.toString();
+      const proposalId = request.params.proposalId;
+
       update = {
         $set: {
-          parsingResults: request.payload         
+          parsingResults: request.payload,
+          parsingResultsUpdatedAt: new Date(),
+          parsingResultsUpdatedBy: userId        
         }
       };      
 

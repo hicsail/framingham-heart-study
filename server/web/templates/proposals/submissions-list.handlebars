@@ -31,23 +31,22 @@
                                     {{#if ../user.roles.coordinator}}
                                         <div class="btn-group float-right" role="group">
                                             <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#parsing-results-modal" onclick="onclickParsingResultsModal('{{_id}}')">
-                                                Edit Parsing Resutls
+                                                {{#if proposal.parsingResultsUpdatedAt}}
+                                                    Edit Parsing Resutls 
+                                                {{else}}
+                                                    Reveiw Parsing Results
+                                                {{/if}}                                              
                                             </button>
                                             {{#ifNotEquals feasibilityStatus 'Feasibility Checked'}}
-                                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#feasibility-modal-{{../_id}}">
+                                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#feasibility-modal-{{../_id}}" {{#if proposal.parsingResultsUpdatedAt}}{{else}}disabled{{/if}}>
                                                 Approve Feasibility
                                                 </button>
                                             {{/ifNotEquals}}                                            
                                             {{#ifEquals feasibilityStatus 'Pending'}}
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="updateFeasibilityStatus('{{../_id}}', false)">
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="updateFeasibilityStatus('{{../_id}}', false)" {{#if proposal.parsingResultsUpdatedAt}}{{else}}disabled{{/if}}>
                                                     Request Revision
                                                 </button>
-                                            {{/ifEquals}}
-                                            <!--{{#ifEquals feasibilityStatus 'Revise Requested'}}
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="updateFeasibilityStatus('{{../_id}}', false)" disabled>
-                                                    Request Revision
-                                                </button>
-                                            {{/ifEquals}}-->
+                                            {{/ifEquals}}                           
 
                                             {{!-- Feasibility Modal --}}
                                             <div class="modal text-left" id="feasibility-modal-{{_id}}" tabindex="-1" role="dialog">

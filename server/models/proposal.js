@@ -15,7 +15,7 @@ class Proposal extends AnchorModel {
       groupId: doc.groupId ? doc.groupId : null, // we link proposals (revised ones) using groupId
       reviewerIds: [], // list of assigned reviwers
       feasibilityStatus: this.status.PENDING,
-      feasibilityReviewDate: null,
+      feasibilityReviewDate: null,      
       feasibilityReviewerId: null,
       reviewStatus: null,
       reviewComment: null,
@@ -33,7 +33,9 @@ class Proposal extends AnchorModel {
         details: null,
         conflict: null,
         funding: null  
-      }
+      },
+      parsingResultsUpdatedAt: null,
+      parsingResultsUpdatedBy: null
     });
     return this.insertOne(document);
   }
@@ -69,6 +71,8 @@ class Proposal extends AnchorModel {
       doc.groupId = doc.groupId ? doc.groupId : null;
       doc.postReviewInfo = postReviewInfo;
       doc.parsingResults = parsingResults;
+      doc.parsingResultsUpdatedAt = null;
+      doc.parsingResultsUpdatedBy = null;
     }
 
     const files = await this.insertMany(docs);
@@ -238,6 +242,8 @@ Proposal.schema = Joi.object({
     conflict: Joi.string().required() ,
     funding: Joi.string().optional().allow(null).allow('')    
   }).required(),
+  parsingResultsUpdatedAt:Joi.date().optional(),
+  parsingResultsUpdatedBy: Joi.string().optional()
 });
 
 Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
