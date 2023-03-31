@@ -119,8 +119,10 @@ const register = function (server, options) {
       },
       validate: {
         payload: Joi.object({
-          reviewStatus: Joi.string(),
-          reviewComment: Joi.string(),
+          reviewStatus: Joi.string()
+            .valid(Proposal.decision.APPROVE, Proposal.decision.REJECT, Proposal.decision.REVISE)
+            .required(),
+          reviewComment: Joi.string().allow(""),
         }),
       },
     },
