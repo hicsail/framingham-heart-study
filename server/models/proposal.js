@@ -113,7 +113,13 @@ class Proposal extends AnchorModel {
 
   static parse(content, numPages) {
     
-    let result = {};
+    let result = {'details': null, 
+                  'funding': null, 
+                  'conflict': null, 
+                  'applicantName':null,
+                  'applicationId': null,
+                  'projectTitle': null};
+
     const textBlockAnchorDict = {
       'details': {
         'separator1': 'General Research Proposal',
@@ -170,10 +176,10 @@ class Proposal extends AnchorModel {
         try {
           const textBlock = (content.split(separator1)[1]).split(separator2)[0].trim();          
           if (key === 'applicationId') {
-            result[key] = textBlock.split('\n')[0];            
+            result[key] = textBlock.split('\n')[0] ? textBlock.split('\n')[0] : null;            
           }
           else if (key === 'projectTitle') {
-            result[key] = textBlock.split('\n')[1];
+            result[key] = textBlock.split('\n')[1] ? textBlock.split('\n')[1] : null;
           }
           else {
             result[key] = textBlock;
@@ -268,7 +274,7 @@ Proposal.parsingResultsPayload = Joi.object({
   applicationId: Joi.string().required(),
   projectTitle: Joi.string().required(),
   details: Joi.string().required(),
-  conflict: Joi.string().required(),
+  conflict: Joi.string().optional().allow(null).allow(''),
   funding: Joi.string().optional().allow(null).allow(''),
 }),
 

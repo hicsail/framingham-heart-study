@@ -8,12 +8,13 @@ function onclickParsingResultsModal(proposalId) {
   $.ajax({
     type: "GET",
     url: "/api/proposals/parsing-results/" + proposalId,    
-    success: function (result) {
+    success: function (result) {      
       $("#proposalId").val(proposalId);
       for (const key in result['parsingResults']) {
-        let value;
+        $("#" + key).val();  
+        let value;        
         if (result['proposal']['parsingResults'] && result['proposal']['parsingResults'][key]) {
-          value = result['proposal']['parsingResults'][key];
+          value = result['proposal']['parsingResults'][key];          
         }
         else {
           value = result['parsingResults'][key]; 
