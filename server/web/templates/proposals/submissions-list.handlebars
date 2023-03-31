@@ -18,7 +18,12 @@
                                         <a href="/api/S3/getObject/{{fileName}}" name="fileName">{{fileName}}</a>                                        
                                         <span class="badge badge-pill {{statusBadgeClass feasibilityStatus 'badge'}}">
                                             {{feasibilityStatus}}
-                                        </span>                                  
+                                        </span>
+                                        {{#if reviewStatus}}
+                                            <span class="badge badge-pill {{statusBadgeClass reviewStatus 'badge'}}">
+                                                {{reviewStatus}}
+                                            </span>
+                                        {{/if}}
                                     </h5>
                                     <h6>Uploaded on {{formatDate createdAt}} by {{user.name}}</h6>
                                     {{#if feasibilityReviewDate}}
