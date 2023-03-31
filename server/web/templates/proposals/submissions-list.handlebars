@@ -25,7 +25,10 @@
                                         <h6>
                                             Feasibility reviewed on {{formatDate feasibilityReviewDate}} by {{feasibilityReviewer.name}}
                                         </h6>
-                                    {{/if}}                                    
+                                    {{/if}}
+                                    {{#if reviewerAssignmentDate}}
+                                        <h6>Reviewers assigned on {{formatDate reviewerAssignmentDate}}</h6>
+                                    {{/if}}
                                 </div>
                                 <div class="col-md-4 text-right">
                                     {{#if ../user.roles.coordinator}}

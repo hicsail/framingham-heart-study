@@ -97,6 +97,7 @@ const register = function (server, options) {
       const update = {
         $set: {
           reviewerIds: request.payload.reviewerIds,
+          reviewerAssignmentDate: new Date(),
         },
       };
 
