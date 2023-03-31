@@ -18,7 +18,6 @@ var format = require('date-fns/format');
 const register = async function (server, options) { 
 
   const delay = 24 * 60 * 60 * 1000; //24 hours to miliseconds  
-  //change to setInterval
   setInterval(async () => {
     await sendEmailNotification(); 
   }, delay); 
@@ -136,7 +135,8 @@ async function sendMail(data){
           cc: Config.get('/EmailList/ccAddress')
       };
       emailTemplateData = {
-        fileName
+        fileName,
+        loginURL: Config.get('/baseUrl') + 'login'
       }
     }
 
@@ -160,7 +160,8 @@ async function sendMail(data){
           cc: Config.get('/EmailList/ccAddress')
       };
       emailTemplateData = {
-        fileName
+        fileName,
+        loginURL: Config.get('/baseUrl') + 'login'
       }
     }
 
@@ -220,7 +221,8 @@ async function sendMail(data){
       };
       emailTemplateData = {
         fileName,
-        dueDate: data.reviewDueDate
+        dueDate: data.reviewDueDate,
+        loginURL: Config.get('/baseUrl') + 'login'
       }
     }
 
