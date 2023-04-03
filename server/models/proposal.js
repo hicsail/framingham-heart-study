@@ -16,7 +16,7 @@ class Proposal extends AnchorModel {
       reviewerIds: [], // list of assigned reviwers
       reviewerAssignmentDate: null,
       feasibilityStatus: this.status.PENDING,
-      feasibilityReviewDate: null,
+      feasibilityReviewDate: null,      
       feasibilityReviewerId: null,
       reviewStatus: null,
       reviewComment: null,
@@ -34,8 +34,10 @@ class Proposal extends AnchorModel {
         projectTitle: null,
         details: null,
         conflict: null,
-        funding: null,
+        funding: null  
       },
+      parsingResultsUpdatedAt: null,
+      parsingResultsUpdatedBy: null
     });
     return this.insertOne(document);
   }
@@ -73,6 +75,8 @@ class Proposal extends AnchorModel {
       doc.groupId = doc.groupId ? doc.groupId : null;
       doc.postReviewInfo = postReviewInfo;
       doc.parsingResults = parsingResults;
+      doc.parsingResultsUpdatedAt = null;
+      doc.parsingResultsUpdatedBy = null;
     }
 
     const files = await this.insertMany(docs);
@@ -117,7 +121,14 @@ class Proposal extends AnchorModel {
   }
 
   static parse(content, numPages) {
-    let result = {};
+  
+    let result = {'details': null, 
+                  'funding': null, 
+                  'conflict': null, 
+                  'applicantName':null,
+                  'applicationId': null,
+                  'projectTitle': null};
+
     const textBlockAnchorDict = {
       details: {
         separator1: "General Research Proposal",
@@ -175,12 +186,14 @@ class Proposal extends AnchorModel {
       const separator2 = textBlockAnchorDict[key]["separator2"];
       if (separator1 && separator2) {
         try {
-          const textBlock = content.split(separator1)[1].split(separator2)[0].trim();
-          if (key === "applicationId") {
-            result[key] = textBlock.split("\n")[0];
-          } else if (key === "projectTitle") {
-            result[key] = textBlock.split("\n")[1];
-          } else {
+          const textBlock = (content.split(separator1)[1]).split(separator2)[0].trim();          
+          if (key === 'applicationId') {
+            result[key] = textBlock.split('\n')[0] ? textBlock.split('\n')[0] : null;            
+          }
+          else if (key === 'projectTitle') {
+            result[key] = textBlock.split('\n')[1] ? textBlock.split('\n')[1] : null;
+          }
+          else {
             result[key] = textBlock;
           }
         } catch (e) {
@@ -236,6 +249,8 @@ Proposal.schema = Joi.object({
     conflict: Joi.string().required(),
     funding: Joi.string().optional().allow(null).allow(""),
   }).required(),
+  parsingResultsUpdatedAt:Joi.date().optional(),
+  parsingResultsUpdatedBy: Joi.string().optional()
 });
 
 Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
@@ -267,36 +282,37 @@ Proposal.postReviewInfoPayload = Joi.object({
   clinicalDataTransfered: Joi.boolean().optional(),
 });
 
-(Proposal.parsingResultsPayload = Joi.object({
+Proposal.parsingResultsPayload = Joi.object({
   applicantName: Joi.string().required(),
   applicationId: Joi.string().required(),
   projectTitle: Joi.string().required(),
   details: Joi.string().required(),
-  conflict: Joi.string().required(),
-  funding: Joi.string().optional().allow(null).allow(""),
-})),
-  (Proposal.lookups = [
-    {
-      from: require("./user"),
-      local: "userId",
-      foreign: "_id",
-      as: "user",
-      one: true,
-    },
-    {
-      from: require("./user"),
-      local: "feasibilityReviewerId",
-      foreign: "_id",
-      as: "feasibilityReviewer",
-      one: true,
-    },
-    {
-      from: require("./user"),
-      local: "finalReviewerId",
-      foreign: "_id",
-      as: "finalReviewer",
-      one: true,
-    },
-  ]);
+  conflict: Joi.string().optional().allow(null).allow(''),
+  funding: Joi.string().optional().allow(null).allow(''),
+});
+
+Proposal.lookups = [
+  {
+    from: require("./user"),
+    local: "userId",
+    foreign: "_id",
+    as: "user",
+    one: true,
+  },
+  {
+    from: require("./user"),
+    local: "feasibilityReviewerId",
+    foreign: "_id",
+    as: "feasibilityReviewer",
+    one: true,
+  },
+  {
+    from: require("./user"),
+    local: "finalReviewerId",
+    foreign: "_id",
+    as: "finalReviewer",
+    one: true,
+  }
+];
 
 module.exports = Proposal;

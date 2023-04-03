@@ -91,10 +91,15 @@ const register = function (server, options) {
           parsedInfo[key] = {};         
           for (let i=0; i<subTitles.length; ++i) {
             if (i !== subTitles.length-1) {
-              parsedInfo[key][subTitles[i]] = (text.split(subTitles[i])[1]).split(subTitles[i+1])[0];  
+              try {
+                parsedInfo[key][subTitles[i]] = (text.split(subTitles[i])[1]).split(subTitles[i+1])[0];  
+              }
+              catch(e) {
+                parsedInfo[key][subTitles[i]] = 'N/A';  
+              }              
             }
             else {
-              parsedInfo[key][subTitles[i]] = text.split(subTitles[i])[1]; 
+              parsedInfo[key][subTitles[i]] = text.split(subTitles[i])[1] ? text.split(subTitles[i])[1] : 'N/A'; 
             }
           }          
         }
@@ -232,9 +237,11 @@ const register = function (server, options) {
       for (const proposal of result.data) {
         proposal.assignedReviewers = [];
         for (const id of proposal.reviewerIds) {
+        
           const reviewer = await User.findById(id);
           proposal.assignedReviewers.push(reviewer);
-        }
+          }
+          
       }
 
       //logic for hasfeeback need to change here

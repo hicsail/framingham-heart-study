@@ -8,12 +8,13 @@ function onclickParsingResultsModal(proposalId) {
   $.ajax({
     type: "GET",
     url: "/api/proposals/parsing-results/" + proposalId,    
-    success: function (result) {
+    success: function (result) {      
       $("#proposalId").val(proposalId);
       for (const key in result['parsingResults']) {
-        let value;
+        $("#" + key).val();  
+        let value;        
         if (result['proposal']['parsingResults'] && result['proposal']['parsingResults'][key]) {
-          value = result['proposal']['parsingResults'][key];
+          value = result['proposal']['parsingResults'][key];          
         }
         else {
           value = result['parsingResults'][key]; 
@@ -76,10 +77,30 @@ function assignReviewer(proposalId){
       data: JSON.stringify({ reviewerIds: values }),
       success: function (result) {
           successAlert('Successfully assigned a reviewer');
+          sendEmail(proposalId);
           location.reload();
       },
       error: function (result) {
           errorAlert(result.responseJSON.message);
       }
   }); 
+}
+
+function sendEmail(proposalId){
+  const payload = {
+    templateName: 'reviewers-to-review-proposal',
+    fileName: ''
+  }
+  $.ajax({
+    type: 'POST',
+    url: '/api/email/' + proposalId,
+    contentType: 'application/json',
+    data: JSON.stringify(payload),
+    success: function (result) {
+      successAlert('Emails sent');
+    },
+    error: function (result){
+      errorAlert(result.responseJSON.message);
+    }
+  })
 }

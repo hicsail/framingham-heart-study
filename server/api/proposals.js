@@ -151,13 +151,18 @@ const register = function (server, options) {
       },
     },
     handler: async function (request, h) {
+
+      const userId = request.auth.credentials.user._id.toString();
       const proposalId = request.params.proposalId;
+
       update = {
         $set: {
           parsingResults: request.payload,
-        },
+          parsingResultsUpdatedAt: new Date(),
+          parsingResultsUpdatedBy: userId        
+        }
       };
-
+      
       const proposal = await Proposal.findByIdAndUpdate(proposalId, update);
       if (!proposal) {
         throw Boom.notFound("Proposal not found!");

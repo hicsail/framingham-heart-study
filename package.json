@@ -36,6 +36,7 @@
     "boom": "5.x.x",
     "child_process": "1.x.x",
     "confidence": "3.x.x",
+    "date-fns": "^2.29.3",
     "dotenv": "4.x.x",
     "glue": "5.x.x",
     "handlebars": "4.x.x",

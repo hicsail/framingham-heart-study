@@ -84,6 +84,7 @@ function submitFeedback(proposalId, userId) {
       break;
     }
   }
+  
 
   $.ajax({
     url: `/api/feedbacks`,
@@ -91,6 +92,7 @@ function submitFeedback(proposalId, userId) {
     data: JSON.stringify(doc),
     contentType: "application/json",
     success: function (result) {
+      sendEmail(proposalId,'all-reviews-submitted');
       location.reload();
     },
     error: function (result) {
@@ -115,10 +117,30 @@ function submitReview(proposalId) {
     data: JSON.stringify(doc),
     contentType: "application/json",
     success: function (result) {
+      sendEmail(proposalId, 'chair-finalized-decision');
       location.reload();
     },
     error: function (result) {
       errorAlert(result.responseJSON.message);
     },
   });
+}
+
+function sendEmail(proposalId, template){
+  const payload = {
+    templateName: template,
+    fileName: ''
+  }
+  $.ajax({ 
+    type: 'POST',
+    url: '/api/email/' + proposalId,
+    contentType: 'application/json',
+    data: JSON.stringify(payload),
+    success: function (result) {
+      successAlert('Emails sent');
+    },
+    error: function (result){
+      errorAlert(result.responseJSON.message);
+    }
+  })
 }
