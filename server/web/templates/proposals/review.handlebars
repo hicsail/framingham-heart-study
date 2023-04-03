@@ -17,7 +17,7 @@
             <span class="badge badge-pill badge-danger">Rejected</span>
           {{/ifEquals}}
           {{#ifEquals proposal.reviewStatus 'Revise'}}
-            <span class="badge badge-pill badge-warning">Revise Reuqested</span>
+            <span class="badge badge-pill badge-warning">Revise Requested</span>
           {{/ifEquals}} 
         </h4>       
         
@@ -59,6 +59,7 @@
                 </div>                
               {{/each}}
             </div>
+            <p class="text-right font-italic">Download: <a href="/api/S3/getObject/{{proposal.fileName}}">{{proposal.fileName}}</a></p>
           </div>
         </div>
         <br><br>        
@@ -169,7 +170,7 @@
 
                 <div>
                   <h5>Decision</h5>
-                  <div class="row">
+                  <div name="decision-section" class="row">
                     <div class="col-sm-8">
                       <textarea class="form-control" rows="5" id="feedback-decision-comment" placeholder="Comments">{{feedback.decisionComment}}</textarea>
                     </div>
@@ -190,9 +191,9 @@
                 {{#if finalDecisionMode}}                  
                   <hr>
                   <h5>Final Decision</h5>
-                  <div class="row">
+                  <div name="decision-section" class="row">
                     <div class="col-sm-8">
-                      <textarea chair-input="true" class="form-control" rows="5" id="final-decision-comment" placeholder="Comments">{{proposal.reviewComment}}</textarea>
+                      <textarea chair-input="true" class="form-control" rows="5" id="final-decision-comment" placeholder="Comments (optional)">{{proposal.reviewComment}}</textarea>
                     </div>
                     <div class="col-sm-4">
                       <form>
