@@ -64,8 +64,7 @@ const config = {
     autoIndex: true
   },
   nodemailer: {
-    host: 'smtp.office365.com',    
-    service: 'Outlook365',
+    host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {
@@ -76,20 +75,13 @@ const config = {
   system: {
     fromAddress: {
       name: 'FHS',
-      address: 'zimlim@bu.edu'//'bwhs2021@yahoo.com'
+      address: 'npdataau@bu.edu'//'bwhs2021@yahoo.com'
     },
     toAddress: {
       name: 'BWHS',
       address: 'jolij8147@gmail.com'
     }
-  },
-  bccReviewrs: {
-    $filter: 'env',
-    production: process.env.BASE_URL,
-    test: [],
-    local: process.env.BASE_URL,
-    $default: []
-  },
+  },  
   passwordComplexity: {
     min: 6,
     max: 32,
@@ -141,9 +133,9 @@ const config = {
     proposalUpload: ['tdstein@bu.edu','amckee@bu.edu'],
     relevantPeople: ['harruda@bu.edu'],
     ccAddress: ['npdataau@bu.edu']
-    }
   }
 };
+
 
 
 const store = new Confidence.Store(config);
