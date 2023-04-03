@@ -59,6 +59,9 @@ const manifest = {
         plugin: './server/anchor/hapi-anchor-web'
       },
       {
+        plugin: './server/reminderEmails.js'
+      },
+      {
         plugin: 'hapi-cron',
         options: {
           jobs: [{

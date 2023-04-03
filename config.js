@@ -66,7 +66,7 @@ const config = {
   nodemailer: {
     host: 'smtp.office365.com',    
     service: 'Outlook365',
-    port: 465, 
+    port: 465,
     secure: true,
     auth: {
       user: process.env.SMTP_USERNAME,
@@ -75,8 +75,8 @@ const config = {
   },
   system: {
     fromAddress: {
-      name: 'BWHS',
-      address: 'bwhsdata@bu.edu'//'bwhs2021@yahoo.com'
+      name: 'FHS',
+      address: 'zimlim@bu.edu'//'bwhs2021@yahoo.com'
     },
     toAddress: {
       name: 'BWHS',
@@ -120,7 +120,7 @@ const config = {
   S3: {
     bucketName: {
       $filter: 'env',
-      production: process.env.BUCKET_NAME, 
+      production: process.env.BUCKET_NAME,
       local: process.env.BUCKET_NAME,     
       $default: 'fhs-broc'
     },
@@ -135,6 +135,12 @@ const config = {
       production: process.env.S3_SECRET_ACCESS_KEY, 
       local: process.env.S3_SECRET_ACCESS_KEY,     
       $default: ''
+    }    
+  },
+  EmailList: {
+    proposalUpload: ['tdstein@bu.edu','amckee@bu.edu'],
+    relevantPeople: ['harruda@bu.edu'],
+    ccAddress: ['npdataau@bu.edu']
     }
   }
 };

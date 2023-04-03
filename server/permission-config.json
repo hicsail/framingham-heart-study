@@ -168,7 +168,8 @@
     ],
     "/feedback/{id}": [
       "root",
-      "admin"
+      "admin",
+      "reviewer"
     ],
     "/invite/create": [
       "root",

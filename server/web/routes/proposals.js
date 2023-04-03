@@ -237,9 +237,11 @@ const register = function (server, options) {
       for (const proposal of result.data) {
         proposal.assignedReviewers = [];
         for (const id of proposal.reviewerIds) {
+        
           const reviewer = await User.findById(id);
           proposal.assignedReviewers.push(reviewer);
-        }
+          }
+          
       }
 
       //logic for hasfeeback need to change here
