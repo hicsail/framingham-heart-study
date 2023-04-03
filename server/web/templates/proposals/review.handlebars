@@ -9,7 +9,8 @@
         <br>
 
         <h4 class="text-center font-weight-bold">
-          Project Title: {{parsedInfo.projectTitle}}          
+          Project Title: 
+          <a href="/api/S3/getObject/{{proposal.fileName}}">{{parsedInfo.projectTitle}}</a>        
           {{#ifEquals proposal.reviewStatus 'Approve'}}
             <span class="badge badge-pill badge-success">Approved</span>
           {{/ifEquals}}
@@ -58,8 +59,7 @@
                   </div>
                 </div>                
               {{/each}}
-            </div>
-            <p class="text-right font-italic">Download: <a href="/api/S3/getObject/{{proposal.fileName}}">{{proposal.fileName}}</a></p>
+            </div>            
           </div>
         </div>
         <br><br>        

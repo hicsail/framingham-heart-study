@@ -75,7 +75,7 @@ const config = {
   system: {
     fromAddress: {
       name: 'FHS',
-      address: 'npdataau@bu.edu'//'bwhs2021@yahoo.com'
+      address: 'npdataau@bu.edu'
     },
     toAddress: {
       name: 'BWHS',
