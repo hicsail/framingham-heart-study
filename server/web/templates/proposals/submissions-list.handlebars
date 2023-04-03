@@ -30,17 +30,24 @@
                                 <div class="col-md-4 text-right">
                                     {{#if ../user.roles.coordinator}}
                                         <div class="btn-group float-right" role="group">
+                                            <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#parsing-results-modal" onclick="onclickParsingResultsModal('{{_id}}')">
+                                                {{#if proposal.parsingResultsUpdatedAt}}
+                                                    Edit Parsing Resutls 
+                                                {{else}}
+                                                    Reveiw Parsing Results
+                                                {{/if}}                                              
+                                            </button>
                                             {{#ifNotEquals feasibilityStatus 'Feasibility Checked'}}
-                                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#feasibility-modal-{{../_id}}">
+                                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#feasibility-modal-{{../_id}}" {{#if proposal.parsingResultsUpdatedAt}}{{else}}disabled{{/if}}>
                                                 Approve Feasibility
                                                 </button>
                                             {{/ifNotEquals}}                                            
                                             {{#ifEquals feasibilityStatus 'Pending'}}
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="updateFeasibilityStatus('{{../_id}}', false)">
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="updateFeasibilityStatus('{{../_id}}', false)" {{#if proposal.parsingResultsUpdatedAt}}{{else}}disabled{{/if}}>
                                                     Request Revision
                                                 </button>
-                                            {{/ifEquals}}
-
+                                            {{/ifEquals}} 
+                                            
                                             {{!-- Feasibility Modal --}}
                                             <div class="modal text-left" id="feasibility-modal-{{_id}}" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
@@ -72,8 +79,8 @@
                                                 View My Feedback
                                             </button>
                                         {{else}}
-                                            <button type="button" class="btn btn-info" onclick="location.href='../../proposals/review/{{proposal._id}}'">
-                                                Review
+                                            <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}'">
+                                                Submit Feedback
                                             </button>
                                         {{/if}}
                                     {{/if}}
@@ -105,8 +112,14 @@
                                             <div class="btn-group" role="group">
                                                 {{#if proposal.hasFeedback}}
                                                     <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}/'">
-                                                        Review Proposal
+                                                        Final Review
                                                     </button>
+                                                {{else}}
+                                                    {{#if proposal.isAssignedToChair}}
+                                                        <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}'">
+                                                            Submit Feedback
+                                                        </button>
+                                                    {{/if}}
                                                 {{/if}}                                                 
                                                 <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#reviewersList-{{_id}}">
                                                     See Reviewers
@@ -143,7 +156,10 @@
                             </div>
                             <hr />
                         </div>
-                        {{/each}}   
+                        {{/each}} 
+                        <!-- parsing modal-->
+                        {{> parsingResultsEditModal}}
+
                     </div>
                 </div>               
             </div>            

@@ -5,8 +5,64 @@
       <div style="padding: 30px">
         <h3 class="font-weight-bold" style="font-size:1.8em;">Hello, {{user.name}}!</h3>
         <br>
-        <h4>#Dashboard index content</h4>
+        {{#if user.roles.coordinator}}
+        <h4>Table for approved proposals (manual tracking)</h4>
+        <div class="card mt-2">
+          <div style="padding: 20px;">
+            <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th>Proposal Name</th>
+                  <th>Approve Date</th>
+                  <th>Tissue Preparation</th>
+                  <th>Tissue Shipment</th>            
+                  <th>Return of brain data</th>
+                  <th>Transfer of FHS clinical data</th>                                                              
+                </tr>
+              </thead>
+              {{#each proposals as |proposal|}}
+                <tr>
+                  <td>{{fileName}}</td> 
+                  <td>{{formatDate reviewDate}}</td>
+                  <td>
+                    <div class="form-check ml-4">
+                      <input type="checkbox" class="form-check-input" id="tissue-prep-{{_id}}" onchange="onchangeTissuePrep(this, '{{_id}}')" {{#if postReviewInfo.tissueInPreparation}}checked{{/if}}>
+                      <label class="custom-control-label" for="tissue-prep-{{_id}}">In preparation</label>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-check ml-4">
+                      <input type="checkbox" class="form-check-input" id="tissue-shipment-{{_id}}" onchange="onchangeTissueShipment(this, '{{_id}}')" {{#if postReviewInfo.tissueShipped}}checked{{/if}}
+                      {{#disablePostReviewCB postReviewInfo 'tissueShipped'}}disabled{{/disablePostReviewCB}}
+                      >
+                      <label class="custom-control-label" for="tissue-shipment-{{_id}}">Shipped </label>
+                    </div>
+                  </td>                            
+                  <td>
+                    <div class="form-check ml-4">
+                      <input type="checkbox" class="form-check-input" id="brain-data-{{_id}}" onchange="onchangeBrainData(this, '{{_id}}')" {{#if postReviewInfo.brainDataReturned}}checked{{/if}}
+                      {{#disablePostReviewCB postReviewInfo 'brainDataReturned'}}disabled{{/disablePostReviewCB}}
+                      >
+                      <label class="custom-control-label" for="brain-data-{{_id}}">Returned</label>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="form-check ml-4">
+                      <input type="checkbox" class="form-check-input" id="clinical-data-{{_id}}" onchange="onchangeClinicalData(this, '{{_id}}')" {{#if postReviewInfo.clinicalDataTransfered}}checked{{/if}}
+                      {{#disablePostReviewCB postReviewInfo 'clinicalDataTransfered'}}disabled{{/disablePostReviewCB}}
+                      >
+                      <label class="custom-control-label" for="clinical-data-{{_id}}">Transferred</label>
+                    </div>
+                  </td>                                       
+                </tr>
+              {{/each}}
+            </table>
+          </div>
+        </div>
+        {{/if}}
        </div>
     </div>
   </div>
 </div>
+
+<script type="text/javascript" src="/public/scripts/dashboard/index.js"></script>

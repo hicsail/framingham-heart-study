@@ -141,6 +141,7 @@ const config = {
     proposalUpload: ['tdstein@bu.edu','amckee@bu.edu'],
     relevantPeople: ['harruda@bu.edu'],
     ccAddress: ['npdataau@bu.edu']
+    }
   }
 };
 

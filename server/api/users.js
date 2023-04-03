@@ -505,9 +505,10 @@ const register = function (server, options) {
         user.roles[request.params.role] = GroupAdmin.create([]);
       }
       else {
+        user.roles = {};
         user.roles[request.params.role] = true;
       }
-
+      
       const update = {
         $set: {
           roles: user.roles
@@ -515,7 +516,7 @@ const register = function (server, options) {
       };
 
       const updatedUser = await User.findByIdAndUpdate(request.params.id, update);
-
+      
       return {
         _id: updatedUser._id,
         username: updatedUser.username,
@@ -589,7 +590,7 @@ const register = function (server, options) {
       };
 
       const updatedUser = await User.findByIdAndUpdate(request.params.id, update);
-
+      
       return {
         _id: updatedUser._id,
         username: updatedUser.username,

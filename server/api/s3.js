@@ -59,7 +59,7 @@ const register = function (server, options) {
       options: {
         auth: {
           strategies: ['simple', 'session'],
-          scope: ['coordinator', 'root', 'reviewer']        
+          scope: ['coordinator', 'root', 'reviewer', 'chair']        
         }             
       },      
       handler: async function (request, h) {      

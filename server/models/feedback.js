@@ -75,7 +75,7 @@ Feedback.schema = Joi.object({
 
 Feedback.routes = Hoek.applyToDefaults(AnchorModel.routes, {
   create: {
-    scope: ["reviewer", "root"],
+    scope: ["reviewer", "root", "chair"],
     payload: Joi.object({
       userId: Joi.string().required(),
       proposalId: Joi.string().required(),      

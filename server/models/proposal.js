@@ -15,11 +15,27 @@ class Proposal extends AnchorModel {
       groupId: doc.groupId ? doc.groupId : null, // we link proposals (revised ones) using groupId
       reviewerIds: [], // list of assigned reviwers
       feasibilityStatus: this.status.PENDING,
-      feasibilityReviewDate: null,
+      feasibilityReviewDate: null,      
       feasibilityReviewerId: null,
       reviewStatus: null,
       reviewComment: null,
       reviewDate: null,
+      postReviewInfo: {
+        tissueInPreparation: false,
+        tissueShipped: false,
+        brainDataReturned: false,
+        clinicalDataTransfered: false
+      },
+      parsingResults: {
+        applicantName: null,
+        applicationId: null,
+        projectTitle: null,
+        details: null,
+        conflict: null,
+        funding: null  
+      },
+      parsingResultsUpdatedAt: null,
+      parsingResultsUpdatedBy: null
     });
     return this.insertOne(document);
   }
@@ -29,6 +45,22 @@ class Proposal extends AnchorModel {
       Assert.ok(doc.userId, "Missing userId argument.");
       Assert.ok(doc.fileName, "Missing file name argument.");
 
+      const postReviewInfo =  {
+        tissueInPreparation: false,
+        tissueShipped: false,
+        brainDataReturned: false,
+        clinicalDataTransfered: false
+      };
+
+      const parsingResults = {
+        applicantName: null,
+        applicationId: null,
+        projectTitle: null,
+        details: null,
+        conflict: null,
+        funding: null  
+      };     
+
       doc.reviewerIds = [];
       doc.feasibilityStatus = this.status.PENDING;
       doc.feasibilityReviewerId = null;
@@ -37,6 +69,10 @@ class Proposal extends AnchorModel {
       doc.reviewComment = null;
       doc.reviewDate = null;
       doc.groupId = doc.groupId ? doc.groupId : null;
+      doc.postReviewInfo = postReviewInfo;
+      doc.parsingResults = parsingResults;
+      doc.parsingResultsUpdatedAt = null;
+      doc.parsingResultsUpdatedBy = null;
     }
 
     const files = await this.insertMany(docs);
@@ -81,7 +117,13 @@ class Proposal extends AnchorModel {
 
   static parse(content, numPages) {
     
-    let result = {};
+    let result = {'details': null, 
+                  'funding': null, 
+                  'conflict': null, 
+                  'applicantName':null,
+                  'applicationId': null,
+                  'projectTitle': null};
+
     const textBlockAnchorDict = {
       'details': {
         'separator1': 'General Research Proposal',
@@ -138,10 +180,10 @@ class Proposal extends AnchorModel {
         try {
           const textBlock = (content.split(separator1)[1]).split(separator2)[0].trim();          
           if (key === 'applicationId') {
-            result[key] = textBlock.split('\n')[0];            
+            result[key] = textBlock.split('\n')[0] ? textBlock.split('\n')[0] : null;            
           }
           else if (key === 'projectTitle') {
-            result[key] = textBlock.split('\n')[1];
+            result[key] = textBlock.split('\n')[1] ? textBlock.split('\n')[1] : null;
           }
           else {
             result[key] = textBlock;
@@ -186,6 +228,22 @@ Proposal.schema = Joi.object({
   createdAt: Joi.date().required(),
   feasibilityReviewDate: Joi.date().required(),
   reviewDate: Joi.date().required(),
+  postReviewInfo: Joi.object({
+    tissueInPreparation: Joi.boolean().required(),
+    tissueShipped: Joi.boolean().required(),
+    brainDataReturned: Joi.boolean().required(),
+    clinicalDataTransfered: Joi.boolean().required()   
+  }).required(),
+  parsingResults: Joi.object({
+    applicantName: Joi.string().required(),
+    applicationId: Joi.string().required(),
+    projectTitle: Joi.string().required(),
+    details: Joi.string().required(),
+    conflict: Joi.string().required() ,
+    funding: Joi.string().optional().allow(null).allow('')    
+  }).required(),
+  parsingResultsUpdatedAt:Joi.date().optional(),
+  parsingResultsUpdatedBy: Joi.string().optional()
 });
 
 Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
@@ -209,6 +267,22 @@ Proposal.payload = Joi.object({
     .valid(Proposal.status.APPROVED, Proposal.status.REJECTED)
     .required(),
 });
+
+Proposal.postReviewInfoPayload = Joi.object({
+  tissueInPreparation: Joi.boolean().optional(),
+  tissueShipped: Joi.boolean().optional(),
+  brainDataReturned: Joi.boolean().optional(),
+  clinicalDataTransfered: Joi.boolean().optional()    
+});
+
+Proposal.parsingResultsPayload = Joi.object({
+  applicantName: Joi.string().required(),
+  applicationId: Joi.string().required(),
+  projectTitle: Joi.string().required(),
+  details: Joi.string().required(),
+  conflict: Joi.string().optional().allow(null).allow(''),
+  funding: Joi.string().optional().allow(null).allow(''),
+}),
 
 Proposal.lookups = [
   {
