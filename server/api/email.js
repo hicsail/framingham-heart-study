@@ -22,7 +22,7 @@ const register = function (server, options) {
       validate: {
         payload: {
           templateName : Joi.string().valid(['reviewers-to-review-proposal', 'chair-finalized-decision', 'all-reviews-submitted', 'proposal-upload']).required(),
-          fileName: Joi.string()
+          fileName: Joi.string().allow('')
 
         }
       }      
