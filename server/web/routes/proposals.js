@@ -265,6 +265,10 @@ const register = function (server, options) {
         } else {
           proposal.hasFeedback = false;
         }
+
+        console.log(proposal.fileName);
+        console.log(proposal.hasFeedback);
+        console.log(proposal.history);
       }
 
       return h.view("proposals/submissions-list", {
@@ -358,7 +362,7 @@ async function findAllProposalsInSameGroup(proposal, includeSelf = false) {
 
   return {
     list: history,
-    hasHistory: history.length > Number(includeSelf),
+    hasHistory: history.length > Number(includeSelf) || proposal._id.toString() !== original._id.toString(),
     isOriginal: proposal._id.toString() === original._id.toString(),
     original: {
       id: original._id.toString(),
