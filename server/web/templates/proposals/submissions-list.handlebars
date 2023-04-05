@@ -15,6 +15,9 @@
                             <div class="row">
                                 <div class="col-md-8">
                                     <h5 class="font-weight-bold">
+                                        {{#if history.isOriginal}}
+                                            <span class="badge badge-pill badge-warning">Original</span>
+                                        {{/if}}
                                         <a href="/api/S3/getObject/{{fileName}}" name="fileName">{{fileName}}</a>                                        
                                         <span class="badge badge-pill {{statusBadgeClass feasibilityStatus 'badge'}}">
                                             {{feasibilityStatus}}
@@ -172,7 +175,10 @@
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="proposal-history">
                                                 {{#unless ../history.isOriginal}}
-                                                    <a class="dropdown-item" href="/api/S3/getObject/{{../history.original.fileName}}">{{../history.original.fileName}} (Uploaded on {{../history.original.dateString}})</a>
+                                                    <a class="dropdown-item" href="/api/S3/getObject/{{../history.original.fileName}}">
+                                                        {{../history.original.fileName}} (Uploaded on {{../history.original.dateString}})
+                                                        <span class="badge badge-pill badge-warning">Original</span>
+                                                    </a>
                                                     <div class="dropdown-divider"></div>
                                                 {{/unless}}
                                                 {{#each ../history.list as |prop|}}
