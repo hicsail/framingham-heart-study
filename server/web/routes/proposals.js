@@ -265,10 +265,6 @@ const register = function (server, options) {
         } else {
           proposal.hasFeedback = false;
         }
-
-        console.log(proposal.fileName);
-        console.log(proposal.hasFeedback);
-        console.log(proposal.history);
       }
 
       return h.view("proposals/submissions-list", {
