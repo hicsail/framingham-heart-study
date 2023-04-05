@@ -137,7 +137,28 @@
                                                 {{/if}}                                                 
                                                 <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#reviewersList-{{_id}}">
                                                     See Reviewers
-                                                </button>                                                
+                                                </button>
+                                                {{#and history.hasHistory hasFeedback}}
+                                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="proposal-history" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        {{#if ../history.isOriginal}}
+                                                            Revised proposals
+                                                        {{else}}
+                                                            All proposals
+                                                        {{/if}}
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="proposal-history">
+                                                        {{#unless ../history.isOriginal}}
+                                                            <a class="dropdown-item" href="/api/S3/getObject/{{../history.original.fileName}}">
+                                                                {{../history.original.fileName}} (Uploaded on {{../history.original.dateString}})
+                                                                <span class="badge badge-pill badge-warning">Original</span>
+                                                            </a>
+                                                            <div class="dropdown-divider"></div>
+                                                        {{/unless}}
+                                                        {{#each ../history.list as |prop|}}
+                                                            <a class="dropdown-item" href="/api/S3/getObject/{{prop.fileName}}">{{prop.fileName}} (Uploaded on {{prop.dateString}})</a>
+                                                        {{/each}}
+                                                    </div>
+                                                {{/and}}
                                                 <!-- Modal for showing list of reviewers -->
                                                 <div class="modal fade text-left" id="reviewersList-{{_id}}" tabindex="-1" role="dialog"aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
@@ -163,30 +184,8 @@
                                                 </div>
                                             </div>
                                         {{/unless}}
-                                        </div>
-                                        <div class="bottom-right">
-                                        {{#and history.hasHistory hasFeedback}}
-                                            <button class="btn btn-primary dropdown-toggle" type="button" id="proposal-history" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                {{#if ../history.isOriginal}}
-                                                    Revised proposals
-                                                {{else}}
-                                                    All proposals
-                                                {{/if}}
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="proposal-history">
-                                                {{#unless ../history.isOriginal}}
-                                                    <a class="dropdown-item" href="/api/S3/getObject/{{../history.original.fileName}}">
-                                                        {{../history.original.fileName}} (Uploaded on {{../history.original.dateString}})
-                                                        <span class="badge badge-pill badge-warning">Original</span>
-                                                    </a>
-                                                    <div class="dropdown-divider"></div>
-                                                {{/unless}}
-                                                {{#each ../history.list as |prop|}}
-                                                    <a class="dropdown-item" href="/api/S3/getObject/{{prop.fileName}}">{{prop.fileName}} (Uploaded on {{prop.dateString}})</a>
-                                                {{/each}}
-                                            </div>
-                                        {{/and}}
-                                        </div>
+                                        </div> 
+                                        
                                     {{/if}}                        
 
                                 </div>
