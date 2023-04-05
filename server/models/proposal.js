@@ -13,6 +13,7 @@ class Proposal extends AnchorModel {
       fileName: doc.fileName,
       userId: doc.userId, //userId of the person who uploads the doc
       groupId: doc.groupId ? doc.groupId : null, // we link proposals (revised ones) using groupId
+      parentId: doc.parentId ? doc.parentId : null, // it will tell you which proposal this is revised from within the same group
       reviewerIds: [], // list of assigned reviwers
       reviewerAssignmentDate: null,
       feasibilityStatus: this.status.PENDING,
@@ -73,6 +74,7 @@ class Proposal extends AnchorModel {
       doc.reviewDate = null;
       doc.finalReviewerId = null;
       doc.groupId = doc.groupId ? doc.groupId : null;
+      doc.parentId = doc.parentId ? doc.parentId : null;
       doc.postReviewInfo = postReviewInfo;
       doc.parsingResults = parsingResults;
       doc.parsingResultsUpdatedAt = null;
@@ -224,6 +226,7 @@ Proposal.decision = {
 Proposal.schema = Joi.object({
   _id: Joi.object().required(),
   groupId: Joi.string().required(),
+  parentId: Joi.string().required(),
   fileName: Joi.string().required(),
   userId: Joi.object().required(),
   feasibilityReviewerId: Joi.object().required(),
@@ -260,6 +263,7 @@ Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
       userId: Joi.string().required(),
       fileName: Joi.string().required(),
       groupId: Joi.string().optional(),
+      parentId: Joi.string().optional(),
     }),
   },
   insertMany: {
