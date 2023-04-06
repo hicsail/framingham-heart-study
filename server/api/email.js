@@ -22,8 +22,7 @@ const register = function (server, options) {
       validate: {
         payload: {
           templateName : Joi.string().valid(['reviewers-to-review-proposal', 'chair-finalized-decision', 'all-reviews-submitted', 'proposal-upload']).required(),
-          fileName: Joi.string()
-
+          fileName: Joi.string().required()
         }
       }      
     },      
@@ -31,11 +30,11 @@ const register = function (server, options) {
     
       const proposalId = request.params.proposalId;
       const proposalDoc = await Proposal.findById(proposalId); 
+      const fileName = request.payload.fileName;
       let template = request.payload.templateName;
       let subject;  
       let emailOptions;         
       let emailTemplateData;
-      
       /*
         Case for when Chair assigns reviewers to a proposal. Emails are sent to all selected reviewers
       */
@@ -58,7 +57,7 @@ const register = function (server, options) {
                 cc: Config.get('/EmailList/ccAddress')
             };
             emailTemplateData = {
-                fileName: proposalDoc.fileName, // only a single file name
+                fileName, // only a single file name
                 dueDate: daysAfter.toString(),
                 loginURL: Config.get('/baseUrl') + 'login'
             };
@@ -79,7 +78,7 @@ const register = function (server, options) {
                 cc: Config.get('/EmailList/ccAddress')
             };
             emailTemplateData = {
-                fileName: proposalDoc.fileName, // only a single file name
+                fileName, // only a single file name
                 finalizedReviewStatus, // get from proposal model
                 additionalComments, // get from proposal model
                 loginURL: Config.get('/baseUrl') + 'login'
@@ -138,7 +137,7 @@ const register = function (server, options) {
                 }
 
                 emailTemplateData = {
-                    fileName: proposalDoc.fileName, // only a single file name
+                    fileName, // only a single file name
                     approveCount,
                     revisionCount,
                     rejectCount,
@@ -156,7 +155,6 @@ const register = function (server, options) {
         Case for when a file is uploaded by coordinator
       */
         if(template === 'proposal-upload'){      
-            const fileName = request.payload.fileName; //can be multiple file names
             subject = 'New proposal has been uploaded';
             emailOptions = {
                 subject: subject,
