@@ -68,7 +68,6 @@ function updateFeasibilityStatus(proposalId, approved) {
 }
 
 function assignReviewer(proposalId){
-
   const values = $("#reviewerSelect-" + proposalId).val();  
   $.ajax({
       type: 'PUT',
@@ -77,7 +76,7 @@ function assignReviewer(proposalId){
       data: JSON.stringify({ reviewerIds: values }),
       success: function (result) {
           successAlert('Successfully assigned a reviewer');
-          sendEmail(proposalId);
+          sendEmail(proposalId, result.proposal.fileName);
           location.reload();
       },
       error: function (result) {
@@ -86,10 +85,10 @@ function assignReviewer(proposalId){
   }); 
 }
 
-function sendEmail(proposalId){
+function sendEmail(proposalId, fileName){
   const payload = {
     templateName: 'reviewers-to-review-proposal',
-    fileName: ''
+    fileName
   }
   $.ajax({
     type: 'POST',
