@@ -105,7 +105,7 @@ const register = function (server, options) {
       if (!proposal) {
         throw Boom.notFound("Proposal not found!");
       }
-      return { message: "Success" };
+      return { message: "Success" , proposal: proposal};
     },
   });
 

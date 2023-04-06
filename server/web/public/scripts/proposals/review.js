@@ -60,7 +60,7 @@ function submitPopup(finalDecisionMode) {
   return;
 }
 
-function submitFeedback(proposalId, userId) {
+function submitFeedback(proposalId, userId, fileName) {
   const doc = {
     proposalId,
     userId,
@@ -92,7 +92,7 @@ function submitFeedback(proposalId, userId) {
     data: JSON.stringify(doc),
     contentType: "application/json",
     success: function (result) {
-      sendEmail(proposalId,'all-reviews-submitted');
+      sendEmail(proposalId,'all-reviews-submitted', fileName);
       location.reload();
     },
     error: function (result) {
@@ -117,7 +117,7 @@ function submitReview(proposalId) {
     data: JSON.stringify(doc),
     contentType: "application/json",
     success: function (result) {
-      sendEmail(proposalId, 'chair-finalized-decision');
+      sendEmail(proposalId, 'chair-finalized-decision', result.proposal.fileName);
       location.reload();
     },
     error: function (result) {
@@ -126,10 +126,10 @@ function submitReview(proposalId) {
   });
 }
 
-function sendEmail(proposalId, template){
+function sendEmail(proposalId, template, fileName){
   const payload = {
     templateName: template,
-    fileName: ''
+    fileName
   }
   $.ajax({ 
     type: 'POST',

@@ -262,7 +262,7 @@
                         <p>Are you sure you want to submit this review? After submission, no changes can be made.</p>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-success" onclick="submitFeedback('{{proposal._id}}', '{{user._id}}')">Yes</button>
+                        <button type="button" class="btn btn-success" onclick='submitFeedback("{{proposal._id}}", "{{user._id}}", "{{proposal.fileName}}")'>Yes</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                       </div>
                     </div>
