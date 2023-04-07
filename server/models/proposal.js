@@ -23,7 +23,6 @@ class Proposal extends AnchorModel {
       reviewComment: null,
       reviewDate: null,
       finalReviewerId: null,
-      hasChild: false,
       postReviewInfo: {
         tissueInPreparation: false,
         tissueShipped: false,
@@ -41,10 +40,6 @@ class Proposal extends AnchorModel {
       parsingResultsUpdatedAt: null,
       parsingResultsUpdatedBy: null
     });
-
-    if (document.parentId) {
-      this.findByIdAndUpdate(document.parentId, { $set: { hasChild: true } });
-    }
 
     return this.insertOne(document);
   }
@@ -79,7 +74,6 @@ class Proposal extends AnchorModel {
       doc.reviewComment = null;
       doc.reviewDate = null;
       doc.finalReviewerId = null;
-      doc.hasChild = false;
       doc.groupId = doc.groupId ? doc.groupId : null;
       doc.parentId = doc.parentId ? doc.parentId : null;
       doc.postReviewInfo = postReviewInfo;
@@ -245,7 +239,6 @@ Proposal.schema = Joi.object({
   feasibilityReviewDate: Joi.date().required(),
   reviewDate: Joi.date().required(),
   finalReviewerId: Joi.object().required(),
-  hasChild: Joi.boolean().required(),
   postReviewInfo: Joi.object({
     tissueInPreparation: Joi.boolean().required(),
     tissueShipped: Joi.boolean().required(),

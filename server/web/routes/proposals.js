@@ -137,6 +137,10 @@ const register = function (server, options) {
     handler: async function (request, h) {
       const user = request.auth.credentials.user;
       const proposals = await Proposal.lookup({}, Proposal.lookups);
+      
+      for (const proposal of proposals) {
+        proposal.hasChild = await Proposal.count({ parentId: proposal._id.toString() }) > 0;
+      }
 
       return h.view("proposals/reviewer-upload", {
         user: request.auth.credentials.user,
