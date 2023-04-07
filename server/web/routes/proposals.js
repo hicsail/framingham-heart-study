@@ -300,8 +300,6 @@ const register = function (server, options) {
         });
 
         proposal.hasHistory = revisedProposals.length > 0;
-        console.log(proposal.fileName);
-        console.log(proposal.hasHistory);
       }
 
       return h.view("proposals/submissions-list", {
