@@ -255,41 +255,9 @@ const register = function (server, options) {
         });
 
         if (user.roles.chair) {
-          let original = null;
-          if (proposal.groupId) {
-            // if current proposal is a revised proposal, add the original proposal to the list
-            original = await Proposal.findById(proposal.groupId);
-          } else {
-            // if current proposal is the original proposal, add itself to the list
-            original = proposal;
-          }
-          const revisedProposals = await Proposal.find({
-            _id : { $ne: proposal._id },
-            groupId: proposal.groupId ? proposal.groupId : proposal._id.toString(),
-          })
-
           proposal.hasFeedback = feedbacks.length === proposal.reviewerIds.length;
           proposal.hasFeedback &= Boolean(proposal.reviewerIds.length);
           proposal.isAssignedToChair = proposal.reviewerIds.includes(user._id.toString());
-          proposal.isOriginal = proposal.groupId ? false : true;
-          proposal.original = original ? {
-            id: original._id.toString(),
-            fileName: original.fileName,
-            date: original.createdAt,
-          } : null;
-          proposal.revisedProposals = revisedProposals.map((prop) => {
-            return {
-              id: prop._id.toString(),
-              fileName: prop.fileName,
-              date: prop.createdAt,
-            };
-          });
-          proposal.revisedProposals.sort((a, b) => {
-            return b.date - a.date;
-          });
-
-          proposal.hasHistory = revisedProposals.length > 0;
-          
         } else if (user.roles.reviewer) {
           for (const feedback of feedbacks) {
             if (feedback.userId.toString() === user._id.toString()) {
@@ -300,6 +268,40 @@ const register = function (server, options) {
         } else {
           proposal.hasFeedback = false;
         }
+
+        let original = null;
+        if (proposal.groupId) {
+          // if current proposal is a revised proposal, add the original proposal to the list
+          original = await Proposal.findById(proposal.groupId);
+        } else {
+          // if current proposal is the original proposal, add itself to the list
+          original = proposal;
+        }
+        const revisedProposals = await Proposal.find({
+          _id : { $ne: proposal._id },
+          groupId: proposal.groupId ? proposal.groupId : proposal._id.toString(),
+        });
+
+        proposal.isOriginal = proposal.groupId ? false : true;
+        proposal.original = original ? {
+          id: original._id.toString(),
+          fileName: original.fileName,
+          date: original.createdAt,
+        } : null;
+        proposal.revisedProposals = revisedProposals.map((prop) => {
+          return {
+            id: prop._id.toString(),
+            fileName: prop.fileName,
+            date: prop.createdAt,
+          };
+        });
+        proposal.revisedProposals.sort((a, b) => {
+          return b.date - a.date;
+        });
+
+        proposal.hasHistory = revisedProposals.length > 0;
+        console.log(proposal.fileName);
+        console.log(proposal.hasHistory);
       }
 
       return h.view("proposals/submissions-list", {

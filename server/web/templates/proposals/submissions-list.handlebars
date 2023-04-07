@@ -3,12 +3,12 @@
     {{>dashboardNav}}
 <div class="col-sm-9 col-md-10">
     <div style="padding: 30px">  
-        <div calass="row">            
+        <div calass="row">
             <div class="col-md-12">
                 <div class="card">
                     <div id="filters">
                        {{> proposalFilters}}
-                    </div>                                     
+                    </div>
                     <div class="card-body">
                         {{#each proposals as |proposal|}}
                         <div class="proposal" id={{_id}}>
@@ -18,7 +18,7 @@
                                         {{#if history.isOriginal}}
                                             <span class="badge badge-pill badge-warning">Original</span>
                                         {{/if}}
-                                        <a href="/api/S3/getObject/{{fileName}}" name="fileName">{{fileName}}</a>                                        
+                                        <a href="/api/S3/getObject/{{fileName}}" name="fileName">{{fileName}}</a>
                                         <span class="badge badge-pill {{statusBadgeClass feasibilityStatus 'badge'}}">
                                             {{feasibilityStatus}}
                                         </span>
@@ -42,20 +42,20 @@
                                     {{/if}}
                                 </div>
                                 <div class="col-md-4 text-right">
-                                    {{#if ../user.roles.coordinator}}
-                                        <div class="btn-group float-right" role="group">
+                                    <div class="btn-group float-right" role="group">
+                                        {{#if ../user.roles.coordinator}}
                                             <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#parsing-results-modal" onclick="onclickParsingResultsModal('{{_id}}')">
                                                 {{#if proposal.parsingResultsUpdatedAt}}
                                                     Edit Parsing Resutls 
                                                 {{else}}
                                                     Reveiw Parsing Results
-                                                {{/if}}                                              
+                                                {{/if}}
                                             </button>
                                             {{#ifNotEquals feasibilityStatus 'Feasibility Checked'}}
                                                 <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#feasibility-modal-{{../_id}}" {{#if proposal.parsingResultsUpdatedAt}}{{else}}disabled{{/if}}>
-                                                Approve Feasibility
+                                                    Approve Feasibility
                                                 </button>
-                                            {{/ifNotEquals}}                                            
+                                            {{/ifNotEquals}}
                                             {{#ifEquals feasibilityStatus 'Pending'}}
                                                 <button type="button" class="btn btn-danger btn-sm" onclick="updateFeasibilityStatus('{{../_id}}', false)" {{#if proposal.parsingResultsUpdatedAt}}{{else}}disabled{{/if}}>
                                                     Request Revision
@@ -75,7 +75,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            Upon confirmation, the feasibility status cannot be amended thereafter, and an automatic email will be sent to the BROC chair to initiate the review process. Do you want to proceed?                                 
+                                                            Upon confirmation, the feasibility status cannot be amended thereafter, and an automatic email will be sent to the BROC chair to initiate the review process. Do you want to proceed?
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-danger" onclick="updateFeasibilityStatus('{{_id}}', true)">Yes</button>
@@ -83,29 +83,26 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>                                                                        
-                                        </div>                                   
-                                    {{/if}}
-
-                                    {{#if ../user.roles.reviewer}}
-                                        {{#if proposal.hasFeedback}}
-                                            <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}'">
-                                                View My Feedback
-                                            </button>
-                                        {{else}}
-                                            <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}'">
-                                                Submit Feedback
-                                            </button>
+                                            </div>
                                         {{/if}}
-                                    {{/if}}
 
-                                    {{#if ../user.roles.chair}}
-                                        <div>                                        
-                                        {{#unless reviewerIds}}
-                                            <div class="btn-group float-right" role="group">        
+                                        {{#if ../user.roles.reviewer}}
+                                            {{#if proposal.hasFeedback}}
+                                                <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}'">
+                                                    View My Feedback
+                                                </button>
+                                            {{else}}
+                                                <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}'">
+                                                    Submit Feedback
+                                                </button>
+                                            {{/if}}
+                                        {{/if}}
+
+                                        {{#if ../user.roles.chair}}
+                                            {{#unless reviewerIds}}
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
-                                                        <button type="button" class="btn btn-secondary" onclick="assignReviewer('{{_id}}')">Submit</button>    
+                                                        <button type="button" class="btn btn-secondary" onclick="assignReviewer('{{_id}}')">Submit</button>
                                                     </div>
                                                     <select class="selectpicker"
                                                     id="reviewerSelect-{{_id}}" 
@@ -114,16 +111,14 @@
                                                     data-size="5" 
                                                     data-title="Select Reviewers"
                                                     data-selected-text-format="static" 
-                                                    multiple>                     
+                                                    multiple>
                                                         {{#each ../reviewers as |reviewer|}}
-                                                            <option selected value="{{reviewer._id}}"                    
+                                                            <option selected value="{{reviewer._id}}"
                                                             >{{reviewer.name}}</option>
-                                                        {{/each}}                                           
-                                                    </select>                                                   
-                                                </div>                                     
-                                            </div>
-                                        {{else}}
-                                            <div class="btn-group" role="group">
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                            {{else}}
                                                 {{#if proposal.hasFeedback}}
                                                     <button type="button" class="btn btn-secondary" onclick="location.href='../../proposals/review/{{proposal._id}}/'">
                                                         Final Review
@@ -134,31 +129,11 @@
                                                             Submit Feedback
                                                         </button>
                                                     {{/if}}
-                                                {{/if}}                                                 
+                                                {{/if}}
                                                 <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#reviewersList-{{_id}}">
                                                     See Reviewers
                                                 </button>
-                                                {{#and proposal.hasHistory proposal.hasFeedback}}
-                                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="proposal-history" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        {{#if proposal.isOriginal}}
-                                                            Revised proposals
-                                                        {{else}}
-                                                            All proposals
-                                                        {{/if}}
-                                                    </button>
-                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="proposal-history">
-                                                        {{#unless proposal.isOriginal}}
-                                                            <a class="dropdown-item" href="/api/S3/getObject/{{proposal.original.fileName}}">
-                                                                {{proposal.original.fileName}} (Uploaded on {{formatDate proposal.original.date}})
-                                                                <span class="badge badge-pill badge-warning">Original</span>
-                                                            </a>
-                                                            <div class="dropdown-divider"></div>
-                                                        {{/unless}}
-                                                        {{#each proposal.revisedProposals as |prop|}}
-                                                            <a class="dropdown-item" href="/api/S3/getObject/{{prop.fileName}}">{{prop.fileName}} (Uploaded on {{formatDate prop.date}})</a>
-                                                        {{/each}}
-                                                    </div>
-                                                {{/and}}
+                                                
                                                 <!-- Modal for showing list of reviewers -->
                                                 <div class="modal fade text-left" id="reviewersList-{{_id}}" tabindex="-1" role="dialog"aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
@@ -174,20 +149,39 @@
                                                                     {{#each reviewers as |reviewer|}}
                                                                         <p>{{reviewer.name}}, {{reviewer.email}}</p>
                                                                     {{/each}}
-                                                                {{/with}}                                  
+                                                                {{/with}}
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>                           
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        {{/unless}}
-                                        </div> 
-                                        
-                                    {{/if}}                        
+                                            {{/unless}}
+                                        {{/if}}
 
+                                        {{#if proposal.hasHistory}}
+                                            <button class="btn btn-secondary dropdown-toggle {{#if ../user.roles.coordinator}}btn-sm{{/if}}" type="button" id="proposal-history" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                {{#if proposal.isOriginal}}
+                                                    Revised proposals
+                                                {{else}}
+                                                    All proposals
+                                                {{/if}}
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="proposal-history">
+                                                {{#unless proposal.isOriginal}}
+                                                    <a class="dropdown-item" href="/api/S3/getObject/{{proposal.original.fileName}}">
+                                                        {{proposal.original.fileName}} (Uploaded on {{formatDate proposal.original.date}})
+                                                        <span class="badge badge-pill badge-warning">Original</span>
+                                                    </a>
+                                                    <div class="dropdown-divider"></div>
+                                                {{/unless}}
+                                                {{#each proposal.revisedProposals as |prop|}}
+                                                    <a class="dropdown-item" href="/api/S3/getObject/{{prop.fileName}}">{{prop.fileName}} (Uploaded on {{formatDate prop.date}})</a>
+                                                {{/each}}
+                                            </div>
+                                        {{/if}}
+                                    </div>
                                 </div>
                             </div>
                             <hr />
@@ -195,11 +189,10 @@
                         {{/each}} 
                         <!-- parsing modal-->
                         {{> parsingResultsEditModal}}
-
                     </div>
-                </div>               
-            </div>            
-        </div>               
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </div>
