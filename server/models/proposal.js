@@ -270,8 +270,8 @@ Proposal.routes = Hoek.applyToDefaults(AnchorModel.routes, {
     payload: Joi.object({
       userId: Joi.string().required(),
       fileName: Joi.string().required(),
-      groupId: Joi.string().optional(),
-      parentId: Joi.string().optional(),
+      groupId: Joi.string().optional().allow(null).allow(""),
+      parentId: Joi.string().optional().allow(null).allow(""),
     }),
   },
   insertMany: {
