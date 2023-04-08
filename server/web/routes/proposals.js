@@ -135,8 +135,14 @@ const register = function (server, options) {
       },
     },
     handler: async function (request, h) {
+      
       const user = request.auth.credentials.user;
       const proposals = await Proposal.lookup({}, Proposal.lookups);
+      
+      for (const proposal of proposals) {
+        const revisedProposal = await Proposal.findOne({ parentId: proposal._id.toString() });        
+        proposal.revisedProposal = revisedProposal;        
+      }
 
       return h.view("proposals/reviewer-upload", {
         user: request.auth.credentials.user,
@@ -264,6 +270,38 @@ const register = function (server, options) {
         } else {
           proposal.hasFeedback = false;
         }
+
+        let original = null;
+        if (proposal.groupId) {
+          // if current proposal is a revised proposal, add the original proposal to the list
+          original = await Proposal.findById(proposal.groupId);
+        } else {
+          // if current proposal is the original proposal, add itself to the list
+          original = proposal;
+        }
+        const revisedProposals = await Proposal.find({
+          _id : { $ne: proposal._id },
+          groupId: proposal.groupId ? proposal.groupId : proposal._id.toString(),
+        });
+
+        proposal.isOriginal = proposal.groupId ? false : true;
+        proposal.original = original ? {
+          id: original._id.toString(),
+          fileName: original.fileName,
+          date: original.createdAt,
+        } : null;
+        proposal.revisedProposals = revisedProposals.map((prop) => {
+          return {
+            id: prop._id.toString(),
+            fileName: prop.fileName,
+            date: prop.createdAt,
+          };
+        });
+        proposal.revisedProposals.sort((a, b) => {
+          return b.date - a.date;
+        });
+
+        proposal.hasHistory = revisedProposals.length > 0;
       }
 
       return h.view("proposals/submissions-list", {
@@ -321,7 +359,6 @@ async function getObjectFromS3(fileName) {
     });  
   });  
 }
-
 
 module.exports = {
   name: "proposal",

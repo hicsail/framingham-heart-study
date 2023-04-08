@@ -63,6 +63,52 @@ async function uploadFile(elem, userId) {
     });    
 }
 
+async function reuploadFile(element, userId, groupId, proposalId) {
+  const file = $(element).prop("files")[0];
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const call = await $.ajax({
+      type: "POST",
+      url: "/api/S3/saveFilesToBucket",
+      data: formData,
+      contentType: false,
+      cache: false,
+      processData: false,
+      success: function (result) {
+        console.log("save file to bucket");
+      },
+      error: function (result) {
+        errorAlert(result.responseJSON.message);
+      },
+    });
+
+    const payload = {
+      userId, //userId of the person who uploads the doc
+      fileName: call.fileName,
+      groupId: groupId ? groupId : proposalId,
+      parentId: proposalId,
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "/api/proposals",
+      contentType: "application/json",
+      data: JSON.stringify(payload),
+      success: function (result) {
+        successAlert("File uploaded");
+        location.reload();
+      },
+      error: function (result) {
+        errorAlert(result.responseJSON.message);
+      },
+    });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 
 function sendEmail(filesPayload){
   let fileNameArr = [];
@@ -92,6 +138,10 @@ function sendEmail(filesPayload){
 function onClickUploadFile() { 
 
     $("#proposal-file-input").click();
+}
+
+function onClickReuploadFile(proposalId) {
+  $(`#reupload-file-input-${proposalId}`).click();
 }
 
 function deleteFile() {

@@ -39,11 +39,12 @@
                   <th class="hidden">ID</th>
                   <th>Proposal Name</th>
                   <th>Uploaded By</th>
-                  <th>Upload Date</th>            
+                  <th>Upload Date</th>
                   <th>Feasibility Status</th>
                   <th>Review Status</th>
-                  <th>Reviewer Assignment Date</th>                
-                  <th>Delete</th>                                            
+                  <th>Reviewer Assignment Date</th>
+                  <th>Delete</th>
+                  <th>Revised Proposal</th>
                 </tr>
               </thead>
               {{#each proposals as |proposal|}}
@@ -57,7 +58,24 @@
                   <td><span class="badge badge-info">{{feasibilityStatus}}</span></td>
                   <td><span class="badge badge-info">{{reviewStatus}}</span></td>
                   <td>{{formatDate reviewerAssignmentDate}}</td>
-                  <td><button class="btn btn-danger" onClick="onClickDeleteFile('{{fileName}}', '{{_id}}')" data-toggle="modal" data-target="#delete-file-modal" {{#ifNotEquals userId ../user._id}}disabled{{/ifNotEquals}}>Delete</button></td>                         
+                  <td><button class="btn btn-danger" onClick="onClickDeleteFile('{{fileName}}', '{{_id}}')" data-toggle="modal" data-target="#delete-file-modal" {{#ifNotEquals userId ../user._id}}disabled{{/ifNotEquals}}>Delete</button></td>
+                  <td>
+                    {{#ifEquals reviewStatus "Revise"}}
+                      {{#if ../revisedProposal}}
+                        <a title="Click to download" cursor-pointer" href="/api/S3/getObject/{{../revisedProposal.fileName}}">{{../revisedProposal.fileName}} (Uploaded on {{formatDate ../revisedProposal.createdAt}})</a>
+                      {{else}}
+                        <button class="btn btn-primary" onClick="onClickReuploadFile('{{../_id}}')">Upload Revised Proposal</button>
+                      {{/if}}                      
+                    {{/ifEquals}}
+                  </td>
+                  <input
+                    class="btn btn-sm btn-light d-none"
+                    type="file"
+                    id="reupload-file-input-{{_id}}"
+                    name="proposalFile"
+                    accept="application/pdf"
+                    onchange="reuploadFile(this,'{{../user._id}}', '{{groupId}}', '{{_id}}')"
+                  />
                 </tr>
               {{/each}}
             </table>
