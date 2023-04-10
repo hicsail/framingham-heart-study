@@ -25,7 +25,7 @@ function UpdateFiltersOnUI(url) {
           $(`#${prop}-endDate`).hide();
         }
       } else {
-        $("#" + prop + " option[value='" + val + "']").attr(
+        $("#" + prop + " option[value='" + val.replace("%20", " ") + "']").attr(
           "selected",
           "selected"
         );
