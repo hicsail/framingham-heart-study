@@ -69,8 +69,7 @@ async function sendEmailNotification(){
   */
   const reviewerProposal = await Proposal.find({feasibilityStatus: 'Feasibility Checked', reviewerIds: { $ne: [] }}); // get proposal that needs feedback from reviewer
   for(const proposal of reviewerProposal){
-
-    const feedbackCount = await Feedback.count({proposalId: proposal.proposalId});
+    const feedbackCount = await Feedback.count({proposalId: String(proposal._id)});
     const uploadTime = new Date(proposal.createdAt);
     const dueDate = format(addDays(uploadTime, 7), 'MM/dd/yyyy');
     if((proposal.reviewerIds.length !== feedbackCount) && (uploadTime.getDay() === today.getDay() && uploadTime.getDate() !== today.getDate())){ // some reviewers hasn't submitted a review
@@ -86,31 +85,34 @@ async function sendEmailNotification(){
   
   /*
     BROC Chair to finalize a decision for a proposal
-    Send to: BROC CHair
+    Send to: BROC Chair
   */
-    const proposalDoc = await Proposal.find({reviewStatus: null});
-    proposalDoc.forEach(proposal => {
-      const uploadTime = new Date(proposal.createdAt);
-      if(uploadTime.getDay() === today.getDay() && uploadTime.getDate() !== today.getDate()){
-        const payload = {
-          templateName: 'reminder-chair-make-final-decision',
-          fileName: proposal.fileName,
-          proposalId: proposal._id
+    const proposalDoc = await Proposal.find({reviewStatus: null, feasibilityStatus: 'Feasibility Checked', reviewerIds: { $ne: [] }}); 
+      for(const proposal of proposalDoc){
+        // email only sent out if the proposal has feedback from all reviewers
+        const feedbackCount = await Feedback.count({proposalId: String(proposal._id)});
+        const numOfReviewers = proposal.reviewerIds.length;
+        const uploadTime = new Date(proposal.createdAt);
+        if(feedbackCount === numOfReviewers && uploadTime.getDay() === today.getDay() && uploadTime.getDate() !== today.getDate()){
+          const payload = {
+            templateName: 'reminder-chair-make-final-decision',
+            fileName: proposal.fileName,
+            proposalId: proposal._id
+          }
+          proposalReminderPayload.push(payload);
         }
-        proposalReminderPayload.push(payload);
-      }
-    });  
+    }  
 
-    proposalReminderPayload.forEach(payload => {
-      sendMail(payload);
-    })
+    for(const payload of proposalReminderPayload){
+      sendMail(payload);     
+      await new Promise(r => setTimeout(r, 1000)); //1 second sleep between sending files to avoid SMTP temporary block error
+    }
     
 }
 
 
 
 async function sendMail(data){
-  
   const template = data.templateName;
   let subject;  
   let emailOptions;         
@@ -232,7 +234,7 @@ async function sendMail(data){
   try{
       await Mailer.sendEmail(emailOptions, template, emailTemplateData);
   }catch (err) {
-      request.log(['mailer', 'error'], err);
+      console.log(['mailer', 'error'], err);
   }
 }
   
