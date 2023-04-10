@@ -5,21 +5,23 @@ function UpdateFiltersOnUI(url) {
 
   if (url.includes("?")) {
     let queries = url.split("?")[1].split("&");
+    const dateQueries = new Set(["uploadedAt", "reviewDate"]);
+
     for (let query of queries) {
       const prop = query.split("=")[0];
       const val = query.split("=")[1];
-      if (prop === "uploadedAt") {
+      if (dateQueries.has(prop)) {
         //special case for date filters, (handling both range and exact)
         if (val.includes(":")) {
           //range date filter is active
-          $("#date option[value='range']").attr("selected", "selected");
-          $("#startDate").val(val.split(":")[0]);
-          $("#endDate").val(val.split(":")[1]);
+          $(`#${prop}-date option[value='range']`).attr("selected", "selected");
+          $(`#${prop}-startDate`).val(val.split(":")[0]);
+          $(`#${prop}-endDate`).val(val.split(":")[1]);
         } else {
           //exact match date is active
-          $("#date option[value='exact']").attr("selected", "selected");
-          $("#startDate").val(val);
-          $("#endDate").hide();
+          $(`#${prop}-date option[value='exact']`).attr("selected", "selected");
+          $(`#${prop}-startDate`).val(val);
+          $(`#${prop}-endDate`).hide();
         }
       } else {
         $("#" + prop + " option[value='" + val + "']").attr(
@@ -105,6 +107,7 @@ function goToPage(pageNo) {
 $("select[id$=date]").on("change", function () {
 
   const value = $(this).find("option:selected").attr("value");
+  const dateAttribute = $(this).attr("id").split("-")[0];
   const url = window.location.href;
   if (value === "exact") {
     $(`#${dateAttribute}-startDate`).show();
