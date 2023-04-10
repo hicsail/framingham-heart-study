@@ -1,11 +1,12 @@
 "use strict";
 
 //Update filters selected option on UI using query params in the URL
+const dateQueries = new Set(["uploadedAt", "reviewDate"]);
+
 function UpdateFiltersOnUI(url) {
 
   if (url.includes("?")) {
     let queries = url.split("?")[1].split("&");
-    const dateQueries = new Set(["uploadedAt", "reviewDate"]);
 
     for (let query of queries) {
       const prop = query.split("=")[0];
