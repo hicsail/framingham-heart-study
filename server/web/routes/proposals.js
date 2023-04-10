@@ -260,8 +260,6 @@ const register = function (server, options) {
         reviewers = await User.find({ $or:[{ roles: { reviewer: true } }, { roles: { chair: true } } ]});
       }
 
-      console.log(request.query);
-
       const result = await Proposal.pagedLookup(
         request.query,
         page,
