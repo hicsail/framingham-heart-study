@@ -102,54 +102,49 @@ function goToPage(pageNo) {
   window.location = attachKeyValuesToURL("page", pageNo, url);
 }
 
-$("#date").on("change", function () {
+$("select[id$=date]").on("change", function () {
 
   const value = $(this).find("option:selected").attr("value");
   const url = window.location.href;
   if (value === "exact") {
-    $("#startDate").show();
-    $("#endDate").hide();
-    if ($("#startDate").val()) {
+    $(`#${dateAttribute}-startDate`).show();
+    $(`#${dateAttribute}-endDate`).hide();
+    if ($(`#${dateAttribute}-startDate`).val()) {
       window.location = attachKeyValuesToURL(
-        "uploadedAt",
-        $("#startDate").val(),
+        dateAttribute,
+        $(`#${dateAttribute}-startDate`).val(),
         url
       );
     }
   } else if (value === "range") {
-    $("#startDate").show();
-    $("#endDate").show();
-    if ($("#startDate").val() && $("#endDate").val()) {
+    $(`#${dateAttribute}-startDate`).show();
+    $(`#${dateAttribute}-endDate`).show();
+    if ($(`#${dateAttribute}-startDate`).val() && $(`#${dateAttribute}-endDate`).val()) {
       window.location = attachKeyValuesToURL(
-        "uploadedAt",
-        $("#startDate").val() + ":" + $("#endDate").val(),
+        dateAttribute,
+        $(`#${dateAttribute}-startDate`).val() + ":" + $(`#${dateAttribute}-endDate`).val(),
         url
       );
     }
   }
 });
 
-function pickDate() {
-
-  const filterType = $("#date").val();
-  const startDate = $("#startDate").val();
-  const endDate = $("#endDate").val();
+function pickDate(dateAttribute) {
+  const filterType = $(`#${dateAttribute}-date`).val();
+  const startDate = $(`#${dateAttribute}-startDate`).val();
+  const endDate = $(`#${dateAttribute}-endDate`).val();
   const url = window.location.href;
   if (filterType === "range" && startDate && endDate) {
-    window.location = attachKeyValuesToURL(
-      "uploadedAt",
-      startDate + ":" + endDate,
-      url
-    );
+    window.location = attachKeyValuesToURL(dateAttribute, startDate + ":" + endDate, url);
   } else if (filterType === "exact" && startDate) {
-    window.location = attachKeyValuesToURL("uploadedAt", startDate, url);
+    window.location = attachKeyValuesToURL(dateAttribute, startDate, url);
   }
   //case for resetting date filters
   else if (
     (filterType === "exact" && !startDate) ||
     (filterType === "range" && !startDate && !endDate)
   ) {
-    window.location = attachKeyValuesToURL("uploadedAt", "All", url);
+    window.location = attachKeyValuesToURL(dateAttribute, "All", url);
   }
 }
 
