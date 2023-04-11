@@ -88,7 +88,7 @@ function attachKeyValuesToURL(key, value, url) {
 function linkFilters() {
 
   $("#filters .selectpicker").each(function () {
-    if ($(this).attr("id") !== "date") {
+    if (!dateQueries.has($(this).attr("id").replace("-date", ""))) {
       $(this).on("change", function () {
         let url = window.location.href;
         const property = $(this).attr("id");
