@@ -55,7 +55,7 @@ const register = function (server, options) {
 
     server.route({
       method: 'GET',
-      path: '/api/S3/getObject/{fileName}',
+      path: '/api/S3/getObject/{proposalId}',
       options: {
         auth: {
           strategies: ['simple', 'session'],
@@ -65,13 +65,18 @@ const register = function (server, options) {
       handler: async function (request, h) {      
   
         let fileStream;
-        const fileName = request.params.fileName;
+        const proposalId = request.params.proposalId;        
+        const proposal = await Proposal.findById(proposalId);        
+        if (!proposal) {
+          throw Boom.badRequest("Document does not found in DB!")
+        }
+        const fileName = proposal.fileName;      
         const bucketName = Config.get('/S3/bucketName'); 
         
         try {
           fileStream = await getObjectFromS3(fileName, bucketName);             
         } 
-        catch (err) {        
+        catch (err) {                
           throw Boom.badRequest('Unable to download file because ' + err.message);
         }
         
@@ -108,7 +113,7 @@ const register = function (server, options) {
 };
 
 async function getObjectFromS3(fileName, bucketName) {
-
+  
   const s3 = new AWS.S3({
     accessKeyId: Config.get('/S3/accessKeyId'),
     secretAccessKey: Config.get('/S3/secretAccessKey')

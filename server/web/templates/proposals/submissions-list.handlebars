@@ -15,7 +15,7 @@
                             <div class="row">
                                 <div class="col-md-8">
                                     <h5 class="font-weight-bold">                                      
-                                        <a href="/api/S3/getObject/{{fileName}}" name="fileName">{{fileName}}</a>
+                                        <a href="/api/S3/getObject/{{_id}}" download='{{fileName}}'>{{fileName}}</a>
                                         <span class="badge badge-pill {{statusBadgeClass feasibilityStatus 'badge'}}">
                                             {{feasibilityStatus}}
                                         </span>
@@ -167,14 +167,14 @@
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="proposal-history">
                                                 {{#unless proposal.isOriginal}}
-                                                    <a class="dropdown-item" href="/api/S3/getObject/{{proposal.original.fileName}}">
+                                                    <a class="dropdown-item" href="/api/S3/getObject/{{proposal.original._id}}" download='{{proposal.original.fileName}}'>
                                                         {{proposal.original.fileName}} (Uploaded on {{formatDate proposal.original.date}})
                                                         <span class="badge badge-pill badge-warning">Original</span>
                                                     </a>
                                                     <div class="dropdown-divider"></div>
                                                 {{/unless}}
                                                 {{#each proposal.revisedProposals as |prop|}}
-                                                    <a title="Click to download" class="dropdown-item text-primary cursor-pointer" href="/api/S3/getObject/{{prop.fileName}}">{{prop.fileName}} (Uploaded on {{formatDate prop.date}})</a>
+                                                    <a title="Click to download" class="dropdown-item text-primary cursor-pointer" href="/api/S3/getObject/{{prop._id}}" download='{{prop.fileName}}'>{{prop.fileName}} (Uploaded on {{formatDate prop.date}})</a>
                                                 {{/each}}
                                             </div>
                                         {{/if}}

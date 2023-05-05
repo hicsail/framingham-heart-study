@@ -51,7 +51,7 @@
                 <tr>
                   <td>{{_id}}</td> 
                   <td>
-                    <h4><a href="/api/S3/getObject/{{fileName}}">{{fileName}}</a></h4>
+                    <h4><a href="/api/S3/getObject/{{_id}}" download='{{fileName}}'>{{fileName}}</a></h4>
                   </td>
                   <td>{{user.name}}</td>
                   <td>{{formatDate createdAt}}</td>                            
@@ -62,7 +62,7 @@
                   <td>
                     {{#ifEquals reviewStatus "Revise"}}
                       {{#if ../revisedProposal}}
-                        <a title="Click to download" cursor-pointer" href="/api/S3/getObject/{{../revisedProposal.fileName}}">{{../revisedProposal.fileName}} (Uploaded on {{formatDate ../revisedProposal.createdAt}})</a>
+                        <a title="Click to download" cursor-pointer" href="/api/S3/getObject/{{../revisedProposal._id}}" download='{{../revisedProposal.fileName}}'>{{../revisedProposal.fileName}} (Uploaded on {{formatDate ../revisedProposal.createdAt}})</a>
                       {{else}}
                         <button class="btn btn-primary" onClick="onClickReuploadFile('{{../_id}}')">Upload Revised Proposal</button>
                       {{/if}}                      
