@@ -5,6 +5,7 @@ const Handlebars = require('handlebars');
 const Hoek = require('hoek');
 const Markdown = require('nodemailer-markdown').markdown;
 const Nodemailer = require('nodemailer');
+const MailgunTransport = require("nodemailer-mailgun-transport");
 const Path = require('path');
 const Util = require('util');
 
@@ -40,7 +41,7 @@ class Mailer {
 }
 
 Mailer.templateCache = {};
-Mailer.transport = Nodemailer.createTransport(Config.get('/nodemailer'));
+Mailer.transport = Nodemailer.createTransport(MailgunTransport(Config.get('/mailgunTransport')));
 Mailer.transport.use('compile', Markdown({ useEmbeddedImages: true }));
 
 module.exports = Mailer;

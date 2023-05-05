@@ -58,6 +58,7 @@
     "mongo-models": "1.x.x",
     "mongodb": "2.x.x",
     "nodemailer": "4.x.x",
+    "nodemailer-mailgun-transport": "^2.1.5",
     "nodemailer-markdown": "1.x.x",
     "object-assign": "4.x.x",
     "pdf-parse": "^1.1.1",

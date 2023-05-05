@@ -72,14 +72,20 @@ const config = {
       pass: process.env.SMTP_PASSWORD
     }
   },
+  mailgunTransport: {
+    auth: {
+      apiKey: process.env.MAILGUN_APIKEY
+      domain: process.env.MAILGUN_DOMAIN      
+    }  
+  },
   system: {
     fromAddress: {
-      name: 'FHS',
-      address: 'npdataau@bu.edu'
+      name: 'BROC review',
+      address: 'no-reply@fhs.sail.codes'
     },
     toAddress: {
-      name: 'BWHS',
-      address: 'jolij8147@gmail.com'
+      name: '',
+      address: ''
     }
   },  
   passwordComplexity: {
