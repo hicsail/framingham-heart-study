@@ -74,7 +74,7 @@ const config = {
   },
   mailgunTransport: {
     auth: {
-      apiKey: process.env.MAILGUN_APIKEY
+      apiKey: process.env.MAILGUN_APIKEY,
       domain: process.env.MAILGUN_DOMAIN      
     }  
   },
