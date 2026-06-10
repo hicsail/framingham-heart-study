@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  fhs-mongo:
+    image: mongo:4.4
+    container_name: fhs-mongo
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: fhs
+    volumes:
+      - fhs-data:/data/db
+
+  fhs:
+    image: hicsail/fhs:main
+    container_name: fhs
+    restart: always
+    depends_on:
+      - fhs-mongo
+    ports:
+      - "9000:9000"
+    env_file:
+      - stack.env
+
+volumes:
+  fhs-data:
