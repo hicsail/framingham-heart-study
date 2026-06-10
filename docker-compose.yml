@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  fhs-mongo:
+    image: mongo:4.4
+    ports:
+      - '27017:27017'
+    volumes:
+      - fhs-data:/data/db
+
+  fhs:
+    build: .
+    restart: always
+    depends_on:
+      - fhs-mongo
+    ports:
+      - '9000:9000'
+    env_file:
+      - .env
+    environment:
+      - MONGODB_URI=mongodb://fhs-mongo:27017/
+      - NODE_ENV=production
+
+volumes:
+  fhs-data:
