@@ -80,32 +80,75 @@
         id="feasibilityStatus"
         data-live-search="true"
         data-style="btn-white"
+        data-width="65%"
       >
-        <option value="All">Filter By Status (All)</option>
+        <option value="All">Filter By Feasibility Status (All)</option>
         <option value="Pending">Pending</option>
         <option value="Feasibility Checked">Feasibility Checked</option>
         <option value="Revise Requested">Revise Requested</option>
       </select>
     </div>
+    <div class="col">
+      <select
+        class="selectpicker"
+        id="reviewStatus"
+        data-live-search="true"
+        data-style="btn-white"
+        data-width="65%"
+      >
+        <option value="All">Filter By Final Review Status (All)</option>
+        <option value="Approve">Approve</option>
+        <option value="Revise">Revise</option>
+        <option value="Reject">Reject</option>
+      </select>
+    </div>
   </div>
       <br>
     <div class="row ml-2 mr-2">
+      <div class="col-md">
+        Upload Date
+      </div>
+    </div>
+    <div class="row ml-2 mr-2">
         <div class="col-md-2">
-            <select class="selectpicker" id="date" data-style="btn-white">        
+            <select class="selectpicker" id="uploadedAt-date" data-style="btn-white">
                 <option value="range" role="button">Date Range</option>
-                <option value="exact">Exact Date</option>                      
+                <option value="exact">Exact Date</option>
             </select>
         </div>
         <div class="col-md-10">
             <div class="row"> 
-                <div class="col">                          
-                    <input class="form-control bg-white" type="date" id="startDate" onchange="pickDate()" display="none">
+                <div class="col">
+                    <input class="form-control bg-white" type="date" id="uploadedAt-startDate" onchange="pickDate('uploadedAt')" display="none">
                 </div>
-                <div class="col">                          
-                    <input class="form-control bg-white" type="date" id="endDate" onchange="pickDate()" display="none">                
+                <div class="col">
+                    <input class="form-control bg-white" type="date" id="uploadedAt-endDate" onchange="pickDate('uploadedAt')" display="none">
                 </div>
             </div>
-        </div>   
+        </div>
+    </div>
+    <div class="row ml-2 mr-2">
+      <div class="col-md">
+        Review Date
+      </div>
+    </div>
+    <div class="row ml-2 mr-2">
+        <div class="col-md-2">
+            <select class="selectpicker" id="reviewDate-date" data-style="btn-white">
+                <option value="range" role="button">Date Range</option>
+                <option value="exact">Exact Date</option>
+            </select>
+        </div>
+        <div class="col-md-10">
+            <div class="row">
+                <div class="col">
+                    <input class="form-control bg-white" type="date" id="reviewDate-startDate" onchange="pickDate('reviewDate')" display="none">
+                </div>
+                <div class="col">
+                    <input class="form-control bg-white" type="date" id="reviewDate-endDate" onchange="pickDate('reviewDate')" display="none">
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {{#if notDatatableView}}

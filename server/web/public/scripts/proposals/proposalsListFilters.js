@@ -1,28 +1,31 @@
 "use strict";
 
 //Update filters selected option on UI using query params in the URL
+const dateQueries = new Set(["uploadedAt", "reviewDate"]);
+
 function UpdateFiltersOnUI(url) {
 
   if (url.includes("?")) {
     let queries = url.split("?")[1].split("&");
+
     for (let query of queries) {
       const prop = query.split("=")[0];
       const val = query.split("=")[1];
-      if (prop === "uploadedAt") {
+      if (dateQueries.has(prop)) {
         //special case for date filters, (handling both range and exact)
         if (val.includes(":")) {
           //range date filter is active
-          $("#date option[value='range']").attr("selected", "selected");
-          $("#startDate").val(val.split(":")[0]);
-          $("#endDate").val(val.split(":")[1]);
+          $(`#${prop}-date option[value='range']`).attr("selected", "selected");
+          $(`#${prop}-startDate`).val(val.split(":")[0]);
+          $(`#${prop}-endDate`).val(val.split(":")[1]);
         } else {
           //exact match date is active
-          $("#date option[value='exact']").attr("selected", "selected");
-          $("#startDate").val(val);
-          $("#endDate").hide();
+          $(`#${prop}-date option[value='exact']`).attr("selected", "selected");
+          $(`#${prop}-startDate`).val(val);
+          $(`#${prop}-endDate`).hide();
         }
       } else {
-        $("#" + prop + " option[value='" + val + "']").attr(
+        $("#" + prop + " option[value='" + val.replace("%20", " ") + "']").attr(
           "selected",
           "selected"
         );
@@ -85,7 +88,7 @@ function attachKeyValuesToURL(key, value, url) {
 function linkFilters() {
 
   $("#filters .selectpicker").each(function () {
-    if ($(this).attr("id") !== "date") {
+    if (!dateQueries.has($(this).attr("id").replace("-date", ""))) {
       $(this).on("change", function () {
         let url = window.location.href;
         const property = $(this).attr("id");
@@ -102,54 +105,50 @@ function goToPage(pageNo) {
   window.location = attachKeyValuesToURL("page", pageNo, url);
 }
 
-$("#date").on("change", function () {
+$("select[id$=date]").on("change", function () {
 
   const value = $(this).find("option:selected").attr("value");
+  const dateAttribute = $(this).attr("id").split("-")[0];
   const url = window.location.href;
   if (value === "exact") {
-    $("#startDate").show();
-    $("#endDate").hide();
-    if ($("#startDate").val()) {
+    $(`#${dateAttribute}-startDate`).show();
+    $(`#${dateAttribute}-endDate`).hide();
+    if ($(`#${dateAttribute}-startDate`).val()) {
       window.location = attachKeyValuesToURL(
-        "uploadedAt",
-        $("#startDate").val(),
+        dateAttribute,
+        $(`#${dateAttribute}-startDate`).val(),
         url
       );
     }
   } else if (value === "range") {
-    $("#startDate").show();
-    $("#endDate").show();
-    if ($("#startDate").val() && $("#endDate").val()) {
+    $(`#${dateAttribute}-startDate`).show();
+    $(`#${dateAttribute}-endDate`).show();
+    if ($(`#${dateAttribute}-startDate`).val() && $(`#${dateAttribute}-endDate`).val()) {
       window.location = attachKeyValuesToURL(
-        "uploadedAt",
-        $("#startDate").val() + ":" + $("#endDate").val(),
+        dateAttribute,
+        $(`#${dateAttribute}-startDate`).val() + ":" + $(`#${dateAttribute}-endDate`).val(),
         url
       );
     }
   }
 });
 
-function pickDate() {
-
-  const filterType = $("#date").val();
-  const startDate = $("#startDate").val();
-  const endDate = $("#endDate").val();
+function pickDate(dateAttribute) {
+  const filterType = $(`#${dateAttribute}-date`).val();
+  const startDate = $(`#${dateAttribute}-startDate`).val();
+  const endDate = $(`#${dateAttribute}-endDate`).val();
   const url = window.location.href;
   if (filterType === "range" && startDate && endDate) {
-    window.location = attachKeyValuesToURL(
-      "uploadedAt",
-      startDate + ":" + endDate,
-      url
-    );
+    window.location = attachKeyValuesToURL(dateAttribute, startDate + ":" + endDate, url);
   } else if (filterType === "exact" && startDate) {
-    window.location = attachKeyValuesToURL("uploadedAt", startDate, url);
+    window.location = attachKeyValuesToURL(dateAttribute, startDate, url);
   }
   //case for resetting date filters
   else if (
     (filterType === "exact" && !startDate) ||
     (filterType === "range" && !startDate && !endDate)
   ) {
-    window.location = attachKeyValuesToURL("uploadedAt", "All", url);
+    window.location = attachKeyValuesToURL(dateAttribute, "All", url);
   }
 }
 

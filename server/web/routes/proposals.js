@@ -183,11 +183,40 @@ const register = function (server, options) {
           end = new Date(date.setDate(date.getDate() + 1)).toISOString();
         }
 
-        request.query["$and"] = [
+        request.query["$and"] ?
+          request.query["$and"].concat([
+            { createdAt: { $gte: new Date(start) } },
+            { createdAt: { $lt: new Date(end) } },
+          ]) :
+          request.query["$and"] = [
           { createdAt: { $gte: new Date(start) } },
           { createdAt: { $lt: new Date(end) } },
         ];
         delete request.query.uploadedAt;
+      }
+
+      if ("reviewDate" in request.query) {
+        let start;
+        let end;
+        if (request.query["reviewDate"].includes(":")) {
+          start = new Date(request.query["reviewDate"].split(":")[0]).toISOString();
+          end = new Date(request.query["reviewDate"].split(":")[1]).toISOString();
+        } else {
+          const date = new Date(request.query["reviewDate"]);
+          start = date.toISOString();
+          end = new Date(date.setDate(date.getDate() + 1)).toISOString();
+        }
+
+        request.query["$and"] ?
+          request.query["$and"].concat([
+            { reviewDate: { $gte: new Date(start) } },
+            { reviewDate: { $lt: new Date(end) } },
+          ]) :
+          request.query["$and"] = [
+          { reviewDate: { $gte: new Date(start) } },
+          { reviewDate: { $lt: new Date(end) } },
+        ];
+        delete request.query.reviewDate;
       }
 
       // if there is a sort filter
